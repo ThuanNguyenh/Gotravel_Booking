@@ -1,0 +1,26 @@
+.px-6 {
+  padding-left: 0rem !important;
+  padding-right: 0rem !important;
+}
+
+.max-w-\[1024px\] {
+  max-width: 1270px !important;
+}
+
+@media (max-width: 768px) {
+  .nav {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+.modal-account {
+  @media (max-width: 768px) {
+    .menu {
+      display: none;
+    }
+    .language-item {
+      display: none;
+    }
+  }
+}
