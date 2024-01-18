@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useUserAuth } from "../../contexts/userAuthContext";
+import { NotificationIcon } from "../../assets/NotificationIcon";
 
 import {
   Button,
@@ -15,6 +16,7 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
+  Badge,
 } from "@nextui-org/react";
 import Login from "./Login";
 
@@ -45,13 +47,30 @@ const Account = () => {
     <>
       {isLoggedIn ? (
         <NavbarContent justify="end">
+          {/* notification */}
+          <NavbarItem>
+            <Badge size="md" className="scale-85" content="2" shape="circle" color="danger">
+              <Button
+                radius="full"
+                isIconOnly
+                aria-label="more than 99 notifications"
+                variant="flat"
+                size="md"
+                className="scale-90"
+              >
+                <NotificationIcon size={20}/>
+              </Button>
+            </Badge>
+          </NavbarItem>
+          {/* notification */}
           <NavbarItem>
             <Dropdown placement="bottom-end">
               <DropdownTrigger>
                 <Avatar
+                  size="sm"
                   isBordered
                   as="button"
-                  className="transition-transform transform scale-75"
+                  className="transition-transform transform scale-90"
                   src={userRedux.avatarUrl}
                 />
               </DropdownTrigger>

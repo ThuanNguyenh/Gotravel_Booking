@@ -2,28 +2,30 @@ import {
   Autocomplete,
   AutocompleteItem,
   Input,
-  Button,
 } from "@nextui-org/react";
 import { animals } from "../../models/data";
 import { LocationIcon } from "../../assets/LocationIcon";
 import { DateIcon } from "../../assets/DateIcon";
 import { PerRoomIcon } from "../../assets/perRoom";
+import "./slide.scss";
 
 const HotelSearch = () => {
   return (
     <div>
-      <div className="flex mt-2 mx-2">
+      <div className="flex mt-2 mb-4 ml-2">
+      {/* đia diem */}
         <div className="w-1/4">
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-3">
             <h2 className="font-semibold text-neutral-800">
               Địa điểm hoặc tên khách sạn
             </h2>
             <Autocomplete
               defaultItems={animals}
               placeholder="Thành phố, khách sạn..."
-              className="max-w-xs border"
+              className="location max-w-xs"
               startContent={<LocationIcon />}
-              radius="none"
+              size="sm"
+              variant="bordered"
             >
               {(animal) => (
                 <AutocompleteItem key={animal.value}>
@@ -35,46 +37,52 @@ const HotelSearch = () => {
         </div>
         {/* ngày nhận phòng */}
         <div className=" w-1/4">
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-3">
             <h2 className="font-semibold text-neutral-800">Ngày nhận phòng</h2>
 
             <Input
               placeholder="Thành phố, khách sạn..."
-              className="max-w-xs border"
+              className="max-w-xs"
               startContent={<DateIcon />}
               type="date"
               radius="none"
+              size="sm"
+              variant="bordered"
             />
           </div>
         </div>
 
         {/* ngày trả phòng */}
         <div className="w-1/4">
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-3">
             <h2 className="font-semibold text-neutral-800">Ngày trả phòng</h2>
            
             <Input
               placeholder="Thành phố, khách sạn..."
-              className="max-w-xs border"
+              className="max-w-xs"
               startContent={<DateIcon />}
               type="date"
               radius="none"
+              size="sm"
+              variant="bordered"
             />
           </div>
         </div>
 
         {/* khách và phòng */}
         <div className="w-1/4">
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-3">
             <h2 className="font-semibold text-neutral-800">
               Phòng và khách hàng
             </h2>
             <Autocomplete
               defaultItems={animals}
               placeholder="Phòng và khách hàng"
-              className="max-w-xs border"
+              className="max-w-xs type"
               startContent={<PerRoomIcon />}
-              radius="none"
+              // radius="none"
+              size="sm"
+              variant="bordered"
             >
               {(animal) => (
                 <AutocompleteItem key={animal.value}>
@@ -84,11 +92,6 @@ const HotelSearch = () => {
             </Autocomplete>
           </div>
         </div>
-      </div>
-      <div className="flex justify-end mt-4 mb-2 mx-2">
-        <Button className="text-white bg-blue-500">
-          Tìm kiếm
-        </Button>
       </div>
     </div>
   );

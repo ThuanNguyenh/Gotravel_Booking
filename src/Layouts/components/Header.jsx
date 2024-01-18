@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import {
   Navbar,
   NavbarBrand,
@@ -7,15 +8,20 @@ import {
   NavbarMenu,
   NavbarContent,
   NavbarItem,
-  Link,
   Tabs,
   Tab,
+  Dropdown,
+  DropdownItem,
+  DropdownTrigger,
+  Button,
+  DropdownMenu,
 } from "@nextui-org/react";
 
 import "./style.scss";
 import Account from "../../components/Auth/Account";
-import SlideBanner from "../../components/SlideBanner/SlideBanner";
+// import SlideBanner from "../../components/SlideBanner/SlideBanner";
 import Language from "../../components/menu/language";
+import { ChevronDownIcon } from "../../assets/ChevronDownIcon ";
 
 export default function App() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -35,10 +41,22 @@ export default function App() {
   }, []);
 
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  // const [id, setId] = React.useState();
+
   const ListsId = [
-    { id: 1, page: "khám phá" },
-    { id: 2, page: "Hợp tác" },
-    { id: 3, page: "Hỗ trợ" },
+    { id: 1, page: "Trang chủ" },
+    {
+      id: 2,
+      page: "khám phá",
+      icon: <ChevronDownIcon />,
+      subpages: [
+        { id: 1, item: "Tour", link: "/list-tour" },
+        { id: 2, item: "Khách sạn", link: "" },
+        { id: 3, item: "Xe", link: "" },
+      ],
+    },
+    { id: 3, page: "Hợp tác" },
+    { id: 4, page: "Hỗ trợ" },
   ];
 
   const menuItems = [
@@ -59,9 +77,10 @@ export default function App() {
       {/* <Navbar/> */}
       <Navbar
         className={`nav mx-auto absolute z-50 fixed ${
-          isScrolled ? "" : "bg-gradient-to-r from-cyan-500 to-blue-500"
+          isScrolled
+            ? "border-b-1"
+            : "bg-gradient-to-r from-cyan-500 to-blue-500"
         } `}
-        // isBordered
         isMenuOpen={isMenuOpen}
         onMenuOpenChange={setIsMenuOpen}
       >
@@ -72,7 +91,7 @@ export default function App() {
         </NavbarContent>
 
         <NavbarContent className="sm:hidden pr-3" justify="center">
-          <Link href="/">
+          <Link to="/">
             <NavbarBrand>
               <img
                 src={isScrolled ? "./Logo.png" : "./Logo1.png"}
@@ -90,7 +109,7 @@ export default function App() {
         </NavbarContent>
 
         <NavbarContent className="hidden sm:flex gap-8" justify="start">
-          <Link href="/">
+          <Link to="/">
             <NavbarBrand>
               <img
                 src={isScrolled ? "./Logo.png" : "./Logo1.png"}
@@ -109,10 +128,7 @@ export default function App() {
 
         {/* menu phải*/}
 
-        <NavbarContent
-          justify="end"
-          className="modal-account font-semibold"
-        >
+        <NavbarContent justify="end" className="modal-account font-semibold">
           {/* menu */}
           <NavbarContent className="menu">
             <div className="flex w-full flex-col">
@@ -127,11 +143,56 @@ export default function App() {
                     isScrolled
                       ? "group-data-[selected=true]:text-[#00AFE1] "
                       : "group-data-[selected=true]:text-white "
-                  } text-zinc-700 group-data-[selected=false]`,
+                  } text-current group-data-[selected=false]`,
                 }}
               >
-                {ListsId.map((key) => (
-                  <Tab key={key.id} title={key.page} />
+                {ListsId.map((index) => (
+                  <Tab
+                    key={index.id}
+                    title={
+                      index.subpages ? (
+                        <Dropdown>
+                          <NavbarItem>
+                            <DropdownTrigger >
+                              <Button
+                                disableRipple
+                                className="p-0 font-bold bg-transparent data-[hover=true]:bg-transparent"
+                                // endContent={icons.chevron}
+                                radius="sm"
+                                variant="light"
+                              >
+                                {index.page} {index.icon}
+                              </Button>
+                            </DropdownTrigger>
+                          </NavbarItem>
+                          <DropdownMenu
+                            className="w-[100px]"
+                            itemClasses={{
+                              base: "gap-4",
+                            }}
+                          >
+                            {index.subpages.map((item) => (
+                              <DropdownItem key={item.id}>
+                                <Link to={item.link}>{item.item}</Link>
+                              </DropdownItem>
+                            ))}
+                          </DropdownMenu>
+                        </Dropdown>
+                      ) : (
+                        <div className="flex items-center">
+                          {index.page} {index.icon}
+                        </div>
+                      )
+                    }
+                  >
+                    {/* {index.subpages ? ( 
+                      <DropdownMenu>
+                        
+                      </DropdownMenu>
+                    ) : (
+                      ""
+                    )} */}
+                  </Tab>
                 ))}
               </Tabs>
             </div>
@@ -139,19 +200,13 @@ export default function App() {
 
           {/* menu */}
 
-          {/* modal đăng nhập */}
-          <NavbarItem
-            className={`language-item ${
-              isScrolled ? "text-zinc-700" : "text-white"
-            } `}
-          >
+          <NavbarItem className="text-current">
             <Language />
           </NavbarItem>
           <NavbarItem>
             <Account />
           </NavbarItem>
         </NavbarContent>
-        {/* modal đăng nhập */}
 
         <NavbarMenu>
           {menuItems.map((item, index) => (
@@ -165,7 +220,7 @@ export default function App() {
                     ? "danger"
                     : "foreground"
                 }
-                href="#"
+                to="#"
                 size="lg"
               >
                 {item}
@@ -174,8 +229,6 @@ export default function App() {
           ))}
         </NavbarMenu>
       </Navbar>
-
-      <SlideBanner />
     </>
   );
 }
