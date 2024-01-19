@@ -47,7 +47,7 @@ export default function App() {
     { id: 1, page: "Trang chủ" },
     {
       id: 2,
-      page: "khám phá",
+      page: "Khám phá",
       icon: <ChevronDownIcon />,
       subpages: [
         { id: 1, item: "Tour", link: "/list-tour" },

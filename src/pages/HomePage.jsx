@@ -1,66 +1,95 @@
-import {Card, CardBody, CardFooter, Image} from "@nextui-org/react";
+import {Card, CardBody, CardFooter, Image, Button} from "@nextui-org/react";
+
 export default function App() {
   const list = [
     {
-      title: "Orange",
-      img: "/Logo.png",
+      title: "anh",
+      img: "https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?cs=srgb&dl=pexels-jaime-reimer-2662116.jpg&fm=jpg",
       price: "$5.50",
     },
     {
       title: "Tangerine",
-      img: "/images/fruit-2.jpeg",
+      img: "https://images.pexels.com/photos/2166553/pexels-photo-2166553.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       price: "$3.00",
     },
     {
       title: "Raspberry",
-      img: "/images/fruit-3.jpeg",
+      img: "https://images.pexels.com/photos/1450372/pexels-photo-1450372.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       price: "$10.00",
     },
     {
       title: "Lemon",
-      img: "/images/fruit-4.jpeg",
+      img: "https://images.pexels.com/photos/3601450/pexels-photo-3601450.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       price: "$5.30",
     },
     {
       title: "Avocado",
-      img: "/images/fruit-5.jpeg",
+      img: "https://images.pexels.com/photos/3703521/pexels-photo-3703521.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       price: "$15.70",
     },
     {
       title: "Lemon 2",
-      img: "/images/fruit-6.jpeg",
+      img: "https://images.pexels.com/photos/2190283/pexels-photo-2190283.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       price: "$8.00",
     },
     {
       title: "Banana",
-      img: "/images/fruit-7.jpeg",
+      img: "https://images.pexels.com/photos/5679531/pexels-photo-5679531.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       price: "$7.50",
     },
     {
       title: "Watermelon",
-      img: "/images/fruit-8.jpeg",
+      img: "https://images.pexels.com/photos/3728078/pexels-photo-3728078.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       price: "$12.20",
     },
   ];
 
+  //function on hover card
+
+
+
   return (
     <>
-      <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
+      <div className="gap-4 grid grid-cols-2 sm:grid-cols-4">
         {list.map((item, index) => (
-          <Card shadow="sm" key={index} isPressable onPress={() => console.log("item pressed")}>
+          <Card 
+            shadow="sm" 
+            key={index} 
+   
+            isPressable 
+            onPress={() => console.log("item pressed")}       
+          >
             <CardBody className="overflow-visible p-0">
-              <Image
-                shadow="sm"
-                radius="lg"
-                width="100%"
-                alt={item.title}
-                className="w-full object-cover h-[140px]"
-                src={item.img}
-              />
+              <div className="relative group">
+                <Image
+                  shadow="sm"
+                  radius="lg"
+                  width="100%"
+                  className="w-full object-cover h-[140px] group-hover:scale-110 transform transition-transform duration-500 ease-in-out"
+                  src={item.img}
+                />
+              </div>
             </CardBody>
-            <CardFooter className="text-small justify-between">
-              <b>{item.title}</b>
-              <p className="text-default-500">{item.price}</p>
+            
+            <CardFooter>
+              <div className="w-full flex flex-col gap-5">
+                <div className="flex justify-between align-middle">
+                  <h1 className="text-lg font-semibold">{item.title}</h1>
+                  <p className=" text-md text-default-foreground">Starting at {item.price}</p>
+                </div>
+
+                <p className="overflow-hidden max-h-[4em] text-default-700 text-sm line-clamp-3">desription 
+                  To limit the description to three lines and a certain number of characters,
+                  you can use CSS to set the maximum height and use ellipsis for overflow. 
+                  s an updated version of your component</p>
+
+                <Button
+                  radius="none"
+                  color="default"
+                  variant="bordered"
+                  className="border-black text-black text-lg"
+                >Book This Tour</Button>
+              </div>
             </CardFooter>
           </Card>
         ))}

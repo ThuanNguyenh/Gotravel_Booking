@@ -27,7 +27,7 @@ const Login = () => {
     <div className="container">
       <Image width={40} alt="NextUI hero Image" src="./Logo.png" />
 
-      <div className="mt-4 mb-4 font-medium text-xl text-slate-600">
+      <div className="mt-4 mb-4 font-medium  text-xl text-slate-600">
         ĐĂNG NHẬP
       </div>
 

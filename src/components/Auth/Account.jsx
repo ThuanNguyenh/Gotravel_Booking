@@ -98,7 +98,7 @@ const Account = () => {
               onPress={onOpen}
               radius="full"
               variant="bordered"
-              className="bg-gradient-to-tr from-green-400 to-blue-500 text-white font-medium shadow-lg transform transition-transform hover:scale-110 delay-150 duration-300"
+              className="bg-gradient-to-tr from-blue-400 to-cyan-500 text-white font-medium shadow-lg transform transition-transform hover:scale-110 delay-150 duration-300"
             >
               Đăng nhập
             </Button>

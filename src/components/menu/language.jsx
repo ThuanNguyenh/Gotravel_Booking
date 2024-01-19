@@ -20,16 +20,16 @@ export default function Language() {
   };
 
   const labelsMap = {
-    vi: { label: "vi", icon: "./vietnam.png" },
-    en: { label: "en", icon: "./america.png" },
-    ja: { label: "ja", icon: "./japan.png" },
+    vi: { label: "VI", icon: "./vietnam.png" },
+    en: { label: "EN", icon: "./america.png" },
+    ja: { label: "JP", icon: "./japan.png" },
   };
 
   // Convert the Set to an Array and get the first value.
   const selectedOptionValue = Array.from(selectedOption)[0];
 
   return (
-    <ButtonGroup variant="flat bg-none">
+    <ButtonGroup variant="flat bg-none" className="w-28">
       <Dropdown placement="bottom-end">
         <DropdownTrigger>
           <Button
