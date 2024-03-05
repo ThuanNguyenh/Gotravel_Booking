@@ -35,7 +35,7 @@ const SlideBanner = () => {
         modules={[Pagination]}
         className="mySwiper relative z-0 hidden xl:block"
       >
-        <SwiperSlide className="bg-gradient-to-r from-cyan-500 to-blue-500">
+        <SwiperSlide className="bg-gradient-to-r from-cyan-500 to-[#73D8FC]">
           <div className="w-5/6 flex justify-between mt-20">
             <div className="text-white font-semibold text-5xl font-sans text-start pr-6">
               <p className="pt-16 pb-4 leading-tight">
@@ -44,7 +44,7 @@ const SlideBanner = () => {
             </div>
             <div className="">
               <Image
-                className=""
+                className="-mt-4"
                 width="500px"
                 alt="NextUI hero Image with delay"
                 src="./anh2.png"
@@ -52,19 +52,6 @@ const SlideBanner = () => {
             </div>
           </div>
         </SwiperSlide>
-        {/* <SwiperSlide>
-          <img
-            alt="NextUI hero Image"
-            // src="https://nextui-docs-v2.vercel.app/images/hero-card-complete.jpeg"
-          />
-        </SwiperSlide>
-        <SwiperSlide>
-          <img
-            
-            alt="NextUI hero Image"
-            // src="https://nextui-docs-v2.vercel.app/images/hero-card-complete.jpeg"
-          />
-        </SwiperSlide> */}
       </Swiper>
 
       {/* SearchBar */}
@@ -102,13 +89,13 @@ const SlideBanner = () => {
                     <CardBody>{item.card}</CardBody>
                     <Button
                       isIconOnly
-                      color="warning"
-                      variant="faded"
-                      className="mr-4 mt-6"
+                      // color="white"
+                      variant="ghost"
+                      className="bg-gradient-to-tl text-white to-cyan-500 from-[#73D8FC] mr-4 mt-6"
                       size="lg"
                       radius="md"
                     >
-                      <SearchIcon/>
+                      <SearchIcon />
                     </Button>
                   </div>
                 </Card>

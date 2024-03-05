@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Autocomplete,
   AutocompleteItem,
@@ -23,7 +24,11 @@ const HotelSearch = () => {
               defaultItems={animals}
               placeholder="Thành phố, khách sạn..."
               className="location max-w-xs"
-              startContent={<LocationIcon />}
+              startContent={
+                React.cloneElement(<LocationIcon />, {
+                  stroke: "#0194F3"
+                })
+              }
               size="sm"
               variant="bordered"
             >

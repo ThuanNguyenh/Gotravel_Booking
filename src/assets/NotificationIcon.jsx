@@ -6,7 +6,7 @@ export const NotificationIcon = ({ size, height, width, ...props }) => {
       width={size || width || 18}
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
-      fill="rgb(63 63 70)"
+      fill={props}
       {...props}
     >
       <g data-name="26. Notification" id="_26._Notification">

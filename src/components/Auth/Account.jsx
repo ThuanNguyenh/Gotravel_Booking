@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useUserAuth } from "../../contexts/userAuthContext";
 import { NotificationIcon } from "../../assets/NotificationIcon";
@@ -43,6 +43,23 @@ const Account = () => {
     }
   };
 
+  // scroll display
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      setIsScrolled(scrollTop > 0);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
     <>
       {isLoggedIn ? (
@@ -54,11 +71,15 @@ const Account = () => {
                 radius="full"
                 isIconOnly
                 aria-label="more than 99 notifications"
-                variant="flat"
+                variant="bordered"
                 size="md"
                 className="scale-90"
               >
-                <NotificationIcon size={20}/>
+               {React.cloneElement(<NotificationIcon/>, {
+                size: "20",
+                fill: isScrolled ? "#1E293B" : "white"
+               })} 
+                
               </Button>
             </Badge>
           </NavbarItem>
@@ -97,8 +118,8 @@ const Account = () => {
             <Button
               onPress={onOpen}
               radius="full"
-              variant="bordered"
-              className="bg-gradient-to-tr from-blue-400 to-cyan-500 text-white font-medium shadow-lg transform transition-transform hover:scale-110 delay-150 duration-300"
+              // variant="bordered"
+              className="bg-gradient-to-tr from-cyan-300 to-blue-400 text-white text-md shadow-lg transform transition-transform hover:scale-110 delay-150 duration-300"
             >
               Đăng nhập
             </Button>

@@ -8,11 +8,9 @@ import {
   NavbarMenu,
   NavbarContent,
   NavbarItem,
-  Tabs,
-  Tab,
+  Divider,
   Dropdown,
   DropdownItem,
-  DropdownTrigger,
   Button,
   DropdownMenu,
 } from "@nextui-org/react";
@@ -22,8 +20,12 @@ import Account from "../../components/Auth/Account";
 // import SlideBanner from "../../components/SlideBanner/SlideBanner";
 import Language from "../../components/menu/language";
 import { ChevronDownIcon } from "../../assets/ChevronDownIcon ";
+import { TourIcon } from "../../assets/TourIcon";
+import { HotelIcon } from "../../assets/HotelIcon";
+import { CarIcon } from "../../assets/CarIcon";
 
 export default function App() {
+  // scroll display
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -40,23 +42,25 @@ export default function App() {
     };
   }, []);
 
+  // menu open ui phone
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  // const [id, setId] = React.useState();
+
+  // const [id, setId] = useState(1);
 
   const ListsId = [
-    { id: 1, page: "Trang chủ" },
+    { id: 1, page: "Trang chủ", linkPage: "/" },
     {
       id: 2,
       page: "Khám phá",
       icon: <ChevronDownIcon />,
       subpages: [
-        { id: 1, item: "Tour", link: "/list-tour" },
-        { id: 2, item: "Khách sạn", link: "" },
-        { id: 3, item: "Xe", link: "" },
+        { id: 1, item: "Tour", link: "/list-tour", icon: <TourIcon /> },
+        { id: 2, item: "Khách sạn", link: "/", icon: <HotelIcon /> },
+        { id: 3, item: "Xe", link: "/", icon: <CarIcon /> },
       ],
     },
-    { id: 3, page: "Hợp tác" },
-    { id: 4, page: "Hỗ trợ" },
+    { id: 3, page: "Hợp tác", linkPage: "" },
+    { id: 4, page: "Hỗ trợ", linkPage: "" },
   ];
 
   const menuItems = [
@@ -72,6 +76,17 @@ export default function App() {
     "Log Out",
   ];
 
+  // hover: open or close dropdown
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const handleNavbarItemHover = () => {
+    setIsDropdownOpen(true);
+  };
+
+  const handleNavbarItemLeave = () => {
+    setIsDropdownOpen(false);
+  };
+
   return (
     <>
       {/* <Navbar/> */}
@@ -79,7 +94,7 @@ export default function App() {
         className={`nav mx-auto absolute z-50 fixed ${
           isScrolled
             ? "border-b-1"
-            : "bg-gradient-to-r from-cyan-500 to-blue-500"
+            : "bg-gradient-to-r from-cyan-500 to-[#73D8FC]"
         } `}
         isMenuOpen={isMenuOpen}
         onMenuOpenChange={setIsMenuOpen}
@@ -90,6 +105,7 @@ export default function App() {
           />
         </NavbarContent>
 
+        {/* logo sm */}
         <NavbarContent className="sm:hidden pr-3" justify="center">
           <Link to="/">
             <NavbarBrand>
@@ -102,25 +118,26 @@ export default function App() {
                   isScrolled ? "text-[#00AFE1]" : "text-white"
                 } `}
               >
-                Gotravel
+                gotravel
               </p>
             </NavbarBrand>
           </Link>
         </NavbarContent>
 
+        {/* logo xl */}
         <NavbarContent className="hidden sm:flex gap-8" justify="start">
           <Link to="/">
             <NavbarBrand>
               <img
                 src={isScrolled ? "./Logo.png" : "./Logo1.png"}
-                className="me-2 w-6"
+                className="me-2 w-8"
               />
               <p
-                className={`font-bold ${
+                className={`font-bold text-xl ${
                   isScrolled ? "text-[#00AFE1]" : "text-white"
                 } `}
               >
-                Gotravel
+                gotravel
               </p>
             </NavbarBrand>
           </Link>
@@ -130,77 +147,73 @@ export default function App() {
 
         <NavbarContent justify="end" className="modal-account font-semibold">
           {/* menu */}
-          <NavbarContent className="menu">
-            <div className="flex w-full flex-col">
-              <Tabs
-                aria-label="Options"
-                variant="underlined"
-                classNames={{
-                  tabList: "gap-6 w-full relative rounded-none justify-end",
-                  cursor: `w-full ${isScrolled ? "bg-[#00AFE1]" : "bg-white"}`,
-                  tab: "max-w-fit px-0 ",
-                  tabContent: `${
-                    isScrolled
-                      ? "group-data-[selected=true]:text-[#00AFE1] "
-                      : "group-data-[selected=true]:text-white "
-                  } text-current group-data-[selected=false]`,
-                }}
-              >
-                {ListsId.map((index) => (
-                  <Tab
-                    key={index.id}
-                    title={
-                      index.subpages ? (
-                        <Dropdown>
-                          <NavbarItem>
-                            <DropdownTrigger >
-                              <Button
-                                disableRipple
-                                className="p-0 font-bold bg-transparent data-[hover=true]:bg-transparent"
-                                // endContent={icons.chevron}
-                                radius="sm"
-                                variant="light"
-                              >
-                                {index.page} {index.icon}
-                              </Button>
-                            </DropdownTrigger>
-                          </NavbarItem>
-                          <DropdownMenu
-                            className="w-[100px]"
-                            itemClasses={{
-                              base: "gap-4",
-                            }}
-                          >
+          <NavbarContent className="hidden sm:flex gap-4" justify="center">
+            {ListsId.map((index) => (
+              <NavbarItem key={index.id}>
+                <div className="flex h-5 items-center space-x-4">
+                  {index.subpages ? (
+                    <Dropdown>
+                      <NavbarItem
+                        onMouseEnter={handleNavbarItemHover}
+                        onMouseLeave={handleNavbarItemLeave}
+                      >
+                        <Button
+                          disableRipple
+                          className={`p-0 bg-transparent data-[hover=true]:bg-transparent ${
+                            isScrolled ? "text-slate-800" : "text-white"
+                          } font-semibold text-md`}
+                          endContent={index.icon}
+                          radius="sm"
+                          variant="light"
+                        >
+                          {index.page}
+                        </Button>
+                        {isDropdownOpen && (
+                          <DropdownMenu>
                             {index.subpages.map((item) => (
                               <DropdownItem key={item.id}>
-                                <Link to={item.link}>{item.item}</Link>
+                                <Link
+                                  to={item.link}
+                                  className=" text-slate-500"
+                                >
+                                  <div className="flex items-center">
+                                    <span className="pl-2 pr-4">
+                                      {React.cloneElement(item.icon, {
+                                        fill: "#64748b",
+                                      })}
+                                    </span>
+                                    {item.item}
+                                  </div>
+                                </Link>
                               </DropdownItem>
                             ))}
                           </DropdownMenu>
-                        </Dropdown>
-                      ) : (
-                        <div className="flex items-center">
-                          {index.page} {index.icon}
-                        </div>
-                      )
-                    }
-                  >
-                    {/* {index.subpages ? ( 
-                      <DropdownMenu>
-                        
-                      </DropdownMenu>
-                    ) : (
-                      ""
-                    )} */}
-                  </Tab>
-                ))}
-              </Tabs>
-            </div>
+                        )}
+                      </NavbarItem>
+                    </Dropdown>
+                  ) : (
+                    <Link
+                      // onClick={() => setId(index.id)}
+                      to={index.linkPage}
+                      className={`${
+                        isScrolled ? "text-slate-800" : "text-white"
+                      } hover:text-slate-500 `}
+                    >
+                      {index.page}
+                    </Link>
+                  )}
+
+                  <Divider orientation="vertical" />
+                </div>
+              </NavbarItem>
+            ))}
           </NavbarContent>
 
           {/* menu */}
 
-          <NavbarItem className="text-current">
+          <NavbarItem
+            className={`${isScrolled ? "text-slate-800" : "text-white"}`}
+          >
             <Language />
           </NavbarItem>
           <NavbarItem>

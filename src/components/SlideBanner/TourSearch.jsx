@@ -4,6 +4,7 @@ import { LocationIcon } from "../../assets/LocationIcon";
 import { DateIcon } from "../../assets/DateIcon";
 import { PerRoomIcon } from "../../assets/perRoom";
 import "./slide.scss";
+import React from "react";
 
 const TourSearch = () => {
   return (
@@ -19,7 +20,11 @@ const TourSearch = () => {
               defaultItems={animals}
               placeholder="Thành phố, địa điểm,..."
               className="location max-w-xs"
-              startContent={<LocationIcon />}
+              startContent={
+                React.cloneElement(<LocationIcon />, {
+                  stroke: "#0194F3"
+                })
+              }
               size="sm"
               variant="bordered"
             >

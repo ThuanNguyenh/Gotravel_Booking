@@ -29,7 +29,7 @@ export default function Language() {
   const selectedOptionValue = Array.from(selectedOption)[0];
 
   return (
-    <ButtonGroup variant="flat bg-none" className="w-28">
+    <ButtonGroup variant="flat bg-none" className="w-28 sm:block hidden">
       <Dropdown placement="bottom-end">
         <DropdownTrigger>
           <Button

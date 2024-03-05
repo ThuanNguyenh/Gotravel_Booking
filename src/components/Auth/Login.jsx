@@ -32,9 +32,9 @@ const Login = () => {
       </div>
 
       <Button
-        startContent={<GoogleIcon />}
+        startContent={<GoogleIcon className="mr-2"/>}
         onClick={handleSignInGg}
-        className="bg-primary drop-shadow border text-white font-medium text-base w-full md:w-auto"
+        className="bg-white drop-shadow border text-slate-600 font-medium text-base w-full md:w-auto"
       >
         Đăng nhập với Google
       </Button>
@@ -42,9 +42,9 @@ const Login = () => {
       <div className="mt-2 mb-2 text-gray-800">OR</div>
 
       <Button
-        startContent={<FacebookIcon />}
+        startContent={<FacebookIcon className="mr-2"/>}
         onClick={handleFb}
-        className="bg-white drop-shadow border font-medium text-base w-full md:w-auto"
+        className="bg-[#32529F] text-white drop-shadow border font-medium text-base w-full md:w-auto"
       >
         Đăng nhập với Facebook
       </Button>
