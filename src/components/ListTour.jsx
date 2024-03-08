@@ -1,9 +1,12 @@
-import Home from "./Home";
+import RecommendTour from  "./RecommendTour";
+import TopTour from "./TopTour";
 
 export default function ListTour() {
   return (
     <div>
-        <Home />
+      <RecommendTour/>
+
+      <TopTour />
     </div>
-  )
+  );
 }
