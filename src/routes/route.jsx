@@ -2,11 +2,13 @@
 import { HeaderOnly } from "../Layouts";
 import ListTour from "../components/ListTour";
 import TourDetail from "../components/Tour/tourDetail"
+import Admin from "../components/admin";
 
 // không cần đăng nhập
 const publicRoutes = [
     // route
     {path: '/', component: ListTour},
+    {path: '/admin', component: Admin ,layout: HeaderOnly },
     {path: '/tourDetail/:productId', component:TourDetail, layout: HeaderOnly}
 ];
 
