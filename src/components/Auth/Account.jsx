@@ -19,6 +19,9 @@ import {
   Badge,
 } from "@nextui-org/react";
 import Login from "./Login";
+import { Link } from "react-router-dom";
+
+
 
 const Account = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -42,6 +45,7 @@ const Account = () => {
       alert("Lỗi!");
     }
   };
+
 
   // scroll display
   const [isScrolled, setIsScrolled] = useState(false);
@@ -85,7 +89,7 @@ const Account = () => {
           </NavbarItem>
           {/* notification */}
           <NavbarItem>
-            <Dropdown placement="bottom-end">
+            <Dropdown size="lg" placement="bottom-end">
               <DropdownTrigger>
                 <Avatar
                   size="sm"
@@ -99,7 +103,7 @@ const Account = () => {
                 <DropdownItem key="profile" className="h-7 gap-2">
                   <p className="font-semibold">{userRedux.userName}</p>
                 </DropdownItem>
-                <DropdownItem key="settings">My Settings</DropdownItem>
+                <DropdownItem as={Link} to={`/profile`} key="settings">My Settings</DropdownItem>
 
                 <DropdownItem
                   key="logout"

@@ -6,7 +6,7 @@ import TourDetailDes from "./tourDetailDes";
 import TourDetailRoom from "./tourDetailRoom";
 import TourDetailReview from "./tourDetailReview";
 
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useState, useEffect } from 'react';
 
 function TourDetail() {
@@ -51,7 +51,9 @@ function TourDetail() {
                     <div className="flex flex-row gap-3">
                         <Button isIconOnly variant="bordered" className="border-[#01B7F2]"><HeartIcon/></Button>
                         <Button isIconOnly variant="bordered" className="border-[#01B7F2]"><ShareIcon/></Button>
-                        <Button className="bg-[#01B7F2] text-white font-semibold">Book Now</Button>
+                        <Link to={`/checkout`}>
+                            <Button className="bg-[#01B7F2] text-white font-semibold">Book Now</Button>
+                        </Link>
                     </div>
                 </div>
 
