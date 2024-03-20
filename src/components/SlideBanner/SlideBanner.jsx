@@ -7,7 +7,7 @@ import "swiper/css/pagination";
 import "./slide.scss";
 
 import { Pagination } from "swiper/modules";
-import { Image, Tabs, Tab, Card, CardBody, Button } from "@nextui-org/react";
+import { Image, Tabs, Tab, Card, CardBody, Button, Link } from "@nextui-org/react";
 import { TourIcon } from "../../assets/TourIcon";
 import { HotelIcon } from "../../assets/HotelIcon";
 import { CarIcon } from "../../assets/CarIcon";
@@ -87,16 +87,17 @@ const SlideBanner = () => {
                 <Card>
                   <div className="flex items-center">
                     <CardBody>{item.card}</CardBody>
-                    <Button
-                      isIconOnly
-                      // color="white"
-                      variant="ghost"
-                      className="bg-gradient-to-tl text-white to-cyan-500 from-[#73D8FC] mr-4 mt-6"
-                      size="lg"
-                      radius="md"
-                    >
-                      <SearchIcon />
-                    </Button>
+                      <Button
+                        as={Link}
+                        href="/search"
+                        isIconOnly
+                        variant="ghost"
+                        className="bg-gradient-to-tl text-white to-cyan-500 from-[#73D8FC] mr-4 mt-6"
+                        size="lg"
+                        radius="md"
+                      >
+                        <SearchIcon />
+                      </Button>
                   </div>
                 </Card>
               </Tab>

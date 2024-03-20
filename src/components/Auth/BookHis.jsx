@@ -7,12 +7,12 @@ function BookingHistory() {
 
     // eslint-disable-next-line no-unused-vars
     const [cities, setCities] = useState([
-        { id: 1, name: 'Paris', nation: 'France' },
-        { id: 2, name: 'Tokyo', nation: 'Japan' },
-        { id: 3, name: 'New York', nation: 'USA' },
-        { id: 4, name: 'London', nation: 'UK' },
-        { id: 5, name: 'Sydney', nation: 'Australia' }
-      ]);
+      { id: 1, name: 'Paris', nation: 'France', price: 9 },
+      { id: 2, name: 'Tokyo', nation: 'Japan', price: 15 },
+      { id: 3, name: 'New York', nation: 'USA', price: 29 },
+      { id: 4, name: 'London', nation: 'UK', price: 35 },
+      { id: 5, name: 'Sydney', nation: 'Australia', price: 46 }
+    ]);
 
 
 
@@ -83,7 +83,7 @@ function BookingHistory() {
                   <div className="flex flex-col col-span-4 md:col-span-4 items-end gap-5 text-right h-full  justify-between">
 
                         <div className="font-semibold text-2xl text-foreground/90">                        
-                          $19            
+                          ${city.price}/night            
                         </div>
                         <div>
                         <Button className="bg-[#73D8FC] text-large text-white font-medium">
