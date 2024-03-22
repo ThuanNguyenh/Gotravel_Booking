@@ -1,11 +1,13 @@
-import { Button, Image } from "@nextui-org/react";
+import { Button, Image, Tab, Tabs} from "@nextui-org/react";
 import "./auth.scss";
 import { GoogleIcon } from "../../assets/GoogleIcon";
 import { FacebookIcon } from "../../assets/FacebookIcon";
 import { useUserAuth } from "../../contexts/userAuthContext";
+import { useState } from "react";
 
 const Login = () => {
   const { googleSignIn, fbSignIn } = useUserAuth();
+  const [selected, setSelected] = useState("login");
 
   const handleSignInGg = async () => {
     try {
@@ -24,30 +26,105 @@ const Login = () => {
   };
 
   return (
-    <div className="container">
-      <Image width={40} alt="NextUI hero Image" src="./Logo.png" />
-
-      <div className="mt-4 mb-4 font-medium  text-xl text-slate-600">
-        ĐĂNG NHẬP
+    <div>
+      <div className="w-full flex justify-center pb-2">
+        <Image width={40} src="./Logo.png" />
       </div>
-
-      <Button
-        startContent={<GoogleIcon className="mr-2"/>}
-        onClick={handleSignInGg}
-        className="bg-white drop-shadow border text-slate-600 font-medium text-base w-full md:w-auto"
+      <Tabs
+        selectedKey={selected}
+        onSelectionChange={setSelected}      
+        variant="underlined"
+        fullWidth
+        classNames={{
+          width: 'full',
+          tabList:
+            "gap-5 w-full relative rounded-none p-0 border-b border-divider",
+          cursor: "w-full bg-[#22d3ee]",
+          tab: "max-w-full px-0 h-12",
+          tabContent: "group-data-[selected=true]:text-[#1089D3]",
+        }}
       >
-        Đăng nhập với Google
-      </Button>
+        <Tab
+          key="Login"
+          title={
+            <div className="heading px-2">
+              <span>Login</span>
+            </div>
+          }
+        >
+          <form className="form" action="">
+            <input
+              placeholder="E-mail"
+              id="email"
+              name="email"
+              type="email"
+              className="input"
+              required=""
+            />
+            <input
+              placeholder="Password"
+              id="password"
+              name="password"
+              type="password"
+              className="input"
+              required=""
+            />
+            <span className="forgot-password">
+              <a href="#">Forgot Password ?</a>
+            </span>
+            <input value="Sign In" type="submit" className="login-button" />
+          </form>
+          <div className="social-account-container">
+            <span className="title">Or Sign in with</span>
+            <div className="social-accounts items-center">
+              <Button isIconOnly onClick={handleSignInGg} className="bg-white">
+                <GoogleIcon />
+              </Button>
+              <Button isIconOnly onClick={handleFb} className="bg-white">
+                <FacebookIcon />
+              </Button>
+            </div>
+          </div>
+        </Tab>
 
-      <div className="mt-2 mb-2 text-gray-800">OR</div>
+        <Tab
+          key="Sign Up"
+          title={
+            <div className="heading px-2">
+              <span>Sign Up</span>
+            </div>
+          }
+        >
+          <form className="form" action="">
+            <input
+              placeholder="Name"
+              id="name"
+              name="name"
+              type="name"
+              className="input"
+              required=""
+            />
+            <input
+              placeholder="E-mail"
+              id="email"
+              name="email"
+              type="email"
+              className="input"
+              required=""
+            />
+            <input
+              placeholder="Password"
+              id="password"
+              name="password"
+              type="password"
+              className="input"
+              required=""
+            />
 
-      <Button
-        startContent={<FacebookIcon className="mr-2"/>}
-        onClick={handleFb}
-        className="bg-[#32529F] text-white drop-shadow border font-medium text-base w-full md:w-auto"
-      >
-        Đăng nhập với Facebook
-      </Button>
+            <input value="Sign Up" type="submit" className="login-button" />
+          </form>
+        </Tab>
+      </Tabs>
     </div>
   );
 };

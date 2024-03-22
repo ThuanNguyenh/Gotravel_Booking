@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button, Card, CardBody, Image, Slider } from "@nextui-org/react";
 import { LocationIcon } from "../assets/LocationIcon";
 import { useMemo, useState} from "react";
@@ -10,7 +11,12 @@ function Search() {
         { id: 2, name: 'Tokyo', nation: 'Japan', price: 15 },
         { id: 3, name: 'New York', nation: 'USA', price: 29 },
         { id: 4, name: 'London', nation: 'UK', price: 35 },
-        { id: 5, name: 'Sydney', nation: 'Australia', price: 46 }
+        { id: 5, name: 'Sydney', nation: 'Australia', price: 46 },
+        { id: 6, name: 'Rome', nation: 'Italy', price: 55 },
+        { id: 7, name: 'Berlin', nation: 'Germany', price: 78 },
+        { id: 8, name: 'Beijing', nation: 'China', price: 42 },
+        { id: 9, name: 'Moscow', nation: 'Russia', price: 67 },
+        { id: 10, name: 'Rio de Janeiro', nation: 'Brazil', price: 88 }
     ]);
 
     const [selectedKeys, setSelectedKeys] = useState(new Set(["Sort by"]));
@@ -60,7 +66,8 @@ function Search() {
 
     return (
         <div className="grid grid-cols-6 md:grid-cols-12 md:gap-4">
-            <div className="flex flex-col col-span-3 md:col-span-3">
+            {/* Filter table */}
+            <div className="flex flex-col col-span-3 md:col-span-3 pt-3">
                 <Card className="p-5 gap-3">
                     <div className="font-semibold text-xl">Sort by</div>
                     <div className="flex flex-col">
@@ -104,7 +111,7 @@ function Search() {
                     </div>
                 </Card>
             </div>
-
+            {/* List Filtered */}
             <div className="flex flex-col col-span-9 md:col-span-9 gap-3">
                 <div className="flex justify-between p-3 items-center">
                     <div className="font-thin">

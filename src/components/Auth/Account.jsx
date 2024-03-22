@@ -7,7 +7,6 @@ import {
   Button,
   Modal,
   ModalContent,
-  ModalBody,
   useDisclosure,
   NavbarContent,
   NavbarItem,
@@ -139,12 +138,10 @@ const Account = () => {
         onClose={onClose}
         hideCloseButton
       >
-        <ModalContent className="px-4">
-          <>
-            <ModalBody>
-              <Login />
-            </ModalBody>
-          </>
+        <ModalContent className="container">
+
+          <Login/>
+
         </ModalContent>
       </Modal>
 
