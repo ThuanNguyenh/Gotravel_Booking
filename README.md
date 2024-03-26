@@ -1,3 +1,3 @@
-#Front End React JS
-#Python Back End for Recommend System API
-#Java Back End for Database API
+#Front End React JS. <br>
+#Python Back End for Recommend System API. <br>
+#Java Back End for Database API. <br>
