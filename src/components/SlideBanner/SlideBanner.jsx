@@ -39,7 +39,7 @@ const SlideBanner = () => {
           <div className="w-5/6 flex justify-between mt-20">
             <div className="text-white font-semibold text-5xl font-sans text-start pr-6">
               <p className="pt-16 pb-4 leading-tight">
-                Biết Rõ Hơn, Đặt Chỗ Tốt Hơn, Đi Tốt Hơn.
+                Biết Rõ Hơn, Đặt Chỗ Tốt Hơn,<br/>Đi Tốt Hơn.
               </p>
             </div>
             <div className="">

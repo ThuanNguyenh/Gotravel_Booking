@@ -137,7 +137,7 @@ export default function App() {
                   isScrolled ? "text-[#00AFE1]" : "text-white"
                 } `}
               >
-                gotravel
+                Gotravel
               </p>
             </NavbarBrand>
           </Link>
