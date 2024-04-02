@@ -6,6 +6,16 @@ import { useUserAuth } from "../../contexts/userAuthContext";
 import { useState } from "react";
 
 const Login = () => {
+
+  //display form
+  const [showNameAndPassword, setShowNameAndPassword] = useState(false);
+
+  const handleSignUpClick = (e) => {
+    e.preventDefault();
+    setShowNameAndPassword(true);
+  };
+
+  //login with GG FB
   const { googleSignIn, fbSignIn } = useUserAuth();
   const [selected, setSelected] = useState("login");
 
@@ -96,32 +106,52 @@ const Login = () => {
           }
         >
           <form className="form" action="">
-            <input
-              placeholder="Name"
-              id="name"
-              name="name"
-              type="name"
-              className="input"
-              required=""
-            />
-            <input
-              placeholder="E-mail"
-              id="email"
-              name="email"
-              type="email"
-              className="input"
-              required=""
-            />
-            <input
-              placeholder="Password"
-              id="password"
-              name="password"
-              type="password"
-              className="input"
-              required=""
-            />
+            {!showNameAndPassword && (
+              <div>
+                <input
+                  placeholder="E-mail"
+                  id="email"
+                  name="email"
+                  type="email"
+                  className="input"
+                  required=""
+                />
+                <input
+                  value="Sign Up"
+                  type="submit"
+                  className="login-button"
+                  onClick={handleSignUpClick}
+                />
+              </div>
+            )}
 
-            <input value="Sign Up" type="submit" className="login-button" />
+            {showNameAndPassword && (
+              <>
+                <input
+                  placeholder="Name"
+                  id="name"
+                  name="name"
+                  type="name"
+                  className="input"
+                  required=""
+                />
+                <input
+                  placeholder="Password"
+                  id="password"
+                  name="password"
+                  type="password"
+                  className="input"
+                  required=""
+                />
+                <input
+                  value="Sign Up"
+                  type="submit"
+                  className="login-button"
+                />
+              </>
+            )}
+
+
           </form>
         </Tab>
       </Tabs>
