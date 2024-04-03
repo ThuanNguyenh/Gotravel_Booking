@@ -8,7 +8,6 @@ import { GoogleIcon } from "../../assets/GoogleIcon";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import StarRating from "./starRating";
 import CommentStar from "./commentStar";
 
 
@@ -89,13 +88,17 @@ function TourDetailReview() {
         </div>
 
         <div className="flex flex-row gap-5 items-center">
-          <div className="text-5xl font-semibold pl-3">{product.rating.toFixed(1)}</div>
+          <div className=" flex text-5xl font-semibold pl-3">
+            {product.rating.toFixed(1)}
+            <div className="rating2">
+              <label title="text" htmlFor="star1"></label>
+            </div>
+          </div>
+
           <div className="flex flex-col pr-10">
             <div className="font-semibold">Very Good</div>
             <div>237 Reviews</div>
           </div>
-
-          <StarRating value={product.rating}/>
 
         </div>
 

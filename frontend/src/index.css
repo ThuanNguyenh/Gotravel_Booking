@@ -288,6 +288,20 @@
   .rating:not(:checked) > label:before {
     content: '★';
   }
+
+  .rating2:not(:checked) > label {
+    float: right;
+    cursor: pointer;
+    font-size: 20px;
+    color: #000000;
+  }
+  
+  .rating2:not(:checked) > label:before {
+    content: '★';
+  }
+
+
+
   
   .rating > input:checked + label:hover,
   .rating > input:checked + label:hover ~ label,

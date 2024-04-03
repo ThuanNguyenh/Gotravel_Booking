@@ -1,7 +1,44 @@
 import { Button, Card, CardBody, Image } from "@nextui-org/react";
 import { LocationIcon } from "../assets/LocationIcon";
+import { useState } from "react";
 
 function CheckOut() {
+
+  //Select number of customer
+  const [adult, setAdult] = useState(0);
+  const pricePerAdult = 10;
+
+  const incrementNumberA = () => {
+    setAdult(prevNumber => prevNumber + 1);
+  };
+
+  const decrementNumberA = () => {
+    if (adult > 0) {
+      setAdult(prevNumber => prevNumber - 1);
+    }
+  };
+
+  const [children, setChildren] = useState(0);
+  const pricePerChildren = 5;
+
+  const incrementNumberC = () => {
+    setChildren(prevNumber => prevNumber + 1);
+  };
+
+  const decrementNumberC = () => {
+    if (children > 0) {
+      setChildren(prevNumber => prevNumber - 1);
+    }
+  };
+
+  const price = (adult * pricePerAdult) + (children * pricePerChildren);
+
+  const discount = 10;
+
+  const totalPrice = price - discount;
+
+
+
   return (
     <div className="grid grid-cols-6 md:grid-cols-12 md:gap-4 p-[3%]">
 
@@ -54,6 +91,29 @@ function CheckOut() {
               </div>
             </CardBody>
           </Card>
+          <div>
+            <div>
+              Number of Adult
+            </div>
+            <div className="flex items-center gap-2">
+              <Button onClick={decrementNumberA} isIconOnly>-</Button>
+               <div className="font-semibold text-lg">
+                {adult}
+               </div>
+              <Button onClick={incrementNumberA} isIconOnly>+</Button>
+            </div>
+
+            <div>
+              Number of Children
+            </div>
+            <div className="flex items-center gap-2">
+              <Button onClick={decrementNumberC} isIconOnly>-</Button>
+               <div className="font-semibold text-lg">
+                {children}
+               </div>
+              <Button onClick={incrementNumberC} isIconOnly>+</Button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -66,17 +126,17 @@ function CheckOut() {
 
                 <div className="py-2.5 border-b border-gray-300 w-full flex justify-between">
                     <div className="text-sm font-medium text-gray-600">Base Price</div>
-                    <div className="font-semibold">$95,200</div>
+                    <div className="font-semibold">${price}</div>
                 </div>
 
                 <div className="py-2.5 border-b border-gray-300 w-full flex justify-between">
                     <div className="text-sm font-medium text-blue-500">Total Discount</div>
-                    <div className="font-semibold">$15,708</div>
+                    <div className="font-semibold">${discount}</div>
                 </div>
 
                 <div className="py-2.5 w-full flex justify-between">
                     <div className="text-md font-semibold text-gray-600">Total Amount to be paid </div>
-                    <div className="font-semibold">$100</div>
+                    <div className="font-semibold">${totalPrice}</div>
                 </div>
 
             </div>
