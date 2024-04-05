@@ -149,6 +149,7 @@
   /* form Login Signin */
 
   .container {
+    height: 600px;
     background: #f8f9fd;
     background: linear-gradient(
       0deg,
@@ -267,4 +268,60 @@
   .social-account-container .social-accounts .social-button:active {
     transform: scale(0.9);
   }
+  
+
+
+  /* star rating */
+
+  .rating:not(:checked) > input {
+    position: absolute;
+    appearance: none;
+  }
+  
+  .rating:not(:checked) > label {
+    float: right;
+    cursor: pointer;
+    font-size: 40px;
+    color: #666;
+  }
+  
+  .rating:not(:checked) > label:before {
+    content: '★';
+  }
+
+  .rating2:not(:checked) > label {
+    float: right;
+    cursor: pointer;
+    font-size: 20px;
+    color: #000000;
+  }
+  
+  .rating2:not(:checked) > label:before {
+    content: '★';
+  }
+
+
+
+  
+  .rating > input:checked + label:hover,
+  .rating > input:checked + label:hover ~ label,
+  .rating > input:checked ~ label:hover,
+  .rating > input:checked ~ label:hover ~ label,
+  .rating > label:hover ~ input:checked ~ label {
+    color: #01B7F2;
+  }
+  
+  .rating:not(:checked) > label:hover,
+  .rating:not(:checked) > label:hover ~ label {
+    color: #01B7F2;
+  }
+  
+  .rating > input:checked ~ label {
+    color: #01B7F2;
+  }
+
+
+  
+  
+  
   

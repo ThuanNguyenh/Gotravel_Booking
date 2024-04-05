@@ -1,4 +1,4 @@
-import { Modal, Avatar, Button, Pagination, Slider, useDisclosure, ModalContent, Spinner } from "@nextui-org/react"
+import { Modal, Avatar, Button, Pagination, useDisclosure, ModalContent, Spinner } from "@nextui-org/react"
 import { NextIcon } from "../../assets/NextIcon";
 import { FacebookIcon } from "../../assets/FacebookIcon";
 import { Twitter } from "../../assets/twitter";
@@ -6,53 +6,71 @@ import { Instagram } from "../../assets/insta";
 import { GoogleIcon } from "../../assets/GoogleIcon";
 
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
-const rating = [
-  {
-    label: "Food",
-    defaultValue: 2.5,
-  },
-  {
-    label: "Child Friendliness",
-    defaultValue: 4,
-  },
-  {
-    label: "Location",
-    defaultValue: 5,
-  },
-  {
-    label: "Amenities",
-    defaultValue: 3,
-  },
-  {
-    label: "Hospitality",
-    defaultValue: 1,
-  },
-];
+import CommentStar from "./commentStar";
+
 
 
 function TourDetailReview() {
 
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
+  
+  //comment star
+  const [commentStar, setCommentStar] = useState(0); // For CommentStar component
+
+  const handleCommentStarChange = (stars) => {
+    setCommentStar(stars);
+  };
 
 
-  //fetch comment api
+  //fetch comment api and switch page
   const [comments, setComments] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-      const fetchComment = async () => {
+    const fetchComments = async () => {
+      try {
+        const response = await fetch(`https://dummyjson.com/comments`);
+        const data = await response.json();
+        const first20Comments = data.comments.slice(0, 20);
+        setComments(first20Comments);
+        console.log(first20Comments);
+      } catch (error) {
+        console.error('Error fetching comments:', error);
+      }
+    };
+    fetchComments();
+  }, []);
+
+  const startIndex = (currentPage - 1) * 5;
+  const endIndex = startIndex + 5;
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+
+  //fetch rating
+  const { productId } = useParams();
+  const [product, setProduct] = useState(null);
+
+  useEffect(() => {
+      const fetchProduct = async () => {
         try {
-          const response = await fetch(`https://dummyjson.com/comments`);
+          const response = await fetch(`https://dummyjson.com/products/${productId}`); // Replace with your actual API endpoint
           const data = await response.json();
-          const first5comment = data.comments.slice(0 , 5)
-          setComments(first5comment);
-          console.log(first5comment)
+          setProduct(data);
         } catch (error) {
-          console.error('Error fetching comments:', error);
+          console.error('Error fetching product details:', error);
         }
       };
-      fetchComment();
-  }, [] );
+      fetchProduct();
+  }, [productId]);
+
+  if (!product) {
+    return <div>Loading...</div>;
+  }
 
     return (
       <div>
@@ -69,55 +87,55 @@ function TourDetailReview() {
           </div>
         </div>
 
-        <div className="flex flex-row gap-2 justify-around">
-          <div className="text-5xl font-semibold">4.2</div>
+        <div className="flex flex-row gap-5 items-center">
+          <div className=" flex text-5xl font-semibold pl-3">
+            {product.rating.toFixed(1)}
+            <div className="rating2">
+              <label title="text" htmlFor="star1"></label>
+            </div>
+          </div>
+
           <div className="flex flex-col pr-10">
             <div className="font-semibold">Very Good</div>
             <div>237 Reviews</div>
           </div>
 
-          {rating.map((rating, index) => (
-            <Slider
-              key={index}
-              isDisabled
-              size="sm"
-              label={rating.label}
-              hideThumb={true}
-              defaultValue={rating.defaultValue}
-              step={0.5}
-              maxValue={5}
-              minValue={0}
-              className="w-[15%] opacity-1"
-            />
-          ))}
         </div>
 
         <div className="py-5">
           <div className="flex flex-col gap-5">
-            {comments ? comments.map((comment) => (
-              <div
-                key={comment.id}
-                className="flex flex-row gap-2 p-4 border-t-1 border-gray-300"
-              >
-                <div>
-                  <Avatar
-                    src="https://i.pravatar.cc/150?u=a04258114e29026302d"
-                    size="lg"
-                  />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <div className="font-semibold">
-                    5.0 Amazing | {comment.user.username}
+            {comments.length > 0 ? (
+              comments.slice(startIndex, endIndex).map((comment) => (
+                <div
+                  key={comment.id}
+                  className="flex flex-row gap-2 p-4 border-t-1 border-gray-300"
+                >
+                  <div>
+                    <Avatar
+                      src="https://i.pravatar.cc/150?u=a04258114e29026302d"
+                      size="lg"
+                    />
                   </div>
-                  <div className="text-foreground">{comment.body}</div>
+                  <div className="flex flex-col gap-1">
+                    <div className="font-semibold">
+                      5.0 Amazing | {comment.user.username}
+                    </div>
+                    <div className="text-foreground">{comment.body}</div>
+                  </div>
                 </div>
-              </div>
-            )): <Spinner size="lg" className="p-40"/> }
+              ))
+            ) : (
+              <Spinner size="lg" className="p-40" />
+            )}
           </div>
         </div>
 
         <div className=" flex justify-center">
-          <Pagination total={10} initialPage={1} />
+          <Pagination
+            total={Math.ceil(comments.length / 5)}
+            initialPage={1}
+            onChange={handlePageChange}
+          />
         </div>
 
         <Modal
@@ -148,42 +166,33 @@ function TourDetailReview() {
           }}
         >
           <ModalContent>
-            <div className="flex flex-col w-full gap-5 p-5">
-              <div className="text-xl font-semibold">Rate Amenities</div>
-              <div className="flex flex-col w-full">
-                {rating.map((rating, index) => (
-                  <Slider
-                    key={index}
-                    size="sm"
-                    label={rating.label}
-                    hideThumb={true}
-                    defaultValue={2.5}
-                    step={0.5}
-                    maxValue={5}
-                    minValue={0}
-                    className="w-[80%] opacity-1  font-semibold"
+            <div className="flex flex-col h-full w-full gap-5 p-5 justify-between">
+              
+              <div className="flex flex-col items-start">
+                <div className="text-xl font-semibold">Rate Amenities</div>
+                <CommentStar numberOfStars={commentStar} onChange={handleCommentStarChange}/>
+              </div>
+              
+              <div className="flex flex-col ">
+                <div className="text-xl font-semibold pt-10">Comment</div>
+                <div className="flex flex-row items-center gap-5 ">
+                  <textarea
+                    rows={4}
+                    cols={50}
+                    placeholder="Your review here..."
+                    className="mt-2 p-2 border rounded"
                   />
-                ))}
+                  <Button
+                    isIconOnly
+                    radius="sm"
+                    size="lg"
+                    className="bg-[#01B7F2]"
+                  >
+                    <NextIcon />
+                  </Button>
+                </div>
               </div>
-              <div className="text-xl font-semibold pt-10">Comment</div>
-
-              <div className="flex flex-row items-center gap-5 ">
-                <textarea
-                  rows={4}
-                  cols={50}
-                  placeholder="Your review here..."
-                  className="mt-2 p-2 border rounded"
-                />
-                <Button
-                  isIconOnly
-                  radius="sm"
-                  size="lg"
-                  className="bg-[#01B7F2]"
-                >
-                  <NextIcon />
-                </Button>
-              </div>
-              <div className="flex flex-col justify-center items-center gap-5 pt-5">
+              <div className="flex flex-col justify-center items-center gap-5 bottom-5">
                 <div className="flex text-xl font-semibold text-[#01b6f2]">About Us</div>
                   <div className="flex flex-row gap-5 justify-center">
                     <FacebookIcon />

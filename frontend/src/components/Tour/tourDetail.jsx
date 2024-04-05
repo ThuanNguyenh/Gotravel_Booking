@@ -3,7 +3,6 @@ import { LocationIcon } from "../../assets/LocationIcon";
 import { HeartIcon } from "../../assets/heart";
 import { ShareIcon } from "../../assets/Share";
 import TourDetailDes from "./tourDetailDes";
-import TourDetailRoom from "./tourDetailRoom";
 import TourDetailReview from "./tourDetailReview";
 
 import { Link, useParams } from "react-router-dom";
@@ -40,7 +39,7 @@ function TourDetail() {
                     <h1 className="text-3xl font-bold pb-5">{product.title}</h1>
                     <div className="flex flex-row underline"><LocationIcon/>Jibhi, Himachal Pradesh, India</div>
                     <div className="flex flex-row gap-1 items-center">
-                        <p className="rounded-md bg-[#01B7F2] p-1 text-white font-semibold">4.2</p>
+                        <p className="rounded-md bg-[#01B7F2] p-1 text-white font-semibold">{product.rating.toFixed(1)}</p>
                         <p className="font-semibold">Very Good</p>
                         <p className="underline">100 reviews</p>
                     </div>
@@ -73,9 +72,6 @@ function TourDetail() {
                 <Tabs size="lg" variant="underlined" color="primary">
                     <Tab title="Overview">
                         <TourDetailDes/>
-                    </Tab>
-                    <Tab  title="Room">
-                        <TourDetailRoom/>
                     </Tab>
                     <Tab  title="Review">
                         <TourDetailReview/>

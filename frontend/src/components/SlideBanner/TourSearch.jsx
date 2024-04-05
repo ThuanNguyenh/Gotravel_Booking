@@ -1,10 +1,11 @@
-import { Autocomplete, AutocompleteItem, Input } from "@nextui-org/react";
+import { Autocomplete, AutocompleteItem, Button, Input, Link } from "@nextui-org/react";
 import { animals } from "../../models/data";
 import { LocationIcon } from "../../assets/LocationIcon";
 import { DateIcon } from "../../assets/DateIcon";
 import { PerRoomIcon } from "../../assets/perRoom";
 import "./slide.scss";
 import React from "react";
+import { SearchIcon } from "../../assets/SearchIcon";
 
 const TourSearch = () => {
   return (
@@ -20,11 +21,9 @@ const TourSearch = () => {
               defaultItems={animals}
               placeholder="Thành phố, địa điểm,..."
               className="location max-w-xs"
-              startContent={
-                React.cloneElement(<LocationIcon />, {
-                  stroke: "#0194F3"
-                })
-              }
+              startContent={React.cloneElement(<LocationIcon />, {
+                stroke: "#0194F3",
+              })}
               size="sm"
               variant="bordered"
             >
@@ -52,25 +51,18 @@ const TourSearch = () => {
           </div>
         </div>
 
-        {/* thời giân */}
+        {/* ngay ve */}
         <div className="w-1/4">
           <div className="flex flex-col gap-3">
-            <h2 className="font-semibold text-neutral-800">Thời gian</h2>
-            <Autocomplete
-              defaultItems={animals}
-              placeholder="Thời gian đi"
-              className="max-w-xs"
-              startContent={<PerRoomIcon />}
+            <h2 className="font-semibold text-neutral-800">Ngày về</h2>
+            <Input
+              className="max-w-xs date"
+              startContent={<DateIcon />}
+              type="date"
               radius="none"
               size="sm"
               variant="bordered"
-            >
-              {(animal) => (
-                <AutocompleteItem key={animal.value}>
-                  {animal.label}
-                </AutocompleteItem>
-              )}
-            </Autocomplete>
+            />
           </div>
         </div>
 
@@ -93,6 +85,19 @@ const TourSearch = () => {
               )}
             </Autocomplete>
           </div>
+        </div>
+        <div className="pl-5 pt-2">
+          <Button
+            as={Link}
+            href="/search"
+            isIconOnly
+            variant="ghost"
+            className="bg-gradient-to-tl text-white to-cyan-500 from-[#73D8FC] mr-4 mt-6"
+            size="lg"
+            radius="md"
+          >
+            <SearchIcon/>
+          </Button>
         </div>
       </div>
     </div>
