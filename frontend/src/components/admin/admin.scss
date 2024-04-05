@@ -1,0 +1,37 @@
+.farme{
+    box-sizing: border-box;
+    display: flex;
+
+}
+.farme_Dashboard{
+    // background-color: aqua;
+    margin: 10px 6px 0;
+    box-shadow: 2px 3px 14px 3px #6a6666;
+    width: 25%;
+    padding: 15px;
+    border-radius: 5px;
+
+    .farme_Dashboard-head{
+        display: flex;
+        justify-content: space-between;
+
+    }
+    .farme_Dashboard-body{
+        .farme_Dashboard-body-text{
+            font-size: 16px;
+        }
+        .farme_Dashboard-body-view{
+            font-size: 24px;
+        }
+    }
+    .farme_Dashboard-footer{
+        margin-top: 10px;
+        padding-top:8px ;
+        border-top: 1px solid rgb(161, 143, 143);
+    }
+}
+
+.table-chart{
+    margin-top: 20px;
+    display: flex;
+}
