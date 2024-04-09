@@ -12,39 +12,48 @@ import { ChartIcon } from '../../assets/chartIcon';
 
 
 const Host = ({ children }) => {
-  // State to manage the content to be displayed
-  const [selectedContent, setSelectedContent] = useState(ManageRevenue);
+  const [selectedContent, setSelectedContent] = useState('DashBoard');
 
-  // Function to handle clicking on a link
-  const handleLinkClick = (contentComponent) => {
-    setSelectedContent(contentComponent);
+  const handleLinkClick = (content) => {
+    setSelectedContent(content);
   };
+
+  let contentComponent;
+  switch (selectedContent) {
+    case 'DashBoard':
+      contentComponent = <DashBoard/>;
+      break;
+    case 'ManageTour':
+      contentComponent = <ManageTour/>;
+      break;
+    case 'ManageRevenue':
+      contentComponent = <ManageRevenue/>;
+      break;
+    default:
+      contentComponent = null;
+  }
 
   return (
     <div className="flex">
-      {/* Sidebar */}
-      <div className=" h-full w-56 fixed left-0 top-16 bottom-0">
-        {/* Sidebar content */}
+      <div className="h-full w-56 fixed left-0 top-16 bottom-0 ">
         <div className="flex flex-col h-full justify-center items-center">
-        
-          {/* Sidebar links */}
           <div className="flex-1 overflow-y-auto w-full max-w-[260px] border-small text-center py-2 rounded-small border-default-200 dark:border-default-100">
+
               <Listbox className='text-xl font-bold'>
-{/* FIX sidebar component cant use hook   */}
-                <ListboxItem startContent={<MenuIcon/>} onClick={() => handleLinkClick(DashBoard)}>Dashboard</ListboxItem>
-                <ListboxItem startContent={<HotelIcon/>} onClick={() => handleLinkClick(ManageTour)}>Your Tour</ListboxItem>
-                <ListboxItem startContent={<ChartIcon/>} onClick={() => handleLinkClick(ManageRevenue)}>Revenue</ListboxItem>
-                <ListboxItem startContent={<HotelIcon/>} href='/host/addTour'>Your Tour</ListboxItem>
+
+                <ListboxItem startContent={<MenuIcon/>} onClick={() => handleLinkClick('DashBoard')}>Dashboard</ListboxItem>
+                <ListboxItem startContent={<HotelIcon/>} onClick={() => handleLinkClick('ManageTour')}>Your Tour</ListboxItem>
+                <ListboxItem startContent={<ChartIcon/>} onClick={() => handleLinkClick('ManageRevenue')}>Revenue</ListboxItem>
+
 
               </Listbox>
+
           </div>
         </div>
       </div>
-      {/* Main content */}
-      <div className="w-5/6 pl-28">
+      <div className="w-full pl-28">
         <div className="p-8">
-          {/* Render the selected content component */}
-          {selectedContent}
+          {contentComponent}
         </div>
       </div>
     </div>

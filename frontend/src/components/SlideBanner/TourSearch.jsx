@@ -2,7 +2,7 @@ import { Autocomplete, AutocompleteItem, Button, Input, Link } from "@nextui-org
 import { animals } from "../../models/data";
 import { LocationIcon } from "../../assets/LocationIcon";
 import { DateIcon } from "../../assets/DateIcon";
-import { PerRoomIcon } from "../../assets/perRoom";
+import { PerRoomIcon } from "../../assets/PerRoom";
 import "./slide.scss";
 import React from "react";
 import { SearchIcon } from "../../assets/SearchIcon";
@@ -74,7 +74,7 @@ const TourSearch = () => {
               defaultItems={animals}
               placeholder="Loại hình mong muốn"
               className="type max-w-xs"
-              startContent={<PerRoomIcon />}
+              startContent={<PerRoomIcon/>}
               size="sm"
               variant="bordered"
             >
