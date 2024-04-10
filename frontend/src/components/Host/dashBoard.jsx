@@ -309,7 +309,7 @@ function DashBoard() {
 
   return(
     <div className="w-full">
-        <div id="financeDB"></div>;
+        <div id="financeDB" className="highcharts-light"></div>;
     </div>
   )
 }

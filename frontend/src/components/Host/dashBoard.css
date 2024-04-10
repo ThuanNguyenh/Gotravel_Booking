@@ -1,7 +1,7 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
-
+@import "https://code.highcharts.com/dashboards/css/dashboards.css";
 /* Colors */
 :root {
     --highcharts-dashboards-green: #20d17e;

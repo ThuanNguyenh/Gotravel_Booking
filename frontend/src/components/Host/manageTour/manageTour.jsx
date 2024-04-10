@@ -21,13 +21,13 @@ import {
   Modal,
   ModalContent,
 } from "@nextui-org/react";
-import { NextIcon } from "../../../assets/NextIcon";
 import { Pen } from "../../../assets/Pen";
 import { DeleteIcon } from "../../../assets/DeleteIcon";
 import { SearchIcon } from "../../../assets/SearchIcon";
 import { ChevronDownIcon } from "../../../assets/ChevronDownIcon ";
 import { PlusIcon } from "../../../assets/PlusIcon";
 import { useState } from "react";
+import { Percent } from "../../../assets/Percent";
 
 function ManageTour() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -77,6 +77,7 @@ function ManageTour() {
     return matchesSearchQuery && matchesStatusFilter;
   };
 
+  //Caplock
   function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
@@ -258,9 +259,9 @@ function ManageTour() {
                       </TableCell>
                       <TableCell>
                         <div className="relative flex items-center gap-4">
-                          <Tooltip content="Details">
+                          <Tooltip content="Voucher">
                             <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                              <NextIcon />
+                              <Percent />
                             </span>
                           </Tooltip>
                           <Tooltip content="Edit">
