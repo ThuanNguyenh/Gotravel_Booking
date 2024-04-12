@@ -74,7 +74,7 @@ function Admin() {
         </div>
 
         <div>
-          <DonutChart/>
+          <DonutChart className="highcharts-light"/>
         </div>
       </div>
     </>

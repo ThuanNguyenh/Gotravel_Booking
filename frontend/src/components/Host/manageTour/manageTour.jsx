@@ -8,7 +8,7 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  User,
+  Pagination,
   Chip,
   Tooltip,
   Input,
@@ -21,6 +21,7 @@ import {
   Modal,
   ModalContent,
 } from "@nextui-org/react";
+
 import { Pen } from "../../../assets/Pen";
 import { DeleteIcon } from "../../../assets/DeleteIcon";
 import { SearchIcon } from "../../../assets/SearchIcon";
@@ -28,6 +29,8 @@ import { ChevronDownIcon } from "../../../assets/ChevronDownIcon ";
 import { PlusIcon } from "../../../assets/PlusIcon";
 import { useState } from "react";
 import { Percent } from "../../../assets/Percent";
+
+import NewTourForm from "./newTour";
 
 function ManageTour() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -49,17 +52,40 @@ function ManageTour() {
     { id: 2, name: "Hue", status: "Paused" },
     { id: 3, name: "Vung Tau", status: "Active" },
     { id: 4, name: "Da Lat", status: "Ongoing" },
+    { id: 5, name: "Ho Chi Minh City", status: "Active" },
+    { id: 6, name: "Hanoi", status: "Paused" },
+    { id: 7, name: "Nha Trang", status: "Active" },
+    { id: 8, name: "Phu Quoc", status: "Ongoing" },
+    { id: 9, name: "Mui Ne", status: "Active" },
+    { id: 10, name: "Hoi An", status: "Paused" },
+    { id: 11, name: "Sapa", status: "Active" },
+    { id: 12, name: "Can Tho", status: "Ongoing" },
+    { id: 13, name: "Phan Thiet", status: "Active" },
+    { id: 14, name: "Quy Nhon", status: "Paused" },
+    { id: 15, name: "Hai Phong", status: "Active" },
+    { id: 16, name: "Ha Long Bay", status: "Ongoing" }
   ];
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const toursPerPage = 5;
+
+  // Handle page change
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  // Calculate indexes for slicing tours array based on current page
+  const indexOfLastTour = currentPage * toursPerPage;
+  const indexOfFirstTour = indexOfLastTour - toursPerPage;
+  const currentTours = tours.slice(indexOfFirstTour, indexOfLastTour);
+ 
 
   //search
   const [searchQuery, setSearchQuery] = useState("");
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
   };
-  // Filter tours based on the search query
-  const filteredTours = tours.filter((tour) =>
-    tour.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   //filter status
   const [selectedStatusFilters, setSelectedStatusFilters] = useState([]);
@@ -76,6 +102,14 @@ function ManageTour() {
       selectedStatusFilters.length === 0 || selectedStatusFilters.includes(tour.status);
     return matchesSearchQuery && matchesStatusFilter;
   };
+
+  // Filter tours based on the search query
+  const filteredTours = currentTours.filter(
+    (tour) =>
+      tour.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      (selectedStatusFilters.length === 0 ||
+        selectedStatusFilters.includes(tour.status))
+  );
 
   //Caplock
   function capitalize(str) {
@@ -126,107 +160,10 @@ function ManageTour() {
             <Button color="primary" onPress={onOpen} endContent={<PlusIcon />}>
               Add New
             </Button>
-            <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+            <Modal size="3xl" isOpen={isOpen} onOpenChange={onOpenChange}>
               <ModalContent>
                 {(onClose) => (
-                  <div className="mx-auto  p-8 bg-white">
-                    <h1 className="text-2xl font-semibold mb-4">Create Tour</h1>
-                    <form>
-                      {/* Tour Name */}
-                      <div className="mb-4">
-                        <label
-                          htmlFor="tourName"
-                          className="block text-sm font-medium text-gray-700"
-                        >
-                          Tour Name
-                        </label>
-                        <input
-                          type="text"
-                          id="tourName"
-                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                        />
-                      </div>
-                      {/* Description */}
-                      <div className="mb-4">
-                        <label
-                          htmlFor="description"
-                          className="block text-sm font-medium text-gray-700"
-                        >
-                          Description
-                        </label>
-                        <textarea
-                          id="description"
-                          rows="3"
-                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                        ></textarea>
-                      </div>
-                      {/* Thumbnail */}
-                      <div className="mb-4">
-                        <label
-                          htmlFor="thumbnail"
-                          className="block text-sm font-medium text-gray-700"
-                        >
-                          Thumbnail
-                        </label>
-                        <input
-                          type="text"
-                          id="thumbnail"
-                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                        />
-                      </div>
-                      {/* Address */}
-                      <div className="mb-4">
-                        <label
-                          htmlFor="address"
-                          className="block text-sm font-medium text-gray-700"
-                        >
-                          Address
-                        </label>
-                        <input
-                          type="text"
-                          id="address"
-                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                        />
-                      </div>
-                      {/* Price */}
-                      <div className="mb-4">
-                        <label
-                          htmlFor="price"
-                          className="block text-sm font-medium text-gray-700"
-                        >
-                          Price
-                        </label>
-                        <input
-                          type="number"
-                          id="price"
-                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                        />
-                      </div>
-                      {/* NumGuest */}
-                      <div className="mb-4">
-                        <label
-                          htmlFor="numGuest"
-                          className="block text-sm font-medium text-gray-700"
-                        >
-                          Number of Guests
-                        </label>
-                        <input
-                          type="number"
-                          id="numGuest"
-                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                        />
-                      </div>
-                      {/* Submit button */}
-                      <div>
-                        <button
-                          type="submit"
-                          className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                        >
-                          Create Tour
-                        </button>
-                      </div>
-                    </form>
-                  </div>
+                  <NewTourForm/>
                 )}
               </ModalContent>
             </Modal>
@@ -234,7 +171,7 @@ function ManageTour() {
         </div>
 
         <div>
-          <Table aria-label="Example static collection table">
+          <Table layout="fixed" aria-label="Example static collection table">
             <TableHeader>
               <TableColumn>NAME</TableColumn>
               <TableColumn>STATUS</TableColumn>
@@ -245,6 +182,7 @@ function ManageTour() {
               {filteredTours.map((tour) => {
                 if (isTourVisible(tour)) {
                   return (
+                    
                     <TableRow key={tour.id}>
                       <TableCell>{tour.name}</TableCell>
                       <TableCell>
@@ -283,6 +221,17 @@ function ManageTour() {
               })}
             </TableBody>
           </Table>
+        </div>
+
+        <div className="flex w-full justify-center">
+          <Pagination
+          isCompact
+          showControls
+          showShadow
+          page={currentPage}
+          total={Math.ceil(tours.length / toursPerPage)}
+          onChange={handlePageChange}
+          />
         </div>
       </div>
     </div>

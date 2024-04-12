@@ -1,17 +1,14 @@
 import {
-    Table,
-    TableHeader,
-    TableColumn,
-    TableBody,
-    TableRow,
-    TableCell,
-    Chip,
     Input,
     Dropdown,
     DropdownTrigger,
     Button,
     DropdownMenu,
     DropdownItem,
+    Card,
+    CardBody,
+    Image,
+    Chip,
   } from "@nextui-org/react";
 
   import { SearchIcon } from "../../../assets/SearchIcon";
@@ -21,7 +18,8 @@ import {
 //Confirm Function
 function useConfirmation() {
     const [confirmedTours, setConfirmedTours] = useState([]);
-  
+    const [declinedTours, setDeclinedTours] = useState([]);
+
     const confirmTour = (tourId) => {
       setConfirmedTours((prevConfirmedTours) => [...prevConfirmedTours, tourId]);
     };
@@ -29,10 +27,20 @@ function useConfirmation() {
     const isTourConfirmed = (tourId) => {
       return confirmedTours.includes(tourId);
     };
+
+    const declineTour = (tourId) => {
+      setDeclinedTours((prevDeclinedTours) => [...prevDeclinedTours, tourId]);
+    };
+
+    const isTourDeclined = (tourId) => {
+      return declinedTours.includes(tourId);
+    };
   
     return {
       confirmTour,
       isTourConfirmed,
+      declineTour,
+      isTourDeclined,
     };
   }
   
@@ -41,7 +49,6 @@ function useConfirmation() {
   
 function RequestBooking() {
 
-  
     const statusColorMap = {
       Active: "success",
       Paused: "danger",
@@ -92,8 +99,11 @@ function RequestBooking() {
       return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
+    //display button
+    const [selectedTours, setSelectedTours] = useState([]);
+
     //Confirm Button
-    const { confirmTour, isTourConfirmed } = useConfirmation();
+    const { confirmTour, isTourConfirmed, declineTour, isTourDeclined } = useConfirmation();
   
   
     return (
@@ -116,7 +126,9 @@ function RequestBooking() {
                     endContent={<ChevronDownIcon className="text-small" />}
                     variant="flat"
                   >
-                    {selectedStatusFilters.length > 0 ? selectedStatusFilters.join(', ') : 'Status'} 
+                    {selectedStatusFilters.length > 0
+                      ? selectedStatusFilters.join(", ")
+                      : "Status"}
                   </Button>
                 </DropdownTrigger>
                 <DropdownMenu
@@ -135,59 +147,117 @@ function RequestBooking() {
                   ))}
                 </DropdownMenu>
               </Dropdown>
-  
-            
             </div>
           </div>
-  
+
           <div>
-            <Table layout="fixed" aria-label="Example static collection table">
-              <TableHeader>
-                <TableColumn>CUSTOMER</TableColumn>
-                <TableColumn>TOUR</TableColumn>
-                <TableColumn>PRICE</TableColumn>
-                <TableColumn>STATUS</TableColumn>
-                <TableColumn>ACTION</TableColumn>
-              </TableHeader>
-              <TableBody>
-                {/* Map over the data to render each row dynamically */}
-                {filteredTours.map((tour) => {
-                  if (isTourVisible(tour)) {
-                    return (
-                      <TableRow key={tour.id}>
-                        <TableCell>{tour.user}</TableCell>
-                        <TableCell>{tour.name}</TableCell>
-                        <TableCell>${tour.price}</TableCell>
-                        <TableCell>
-                          <Chip
-                            className="capitalize"
-                            color={statusColorMap[tour.status]}
-                            size="sm"
-                            variant="flat"
-                          >
-                            {tour.status}
-                          </Chip>
-                        </TableCell>
-                        <TableCell>
-                            <Button
-                                className="w-20"
-                                size="sm"
-                                radius='full'
-                                onClick={() => confirmTour(tour.id)}
-                                disabled={isTourConfirmed(tour.id)}
-                                variant={isTourConfirmed(tour.id) ? "solid" : "bordered"}
-                                color={isTourConfirmed(tour.id) ? "primary" : "default"}
-                            >
-                            {isTourConfirmed(tour.id) ? "Confirmed" : "Confirm"}
-                            </Button>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  }
-                  return null;
-                })}
-              </TableBody>
-            </Table>
+            {/* Map over the data to render each row dynamically */}
+            {filteredTours.map((tour) => {
+              const isSelected = selectedTours.includes(tour.id);
+              if (isTourVisible(tour)) {
+                return (
+                  <Card
+                    key={tour.id}
+                    isBlurred
+                    className="border-none my-4 bg-background/60 dark:bg-default-100/50"
+                  >
+                    <CardBody>
+                      <div className="grid grid-cols-6 md:grid-cols-12 md:gap-4 items-center justify-center">
+                        <div className="relative col-span-3 md:col-span-3">
+                          <Image
+                            height={150}
+                            shadow="md"
+                            src="https://img.directbooking.ro/getimage.ashx?f=Statiuni&w=600&h=399&file=Statiune_2cc49871-736f-43c5-a388-b4d0c4d1c06b.jpg"
+                            width="100%"
+                          />
+                        </div>
+
+                        <div className="flex flex-col col-span-5 md:col-span-5">
+                          <div className="flex flex-col justify-between gap-5">
+                            <div className="flex flex-col gap-0">
+                              <h3 className="font-semibold text-2xl text-foreground/90">
+                                {tour.name}
+                              </h3>
+                              <div className="flex flex-row">
+                                <p className="text-lg text-foreground/80">
+                                  From {tour.user}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="flex flex-row bg-slate-100 w-fit gap-5 p-3 justify-between text-medium font-lights text-slate-500">
+                              <div>
+                                <h1 className="">Check in</h1>
+                                <h1 className="">Date</h1>
+                              </div>
+                              <div>
+                                <h1 className="">Check out</h1>
+                                <h1 className="">Date</h1>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-col col-span-4 md:col-span-4 items-end gap-5 text-right h-full  justify-between">
+                          <div className="font-semibold text-2xl text-foreground/90">
+                            <div>${tour.price}/night</div>
+                            <Chip className="capitalize" color={statusColorMap[tour.status]} size="sm" variant="flat">
+                              {tour.status}
+                            </Chip>
+                          </div>
+                          <div className="flex gap-3">
+                            {!isSelected && ( // Render buttons only if tour is not selected
+                              <>
+                                <Button
+                                  className="w-24 text-lg"
+                                  size="lg"
+                                  radius="full"
+                                  onClick={() => {
+                                    confirmTour(tour.id);
+                                    setSelectedTours([...selectedTours, tour.id]); // Add tour to selectedTours
+                                  }}
+                                  disabled={isTourConfirmed(tour.id) || isTourDeclined(tour.id)}
+                                  variant={isTourConfirmed(tour.id) ? "solid" : "bordered"}
+                                  color={isTourConfirmed(tour.id) ? "primary" : "default"}
+                                >
+                                  {isTourConfirmed(tour.id) ? "Confirmed" : "Confirm"}
+                                </Button>
+                                <Button
+                                  className="w-24 text-lg"
+                                  size="lg"
+                                  radius="full"
+                                  onClick={() => {
+                                    declineTour(tour.id);
+                                    setSelectedTours([...selectedTours, tour.id]); // Add tour to selectedTours
+                                  }}
+                                  disabled={isTourConfirmed(tour.id) || isTourDeclined(tour.id)}
+                                  variant="bordered"
+                                  color="default"
+                                >
+                                  {isTourDeclined(tour.id) ? "Declined" : "Decline"}
+                                </Button>
+                              </>
+                            )}
+                            {isSelected && ( // Render only the confirmed or declined button if tour is selected
+                              <Button
+                                className="w-24 text-lg"
+                                size="lg"
+                                radius="full"
+                                variant="solid"
+                                color={isTourConfirmed(tour.id) ? "primary" : "danger"}
+                              >
+                                {isTourConfirmed(tour.id) ? "Confirmed" : "Declined"}
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </CardBody>
+                  </Card>
+                );
+              }
+              return null;
+            })}
           </div>
         </div>
       </div>
@@ -195,3 +265,5 @@ function RequestBooking() {
   }
   
   export default RequestBooking;
+
+

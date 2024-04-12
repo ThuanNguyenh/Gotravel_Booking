@@ -1,6 +1,7 @@
 import HighchartsReact from "highcharts-react-official";
 import HighchartsMore from "highcharts/highcharts-more";
 import Highcharts from "highcharts/highstock";
+import "./admin.scss";
 
 HighchartsMore(Highcharts);
 const DonutChart = () => {
@@ -58,7 +59,7 @@ const DonutChart = () => {
       },
     ],
   };
-  return <HighchartsReact highcharts={Highcharts} options={options} />;
+  return <HighchartsReact className="highcharts-light" highcharts={Highcharts} options={options} />;
 };
 
 export default DonutChart;

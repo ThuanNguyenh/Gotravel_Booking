@@ -16,6 +16,7 @@ import {
   DropdownMenu,
   DropdownItem,
   Badge,
+  Popover, PopoverTrigger, PopoverContent
 } from "@nextui-org/react";
 import Login from "./Login";
 import { Link } from "react-router-dom";
@@ -69,22 +70,38 @@ const Account = () => {
         <NavbarContent justify="end">
           {/* notification */}
           <NavbarItem>
-            <Badge size="md" className="scale-85" content="2" shape="circle" color="danger">
-              <Button
-                radius="full"
-                isIconOnly
-                aria-label="more than 99 notifications"
-                variant="bordered"
+            <Popover size="lg" placement="bottom-end">
+              <Badge
                 size="md"
-                className="scale-90"
+                className="scale-85"
+                content="2"
+                shape="circle"
+                color="danger"
               >
-               {React.cloneElement(<NotificationIcon/>, {
-                size: "20",
-                fill: isScrolled ? "#1E293B" : "white"
-               })} 
-                
-              </Button>
-            </Badge>
+                <PopoverTrigger>
+                  <Button
+                    radius="full"
+                    isIconOnly
+                    aria-label="more than 99 notifications"
+                    variant="bordered"
+                    size="md"
+                    className="scale-90"
+                  >
+                    {React.cloneElement(<NotificationIcon />, {
+                      size: "20",
+                      fill: isScrolled ? "#1E293B" : "white",
+                    })}
+                  </Button>
+                </PopoverTrigger>
+              </Badge>
+              <PopoverContent>
+                <div className="px-1 py-2 w-52">
+                  <div className="text-small font-bold text-center">Notification</div>
+                  <div className="text-tiny">➢ Notification 1 Notification 1 Notification 1</div>
+                  <div className="text-tiny">➢ Notification 2</div>
+                </div>
+              </PopoverContent>
+            </Popover>
           </NavbarItem>
           {/* notification */}
           <NavbarItem>
@@ -102,7 +119,9 @@ const Account = () => {
                 <DropdownItem key="profile" className="h-7 gap-2">
                   <p className="font-semibold">{userRedux.userName}</p>
                 </DropdownItem>
-                <DropdownItem as={Link} to={`/profile`} key="settings">My Settings</DropdownItem>
+                <DropdownItem as={Link} to={`/profile`} key="settings">
+                  My Settings
+                </DropdownItem>
 
                 <DropdownItem
                   key="logout"
@@ -139,9 +158,7 @@ const Account = () => {
         hideCloseButton
       >
         <ModalContent className="container">
-
-          <Login/>
-
+          <Login />
         </ModalContent>
       </Modal>
 

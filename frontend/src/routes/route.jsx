@@ -18,7 +18,7 @@ const publicRoutes = [
     {path: '/checkout', component:CheckOut, layout: HeaderOnly},
     {path: '/search', component:Search},
     {path: '/host', component:Host ,layout:HeaderOnly},
-    { path: '/admin', component: Admin, layout: HeaderOnly },
+    {path: '/admin', component: Admin, layout: HeaderOnly},
 
 
 ];

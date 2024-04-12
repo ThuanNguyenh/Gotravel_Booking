@@ -11,6 +11,7 @@
 /* General */
 .highcharts-dashboards,
 .highcharts-dashboards-wrapper {
+    border-radius: 20px;
     background-color: #ffffff;
     height: fit-content;
 }
