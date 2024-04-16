@@ -31,9 +31,13 @@ import { useState } from "react";
 import { Percent } from "../../../assets/Percent";
 
 import NewTourForm from "./newTour";
+import UpdateTourForm from "./updateTour";
+import AddVoucher from "./voucherForm";
 
 function ManageTour() {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const newTourModal = useDisclosure();
+  const updateModal = useDisclosure();
+  const voucherModal = useDisclosure()
 
   const statusColorMap = {
     Active: "success",
@@ -157,10 +161,10 @@ function ManageTour() {
               </DropdownMenu>
             </Dropdown>
 
-            <Button color="primary" onPress={onOpen} endContent={<PlusIcon />}>
+            <Button color="primary" onPress={newTourModal.onOpen} endContent={<PlusIcon />}>
               Add New
             </Button>
-            <Modal size="3xl" isOpen={isOpen} onOpenChange={onOpenChange}>
+            <Modal hideCloseButton size="3xl" isOpen={newTourModal.isOpen} onOpenChange={newTourModal.onOpenChange}>
               <ModalContent>
                 {(onClose) => (
                   <NewTourForm/>
@@ -182,7 +186,6 @@ function ManageTour() {
               {filteredTours.map((tour) => {
                 if (isTourVisible(tour)) {
                   return (
-                    
                     <TableRow key={tour.id}>
                       <TableCell>{tour.name}</TableCell>
                       <TableCell>
@@ -197,16 +200,46 @@ function ManageTour() {
                       </TableCell>
                       <TableCell>
                         <div className="relative flex items-center gap-4">
+
+{/* Add Voucher */}
                           <Tooltip content="Voucher">
-                            <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                            <span onClick={voucherModal.onOpen} className="text-lg text-default-400 cursor-pointer active:opacity-50">
                               <Percent />
                             </span>
                           </Tooltip>
+                          <Modal
+                              backdrop="transparent"
+                              hideCloseButton
+                              isOpen={voucherModal.isOpen}
+                              onOpenChange={voucherModal.onOpenChange}
+                            >
+                              <ModalContent>
+                                {(onClose) => <AddVoucher/>}
+                              </ModalContent>
+                            </Modal>
+
+{/* Update */}
                           <Tooltip content="Edit">
-                            <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                            <span
+                              onClick={updateModal.onOpen}
+                              className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                            >
                               <Pen />
                             </span>
                           </Tooltip>
+                            <Modal
+                              backdrop="transparent"
+                              hideCloseButton
+                              size="3xl"
+                              isOpen={updateModal.isOpen}
+                              onOpenChange={updateModal.onOpenChange}
+                            >
+                              <ModalContent>
+                                {(onClose) => <UpdateTourForm/>}
+                              </ModalContent>
+                            </Modal>
+
+{/* Delete */}
                           <Tooltip color="danger" content="Delete">
                             <span className="text-lg text-danger cursor-pointer active:opacity-50">
                               <DeleteIcon />

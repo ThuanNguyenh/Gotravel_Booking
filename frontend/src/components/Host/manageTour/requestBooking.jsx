@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {
     Input,
     Dropdown,
@@ -9,11 +10,15 @@ import {
     CardBody,
     Image,
     Chip,
+    useDisclosure,
+    Modal,
+    ModalContent,
   } from "@nextui-org/react";
 
   import { SearchIcon } from "../../../assets/SearchIcon";
   import { ChevronDownIcon } from "../../../assets/ChevronDownIcon ";
-  import { useState } from "react";
+  import { useState, useCallback } from "react";
+import DetailTour from "./detailTour";
 
 //Confirm Function
 function useConfirmation() {
@@ -48,6 +53,8 @@ function useConfirmation() {
 
   
 function RequestBooking() {
+
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     const statusColorMap = {
       Active: "success",
@@ -104,6 +111,14 @@ function RequestBooking() {
 
     //Confirm Button
     const { confirmTour, isTourConfirmed, declineTour, isTourDeclined } = useConfirmation();
+
+    const [selectedTourId, setSelectedTourId] = useState(null);
+    // Function to handle opening the modal and setting the selected tour ID
+    const handleOpenDetailModal = useCallback((tourId) => {
+      setSelectedTourId(tourId);
+      // Open the modal
+      onOpen();
+    }, []);
   
   
     return (
@@ -201,11 +216,36 @@ function RequestBooking() {
                         <div className="flex flex-col col-span-4 md:col-span-4 items-end gap-5 text-right h-full  justify-between">
                           <div className="font-semibold text-2xl text-foreground/90">
                             <div>${tour.price}/night</div>
-                            <Chip className="capitalize" color={statusColorMap[tour.status]} size="sm" variant="flat">
+                            <Chip
+                              className="capitalize"
+                              color={statusColorMap[tour.status]}
+                              size="sm"
+                              variant="flat"
+                            >
                               {tour.status}
                             </Chip>
                           </div>
                           <div className="flex gap-3">
+
+                            <Button
+                              onPress={() => handleOpenDetailModal(tour.id)} // Pass tour ID
+                              variant="bordered"
+                              radius="full"
+                              size="lg"
+                            >
+                              Detail
+                            </Button>
+                            <Modal
+                              backdrop="transparent"
+                              hideCloseButton
+                              isOpen={isOpen}
+                              onOpenChange={onOpenChange}
+                            >
+                              <ModalContent>
+                                {(onClose) => <DetailTour tourId={selectedTourId} onClose={onClose}/>}
+                              </ModalContent>
+                            </Modal>
+
                             {!isSelected && ( // Render buttons only if tour is not selected
                               <>
                                 <Button
@@ -214,13 +254,29 @@ function RequestBooking() {
                                   radius="full"
                                   onClick={() => {
                                     confirmTour(tour.id);
-                                    setSelectedTours([...selectedTours, tour.id]); // Add tour to selectedTours
+                                    setSelectedTours([
+                                      ...selectedTours,
+                                      tour.id,
+                                    ]); // Add tour to selectedTours
                                   }}
-                                  disabled={isTourConfirmed(tour.id) || isTourDeclined(tour.id)}
-                                  variant={isTourConfirmed(tour.id) ? "solid" : "bordered"}
-                                  color={isTourConfirmed(tour.id) ? "primary" : "default"}
+                                  disabled={
+                                    isTourConfirmed(tour.id) ||
+                                    isTourDeclined(tour.id)
+                                  }
+                                  variant={
+                                    isTourConfirmed(tour.id)
+                                      ? "solid"
+                                      : "bordered"
+                                  }
+                                  color={
+                                    isTourConfirmed(tour.id)
+                                      ? "primary"
+                                      : "default"
+                                  }
                                 >
-                                  {isTourConfirmed(tour.id) ? "Confirmed" : "Confirm"}
+                                  {isTourConfirmed(tour.id)
+                                    ? "Confirmed"
+                                    : "Confirm"}
                                 </Button>
                                 <Button
                                   className="w-24 text-lg"
@@ -228,13 +284,21 @@ function RequestBooking() {
                                   radius="full"
                                   onClick={() => {
                                     declineTour(tour.id);
-                                    setSelectedTours([...selectedTours, tour.id]); // Add tour to selectedTours
+                                    setSelectedTours([
+                                      ...selectedTours,
+                                      tour.id,
+                                    ]); // Add tour to selectedTours
                                   }}
-                                  disabled={isTourConfirmed(tour.id) || isTourDeclined(tour.id)}
+                                  disabled={
+                                    isTourConfirmed(tour.id) ||
+                                    isTourDeclined(tour.id)
+                                  }
                                   variant="bordered"
                                   color="default"
                                 >
-                                  {isTourDeclined(tour.id) ? "Declined" : "Decline"}
+                                  {isTourDeclined(tour.id)
+                                    ? "Declined"
+                                    : "Decline"}
                                 </Button>
                               </>
                             )}
@@ -244,9 +308,15 @@ function RequestBooking() {
                                 size="lg"
                                 radius="full"
                                 variant="solid"
-                                color={isTourConfirmed(tour.id) ? "primary" : "danger"}
+                                color={
+                                  isTourConfirmed(tour.id)
+                                    ? "primary"
+                                    : "danger"
+                                }
                               >
-                                {isTourConfirmed(tour.id) ? "Confirmed" : "Declined"}
+                                {isTourConfirmed(tour.id)
+                                  ? "Confirmed"
+                                  : "Declined"}
                               </Button>
                             )}
                           </div>

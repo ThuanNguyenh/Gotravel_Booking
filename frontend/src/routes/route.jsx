@@ -1,4 +1,3 @@
-// import SignupPage from "../pages/AuthPage/SignupPage";
 import { HeaderOnly } from "../Layouts";
 
 import Profile from "../components/Auth/Profile";
@@ -7,7 +6,7 @@ import Host from "../components/Host/host";
 import ListTour from "../components/ListTour";
 import TourDetail from "../components/Tour/tourDetail";
 import Search from "../components/search";
-import Admin from "../components/admin";
+import Admin from "../components/admin/admin";
 // không cần đăng nhập
 const publicRoutes = [
 
@@ -18,7 +17,7 @@ const publicRoutes = [
     {path: '/checkout', component:CheckOut, layout: HeaderOnly},
     {path: '/search', component:Search},
     {path: '/host', component:Host ,layout:HeaderOnly},
-    {path: '/admin', component: Admin, layout: HeaderOnly},
+    {path: '/admin', component:Admin, layout: HeaderOnly},
 
 
 ];
