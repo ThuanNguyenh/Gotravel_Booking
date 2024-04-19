@@ -2,6 +2,14 @@
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 @import "https://code.highcharts.com/dashboards/css/dashboards.css";
+
+
+#revenue {
+    height: 400px;
+    min-width: 310px;
+}
+
+
 /* Colors */
 :root {
     --highcharts-dashboards-green: #20d17e;

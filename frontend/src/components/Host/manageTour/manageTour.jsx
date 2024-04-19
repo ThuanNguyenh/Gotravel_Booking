@@ -20,6 +20,8 @@ import {
   useDisclosure,
   Modal,
   ModalContent,
+  ModalHeader,
+  ModalBody,
 } from "@nextui-org/react";
 
 import { Pen } from "../../../assets/Pen";
@@ -32,7 +34,7 @@ import { Percent } from "../../../assets/Percent";
 
 import NewTourForm from "./newTour";
 import UpdateTourForm from "./updateTour";
-import AddVoucher from "./voucherForm";
+import "./manageTour.css"
 
 function ManageTour() {
   const newTourModal = useDisclosure();
@@ -214,7 +216,17 @@ function ManageTour() {
                               onOpenChange={voucherModal.onOpenChange}
                             >
                               <ModalContent>
-                                {(onClose) => <AddVoucher/>}
+                                {(onClose) => (
+                                  <>
+                                    <ModalHeader>Add Voucher</ModalHeader>
+                                    <ModalBody>
+                                    <div className="input-container">
+                                        <input placeholder="Add % Sale here" type="text"/>
+                                        <button className="button">Add</button>
+                                    </div>
+                                    </ModalBody>
+                                  </>
+                                )}
                               </ModalContent>
                             </Modal>
 
