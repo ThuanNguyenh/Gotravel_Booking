@@ -18,7 +18,7 @@ function TourDetail() {
     useEffect(() => {
         const fetchProduct = async () => {
           try {
-            const response = await fetch(`https://dummyjson.com/products/${productId}`); // Replace with your actual API endpoint
+            const response = await fetch(`https://dummyjson.com/products/${productId}`);
             const data = await response.json();
             setProduct(data);
           } catch (error) {
