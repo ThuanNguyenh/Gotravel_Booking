@@ -5,10 +5,12 @@ import {Listbox, ListboxItem} from "@nextui-org/react";
 import { MenuIcon } from '../../assets/menuIcon';
 import { HotelIcon } from '../../assets/HotelIcon';
 import { ChartIcon } from '../../assets/chartIcon';
+import { NotificationIcon } from '../../assets/NotificationIcon';
 
 import AdminDashBoard from './adDashBoard';
 import ManageUser from './manageUser';
 import ManageRevenueAd from './manageRevenueAd';
+import Request from './requestToHost';
 
 
 const Admin = ({ children }) => {
@@ -20,14 +22,17 @@ const Admin = ({ children }) => {
 
   let contentComponent;
   switch (selectedContent) {
-    case 'DashBoard':
-      contentComponent = <AdminDashBoard/>;
+    case "DashBoard":
+      contentComponent = <AdminDashBoard />;
       break;
-    case 'ManageUser':
-      contentComponent = <ManageUser/>;
+    case "ManageUser":
+      contentComponent = <ManageUser />;
       break;
-    case 'ManageRevenue':
-      contentComponent = <ManageRevenueAd/>;
+    case "ManageRevenue":
+      contentComponent = <ManageRevenueAd />;
+      break;
+    case "Request":
+      contentComponent = <Request />;
       break;
     default:
       contentComponent = null;
@@ -44,7 +49,8 @@ const Admin = ({ children }) => {
                 <ListboxItem startContent={<MenuIcon/>} onClick={() => handleLinkClick('DashBoard')}>Dashboard</ListboxItem>
                 <ListboxItem startContent={<HotelIcon/>} onClick={() => handleLinkClick('ManageUser')}>Manage User</ListboxItem>
                 <ListboxItem startContent={<ChartIcon/>} onClick={() => handleLinkClick('ManageRevenue')}>Revenue</ListboxItem>
-                {/* <ListboxItem startContent={<RequestIcon/>} onClick={() => handleLinkClick('RequestBooking')}>Booking</ListboxItem> */}
+                <ListboxItem startContent={<NotificationIcon/>} onClick={() => handleLinkClick('Request')}>Request</ListboxItem>
+
 
 
               </Listbox>

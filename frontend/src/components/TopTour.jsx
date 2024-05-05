@@ -30,7 +30,7 @@ function TopTour() {
   return (
     <div>
       <h1 className="py-10 text-3xl font-extrabold">Top Tour</h1>
-      <div className="gap-4 grid grid-cols-2 sm:grid-cols-4">
+      <div className="gap-4 grid grid-cols-1 sm:grid-cols-4">
         {products.map((product) => (
           <Card key={product.id} className="border-small border-blue-400">
             <div className="flip-card">

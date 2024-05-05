@@ -7,6 +7,7 @@ import ListTour from "../components/ListTour";
 import TourDetail from "../components/Tour/tourDetail";
 import Search from "../components/search";
 import Admin from "../components/admin/admin";
+
 // không cần đăng nhập
 const publicRoutes = [
 

@@ -35,8 +35,9 @@ import { Percent } from "../../../assets/Percent";
 import NewTourForm from "./newTour";
 import UpdateTourForm from "./updateTour";
 import "./manageTour.css"
+import { Link } from "react-router-dom";
 
-function ManageTour() {
+const ManageTour = ({  handleLinkClick  }) => {
   const newTourModal = useDisclosure();
   const updateModal = useDisclosure();
   const voucherModal = useDisclosure()
@@ -163,16 +164,11 @@ function ManageTour() {
               </DropdownMenu>
             </Dropdown>
 
-            <Button color="primary" onPress={newTourModal.onOpen} endContent={<PlusIcon />}>
-              Add New
-            </Button>
-            <Modal hideCloseButton size="3xl" isOpen={newTourModal.isOpen} onOpenChange={newTourModal.onOpenChange}>
-              <ModalContent>
-                {(onClose) => (
-                  <NewTourForm/>
-                )}
-              </ModalContent>
-            </Modal>
+             
+              <Button onClick={() => handleLinkClick('NewTour')} color="primary" endContent={<PlusIcon />}>
+                Add New
+              </Button>
+     
           </div>
         </div>
 
@@ -231,25 +227,14 @@ function ManageTour() {
                             </Modal>
 
 {/* Update */}
-                          <Tooltip content="Edit">
+                          <Tooltip content="Edit">                 
                             <span
-                              onClick={updateModal.onOpen}
+                              onClick={() => handleLinkClick('UpdateTour')}
                               className="text-lg text-default-400 cursor-pointer active:opacity-50"
                             >
                               <Pen />
                             </span>
                           </Tooltip>
-                            <Modal
-                              backdrop="transparent"
-                              hideCloseButton
-                              size="3xl"
-                              isOpen={updateModal.isOpen}
-                              onOpenChange={updateModal.onOpenChange}
-                            >
-                              <ModalContent>
-                                {(onClose) => <UpdateTourForm/>}
-                              </ModalContent>
-                            </Modal>
 
 {/* Delete */}
                           <Tooltip color="danger" content="Delete">
