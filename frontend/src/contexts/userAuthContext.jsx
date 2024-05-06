@@ -70,7 +70,7 @@ export function UserAuthContextProvider({ children }) {
             avatarUrl: currentUser.photoURL,
           };
 
-          console.log(userData);
+          console.log("user:", currentUser);
 
           dispatch(loginSuccess(userData));
 

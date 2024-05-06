@@ -1,24 +1,48 @@
-import { Button, Image, Tab, Tabs} from "@nextui-org/react";
+import { Button, Image, Snippet, Tab, Tabs } from "@nextui-org/react";
 import "./auth.scss";
 import { GoogleIcon } from "../../assets/GoogleIcon";
 import { FacebookIcon } from "../../assets/FacebookIcon";
 import { useUserAuth } from "../../contexts/userAuthContext";
 import { useState } from "react";
+import Register from "./Register";
+import axios from "axios";
+import { Alert } from "../Alert/Alert";
 
 const Login = () => {
-
-  //display form
-  const [showNameAndPassword, setShowNameAndPassword] = useState(false);
-
-  const handleSignUpClick = (e) => {
-    e.preventDefault();
-    setShowNameAndPassword(true);
-  };
-
   //login with GG FB
   const { googleSignIn, fbSignIn } = useUserAuth();
   const [selected, setSelected] = useState("login");
+  const [dataLogin, setDataLogin] = useState();
+  const [message, setMessage] = useState();
 
+  // input change
+  const change = (e) => {
+    const { name, value } = e.target;
+    setDataLogin({
+      ...dataLogin,
+      [name]: value,
+    });
+  };
+
+  // đăng nhập với email và password
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      if (!dataLogin) {
+        setMessage("Vui lòng nhập thông tin đăng nhập");
+        return;
+      }
+
+      await axios.post(`http://localhost:8080/api/v1/auth/login`, dataLogin);
+
+      Alert(2000, "Đăng nhập", "Thành công", "success", "OK");
+    } catch (error) {
+      console.log("loi: ", error.response.data);
+      setMessage(error.response.data);
+    }
+  };
+
+  // đăng nhập với facebook
   const handleSignInGg = async () => {
     try {
       await googleSignIn();
@@ -27,6 +51,7 @@ const Login = () => {
     }
   };
 
+  // đăng nhập với gg
   const handleFb = async () => {
     try {
       await fbSignIn();
@@ -42,11 +67,11 @@ const Login = () => {
       </div>
       <Tabs
         selectedKey={selected}
-        onSelectionChange={setSelected}      
+        onSelectionChange={setSelected}
         variant="underlined"
         fullWidth
         classNames={{
-          width: 'full',
+          width: "full",
           tabList:
             "gap-5 w-full relative rounded-none p-0 border-b border-divider",
           cursor: "w-full bg-[#22d3ee]",
@@ -62,7 +87,19 @@ const Login = () => {
             </div>
           }
         >
-          <form className="form" action="">
+          <form className="form" action="" onSubmit={handleLogin}>
+            {message && (
+              <Snippet
+                hideSymbol
+                hideCopyButton
+                color="danger"
+                className={`w-full flex justify-center`}
+              >
+                {message}
+              </Snippet>
+            )}
+
+            {/* email */}
             <input
               placeholder="E-mail"
               id="email"
@@ -70,7 +107,10 @@ const Login = () => {
               type="email"
               className="input"
               required=""
+              onChange={change}
             />
+
+            {/* mật khẩu */}
             <input
               placeholder="Password"
               id="password"
@@ -78,10 +118,12 @@ const Login = () => {
               type="password"
               className="input"
               required=""
+              onChange={change}
             />
             <span className="forgot-password">
               <a href="#">Forgot Password ?</a>
             </span>
+            {/* login */}
             <input value="Sign In" type="submit" className="login-button" />
           </form>
           <div className="social-account-container">
@@ -97,6 +139,7 @@ const Login = () => {
           </div>
         </Tab>
 
+        {/* Sign Up */}
         <Tab
           key="Sign Up"
           title={
@@ -105,54 +148,7 @@ const Login = () => {
             </div>
           }
         >
-          <form className="form" action="">
-            {!showNameAndPassword && (
-              <div>
-                <input
-                  placeholder="E-mail"
-                  id="email"
-                  name="email"
-                  type="email"
-                  className="input"
-                  required=""
-                />
-                <input
-                  value="Sign Up"
-                  type="submit"
-                  className="login-button"
-                  onClick={handleSignUpClick}
-                />
-              </div>
-            )}
-
-            {showNameAndPassword && (
-              <>
-                <input
-                  placeholder="Name"
-                  id="name"
-                  name="name"
-                  type="name"
-                  className="input"
-                  required=""
-                />
-                <input
-                  placeholder="Password"
-                  id="password"
-                  name="password"
-                  type="password"
-                  className="input"
-                  required=""
-                />
-                <input
-                  value="Sign Up"
-                  type="submit"
-                  className="login-button"
-                />
-              </>
-            )}
-
-
-          </form>
+          <Register />
         </Tab>
       </Tabs>
     </div>
