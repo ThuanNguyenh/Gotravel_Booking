@@ -31,6 +31,9 @@ const Account = () => {
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
   const { logOut } = useUserAuth();
 
+  console.log(userRedux)
+
+
   useEffect(() => {
     // Đóng modal khi đăng nhập thành công
     if (isLoggedIn) {
@@ -119,6 +122,13 @@ const Account = () => {
                 <DropdownItem key="profile" className="h-7 gap-2">
                   <p className="font-semibold">{userRedux.userName}</p>
                 </DropdownItem>
+
+                <DropdownItem
+                  color="warning"            
+                >
+                  Upgrade to Host
+                </DropdownItem>
+
                 <DropdownItem as={Link} to={`/profile`} key="settings">
                   My Settings
                 </DropdownItem>

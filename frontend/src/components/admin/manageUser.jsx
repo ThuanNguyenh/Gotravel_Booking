@@ -33,6 +33,7 @@ import {
 function ManageUser() {
 
     const updateUser = useDisclosure();
+    const createUser = useDisclosure();
 
 
     const roleColorMap = {

@@ -1,4 +1,4 @@
-import RecommendSys from "./RecommendSys";
+// import RecommendSys from "./RecommendSys";
 import RecommendTour from  "./RecommendTour";
 import TopTour from "./TopTour";
 
