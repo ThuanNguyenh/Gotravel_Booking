@@ -1,38 +1,149 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Amenities from "../amenities";
 import Category from "../category";
 import { Button } from "@nextui-org/react";
 import { DeleteIcon } from "../../../assets/DeleteIcon";
 import { PlusIcon } from "../../../assets/PlusIcon";
+import SelectAddress from "../../SelectAddress";
+import * as ProvinceService from "../../../services/ProvinceService";
 
 function NewTourForm() {
+  // address
+  const [provinces, setProvinces] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [wards, setWards] = useState([]);
+  const [province, setProvince] = useState();
+  const [district, setDistrict] = useState();
+  const [ward, setWard] = useState();
+  const [provinceName, setProvinceName] = useState("");
+  const [districtName, setDistrictName] = useState("");
+  const [wardName, setWardName] = useState("");
 
-  //Select Image
-  const [thumbnails, setThumbnails] = useState([]);
+  // chuyen tu object sang mang
+  const ArrayProVince = Object.values(provinces);
+  const ArrayDistrict = Object.values(districts);
+  const ArrayWard = Object.values(wards);
 
-  const handleThumbnailChange = (event) => {
-    // Get the selected files
-    const selectedFiles = event.target.files;
+  // get provinceName - districtName - wardName
+  useEffect(() => {
+    const selectProvince = provinces.find((p) => p.province_id === province);
+    const selectDistrict = districts.find((d) => d.district_id === district);
+    const selectWard = wards.find((w) => w.ward_id === ward);
 
-    // Check if files are selected
-    if (selectedFiles && selectedFiles.length > 0) {
-      // Convert the selected files to an array of data URLs
-      const thumbnailArray = Array.from(selectedFiles).map((file) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        return new Promise((resolve) => {
-          reader.onload = () => {
-            resolve(reader.result);
-          };
-        });
-      });
-
-      // Set the thumbnails state when all promises resolve
-      Promise.all(thumbnailArray).then((results) => {
-        setThumbnails(results);
-      });
+    if (selectProvince) {
+      setProvinceName(selectProvince.province_name);
     }
+    if (selectDistrict) {
+      setDistrictName(selectDistrict.district_name);
+    }
+
+    if (selectWard) {
+      setWardName(selectWard.ward_name);
+    }
+  }, [province, provinces, districts, district, wards, ward]);
+
+  //   Tỉnh / thành phố
+  useEffect(() => {
+    const resultProvince = async () => {
+      const result = await ProvinceService.resProvince();
+      if (result.status === 200) {
+        setProvinces(result?.data.results);
+      }
+    };
+
+    resultProvince();
+  }, []);
+
+  //   quận / huyện
+  useEffect(() => {
+    const resultDistrict = async () => {
+      const result = await ProvinceService.resDistrict(province);
+
+      if (result.status === 200) {
+        setDistricts(result.data?.results);
+      }
+    };
+
+    province && resultDistrict(province);
+  }, [province, district]);
+
+  // xã / thị trấn
+  useEffect(() => {
+    const resultWard = async () => {
+      const result = await ProvinceService.resWard(district);
+
+      if (result.status === 200) {
+        setWards(result.data?.results);
+      }
+    };
+
+    district && resultWard(district);
+  }, [district, ward]);
+
+  // dữ liệu nhập vào
+  const [dataInput, setDataInput] = useState({
+    tourName: "",
+    description: "",
+    thumbnail: "",
+    province: "",
+    district: "",
+    ward: "",
+    detailAddress: "",
+    price: "",
+    numGuest: "",
+    discount: "",
+    startDate: "",
+    endDate: "",
+    owner: {
+      userId: "",
+    },
+    images: [
+      {
+        url: "",
+      },
+    ],
+    categories: [
+      {
+        categoryId: "",
+      },
+    ],
+    utilities: [
+      {
+        utilityId: "",
+      },
+    ],
+    rules: [
+      {
+        ruleId: "",
+      },
+    ],
+    schedules: [
+      {
+        date: "",
+        activity: "",
+      },
+    ],
+  });
+
+  useEffect(() => {
+    setDataInput((prevData) => ({
+      ...prevData,
+      province: provinceName,
+      district: districtName,
+      ward: wardName,
+    }));
+  }, [provinceName, districtName, wardName]);
+
+  // input change
+  const change = (e) => {
+    const { name, value } = e.target;
+    setDataInput({
+      ...dataInput,
+      [name]: value,
+    });
   };
+
+  console.log("du lieu nhap vao: ", dataInput);
 
   // Utilities - get all util id
   const [selectAmen, setSelectAmen] = useState([]);
@@ -49,11 +160,11 @@ function NewTourForm() {
   };
 
   //Schedule
-  const [schedules, setSchedules] = useState(['']); // State to store schedules
+  const [schedules, setSchedules] = useState([""]); // State to store schedules
 
   // Function to handle adding a new schedule field
   const handleAddSchedule = () => {
-    setSchedules([...schedules, '']);
+    setSchedules([...schedules, ""]);
   };
 
   // Function to handle updating schedule value
@@ -83,9 +194,10 @@ function NewTourForm() {
             Tour Name
           </label>
           <input
+            onChange={change}
             type="text"
             id="tourName"
-            name="tour_name" // Update name attribute to match the field name
+            name="tourName" // Update name attribute to match the field name
             className="bg-slate-200 mt-1 block w-1/2 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
           />
         </div>
@@ -99,6 +211,7 @@ function NewTourForm() {
           </label>
           <textarea
             id="description"
+            onChange={change}
             name="description" // Update name attribute to match the field name
             rows="2"
             className="bg-slate-200 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
@@ -106,6 +219,39 @@ function NewTourForm() {
         </div>
 
         <div className="flex gap-2">
+          {/* Province */}
+          <SelectAddress
+            value={province}
+            setValue={setProvince}
+            AutocompleteItems={ArrayProVince}
+            label="Tỉnh / Thành phố"
+            type="province"
+            name="province"
+            onChange={change}
+          />
+
+          {/* District */}
+          <SelectAddress
+            value={district}
+            setValue={setDistrict}
+            AutocompleteItems={ArrayDistrict}
+            label="Quận / Huyện"
+            type="district"
+            name="district"
+            onChange={change}
+          />
+
+          {/* Ward */}
+          <SelectAddress
+            value={ward}
+            setValue={setWard}
+            AutocompleteItems={ArrayWard}
+            type="ward"
+            label="Xã / Thị trấn"
+            name="ward"
+            onChange={change}
+          />
+
           {/* Detail Address */}
           <div className="mb-4">
             <label
@@ -115,54 +261,10 @@ function NewTourForm() {
               Detail Address
             </label>
             <input
+              onChange={change}
               type="text"
               id="detailAddress"
-              name="detail_address" // Update name attribute to match the field name
-              className="bg-slate-200 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-            />
-          </div>
-          {/* District */}
-          <div className="mb-4">
-            <label
-              htmlFor="district"
-              className="block text-sm font-medium text-gray-700"
-            >
-              District
-            </label>
-            <input
-              type="text"
-              id="district"
-              name="district" // Update name attribute to match the field name
-              className="bg-slate-200 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-            />
-          </div>
-          {/* Ward */}
-          <div className="mb-4">
-            <label
-              htmlFor="ward"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Ward
-            </label>
-            <input
-              type="text"
-              id="ward"
-              name="ward" // Update name attribute to match the field name
-              className="bg-slate-200 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-            />
-          </div>
-          {/* Province */}
-          <div className="mb-4">
-            <label
-              htmlFor="province"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Province
-            </label>
-            <input
-              type="text"
-              id="province"
-              name="province" // Update name attribute to match the field name
+              name="detailAddress" // Update name attribute to match the field name
               className="bg-slate-200 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             />
           </div>
@@ -170,8 +272,8 @@ function NewTourForm() {
 
         {/* Amenities*/}
         <div className="mb-4 flex gap-5">
-          <Amenities Utils={handleAmenChange} value={selectAmen}/>
-          <Category Cates={handleCateChange} value={selectCate}/>
+          <Amenities Utils={handleAmenChange} value={selectAmen} />
+          <Category Cates={handleCateChange} value={selectCate} />
         </div>
 
         <div className="flex gap-2">
@@ -184,6 +286,7 @@ function NewTourForm() {
               Discount %
             </label>
             <input
+              onChange={change}
               type="number"
               id="discount"
               name="discount" // Update name attribute to match the field name
@@ -199,6 +302,7 @@ function NewTourForm() {
               Price
             </label>
             <input
+              onChange={change}
               type="number"
               id="price"
               name="price" // Update name attribute to match the field name
@@ -215,12 +319,15 @@ function NewTourForm() {
             Number of Guests
           </label>
           <input
+            onChange={change}
             type="number"
             id="numGuest"
-            name="num_guest" // Update name attribute to match the field name
+            name="numGuest" // Update name attribute to match the field name
             className="bg-slate-200 mt-1 block w-1/12 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
           />
         </div>
+
+        {/*  */}
         <div className="flex gap-2">
           {/* Start Date */}
           <div className="mb-4">
@@ -231,9 +338,10 @@ function NewTourForm() {
               Start Date
             </label>
             <input
+              onChange={change}
               type="date"
               id="startDate"
-              name="start_date" // Update name attribute to match the field name
+              name="startDate" // Update name attribute to match the field name
               className="bg-slate-200 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             />
           </div>
@@ -246,9 +354,10 @@ function NewTourForm() {
               End Date
             </label>
             <input
+              onChange={change}
               type="date"
               id="endDate"
-              name="end_date" // Update name attribute to match the field name
+              name="endDate" // Update name attribute to match the field name
               className="bg-slate-200 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             />
           </div>
@@ -280,14 +389,20 @@ function NewTourForm() {
                   className="remove-schedule-btn"
                   onClick={() => handleRemoveSchedule(index)}
                 >
-                  <DeleteIcon/>
+                  <DeleteIcon />
                 </Button>
               )}
             </div>
           ))}
-          <Button isIconOnly color="primary" className="add-schedule-btn" onClick={handleAddSchedule}><PlusIcon/></Button>
+          <Button
+            isIconOnly
+            color="primary"
+            className="add-schedule-btn"
+            onClick={handleAddSchedule}
+          >
+            <PlusIcon />
+          </Button>
         </div>
-
 
         {/* Thumbnail */}
         <div className="mb-4">
@@ -295,26 +410,26 @@ function NewTourForm() {
             htmlFor="thumbnail"
             className="block text-sm font-medium text-gray-700"
           >
-            Thumbnail
+            Images
           </label>
           <input
             type="file"
             multiple // Allow multiple file selection
             id="thumbnail"
-            onChange={handleThumbnailChange}
+            // onChange={handleThumbnailChange}
             name="thumbnail"
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
           />
         </div>
         <div className="py-2 grid grid-cols-3 gap-4">
-          {thumbnails.map((thumbnail, index) => (
+          {/* {thumbnails.map((thumbnail, index) => (
             <img
               key={index}
               src={thumbnail}
               alt={`Thumbnail ${index + 1}`}
               className="rounded-md border-gray-300 shadow-sm"
             />
-          ))}
+          ))} */}
         </div>
 
         {/* Submit button */}

@@ -23,6 +23,10 @@ function Register() {
   const handleSignUpClick = async (e) => {
     e.preventDefault();
 
+    if (!profile) {
+      return setMessage("Vui lòng điền đầy đủ thông tin.");
+    }
+
     try {
       const response = await axios.post(
         `http://localhost:8080/api/v1/auth/register`,
@@ -37,18 +41,29 @@ function Register() {
 
   return (
     <div>
-      <form className="form" action="">
-        {message && (
+      <form className="form" onSubmit={handleSignUpClick}>
+        {message && typeof message === "string" ? (
           <Snippet
             hideSymbol
             hideCopyButton
-            color={`${message.status === 200 ? "success" : "danger"}`}
+            color="danger"
             className={`w-full flex justify-center`}
           >
-            {message.status === 200
-              ? message.data.message
-              : message.response.data}
+            {message}
           </Snippet>
+        ) : (
+          message && (
+            <Snippet
+              hideSymbol
+              hideCopyButton
+              color={`${message?.status === 200 ? "success" : "danger"}`}
+              className={`w-full flex justify-center`}
+            >
+              {message?.status === 200
+                ? message?.data?.message
+                : message?.response?.data}
+            </Snippet>
+          )
         )}
 
         {/* Email */}
@@ -101,7 +116,7 @@ function Register() {
           value="Sign Up"
           type="submit"
           className="login-button"
-          onClick={handleSignUpClick}
+          // onClick={handleSignUpClick}
         />
       </form>
     </div>

@@ -29,18 +29,54 @@ import { DeleteIcon } from "../../../assets/DeleteIcon";
 import { SearchIcon } from "../../../assets/SearchIcon";
 import { ChevronDownIcon } from "../../../assets/ChevronDownIcon ";
 import { PlusIcon } from "../../../assets/PlusIcon";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Percent } from "../../../assets/Percent";
+import axios from "axios";
 
 import NewTourForm from "./newTour";
 import UpdateTourForm from "./updateTour";
-import "./manageTour.css"
+import "./manageTour.css";
 import { Link } from "react-router-dom";
 
-const ManageTour = ({  handleLinkClick  }) => {
+const ManageTour = ({ handleLinkClick }) => {
   const newTourModal = useDisclosure();
   const updateModal = useDisclosure();
-  const voucherModal = useDisclosure()
+  const voucherModal = useDisclosure();
+
+  // state data
+  const [dataTour, setDataTour] = useState([]);
+  const [message, setMessage] = useState(null);
+  // get token from localStorage
+  const token = localStorage.getItem("accessToken");
+
+  // get all tour
+  const getDataTour = async () => {
+    try {
+      if (!token) {
+        return;
+      }
+
+      // Thêm token vào tiêu đề "Authorization"
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const response = await axios.get(
+        `http://localhost:8080/api/v1/tour`,
+        config
+      );
+      setDataTour(response.data);
+      console.log("danh sach tour: ", response.data);
+    } catch (error) {
+      setMessage(error.response.data.message);
+    }
+  };
+
+  useEffect(() => {
+    getDataTour();
+  }, []);
 
   const statusColorMap = {
     Active: "success",
@@ -70,9 +106,9 @@ const ManageTour = ({  handleLinkClick  }) => {
     { id: 13, name: "Phan Thiet", status: "Active" },
     { id: 14, name: "Quy Nhon", status: "Paused" },
     { id: 15, name: "Hai Phong", status: "Active" },
-    { id: 16, name: "Ha Long Bay", status: "Ongoing" }
+    { id: 16, name: "Ha Long Bay", status: "Ongoing" },
   ];
-  
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const toursPerPage = 5;
@@ -86,7 +122,6 @@ const ManageTour = ({  handleLinkClick  }) => {
   const indexOfLastTour = currentPage * toursPerPage;
   const indexOfFirstTour = indexOfLastTour - toursPerPage;
   const currentTours = tours.slice(indexOfFirstTour, indexOfLastTour);
- 
 
   //search
   const [searchQuery, setSearchQuery] = useState("");
@@ -98,15 +133,20 @@ const ManageTour = ({  handleLinkClick  }) => {
   const [selectedStatusFilters, setSelectedStatusFilters] = useState([]);
   const toggleStatusFilter = (status) => {
     if (selectedStatusFilters.includes(status)) {
-      setSelectedStatusFilters(selectedStatusFilters.filter((s) => s !== status));
+      setSelectedStatusFilters(
+        selectedStatusFilters.filter((s) => s !== status)
+      );
     } else {
       setSelectedStatusFilters([...selectedStatusFilters, status]);
     }
   };
   const isTourVisible = (tour) => {
-    const matchesSearchQuery = tour.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearchQuery = tour.name
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
     const matchesStatusFilter =
-      selectedStatusFilters.length === 0 || selectedStatusFilters.includes(tour.status);
+      selectedStatusFilters.length === 0 ||
+      selectedStatusFilters.includes(tour.status);
     return matchesSearchQuery && matchesStatusFilter;
   };
 
@@ -123,6 +163,11 @@ const ManageTour = ({  handleLinkClick  }) => {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
+  if (message) {
+    return (
+      <div>{message}</div>
+    );
+  }
 
   return (
     <div>
@@ -144,7 +189,9 @@ const ManageTour = ({  handleLinkClick  }) => {
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
                 >
-                  {selectedStatusFilters.length > 0 ? selectedStatusFilters.join(', ') : 'Status'} 
+                  {selectedStatusFilters.length > 0
+                    ? selectedStatusFilters.join(", ")
+                    : "Status"}
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
@@ -164,11 +211,13 @@ const ManageTour = ({  handleLinkClick  }) => {
               </DropdownMenu>
             </Dropdown>
 
-             
-              <Button onClick={() => handleLinkClick('NewTour')} color="primary" endContent={<PlusIcon />}>
-                Add New
-              </Button>
-     
+            <Button
+              onClick={() => handleLinkClick("NewTour")}
+              color="primary"
+              endContent={<PlusIcon />}
+            >
+              Add New
+            </Button>
           </div>
         </div>
 
@@ -198,45 +247,50 @@ const ManageTour = ({  handleLinkClick  }) => {
                       </TableCell>
                       <TableCell>
                         <div className="relative flex items-center gap-4">
-
-{/* Add Voucher */}
+                          {/* Add Voucher */}
                           <Tooltip content="Voucher">
-                            <span onClick={voucherModal.onOpen} className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                            <span
+                              onClick={voucherModal.onOpen}
+                              className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                            >
                               <Percent />
                             </span>
                           </Tooltip>
                           <Modal
-                              backdrop="transparent"
-                              hideCloseButton
-                              isOpen={voucherModal.isOpen}
-                              onOpenChange={voucherModal.onOpenChange}
-                            >
-                              <ModalContent>
-                                {(onClose) => (
-                                  <>
-                                    <ModalHeader>Add Voucher</ModalHeader>
-                                    <ModalBody>
+                            backdrop="transparent"
+                            hideCloseButton
+                            isOpen={voucherModal.isOpen}
+                            onOpenChange={voucherModal.onOpenChange}
+                          >
+                            <ModalContent>
+                              {(onClose) => (
+                                <>
+                                  <ModalHeader>Add Voucher</ModalHeader>
+                                  <ModalBody>
                                     <div className="input-container">
-                                        <input placeholder="Add % Sale here" type="text"/>
-                                        <button className="button">Add</button>
+                                      <input
+                                        placeholder="Add % Sale here"
+                                        type="text"
+                                      />
+                                      <button className="button">Add</button>
                                     </div>
-                                    </ModalBody>
-                                  </>
-                                )}
-                              </ModalContent>
-                            </Modal>
+                                  </ModalBody>
+                                </>
+                              )}
+                            </ModalContent>
+                          </Modal>
 
-{/* Update */}
-                          <Tooltip content="Edit">                 
+                          {/* Update */}
+                          <Tooltip content="Edit">
                             <span
-                              onClick={() => handleLinkClick('UpdateTour')}
+                              onClick={() => handleLinkClick("UpdateTour")}
                               className="text-lg text-default-400 cursor-pointer active:opacity-50"
                             >
                               <Pen />
                             </span>
                           </Tooltip>
 
-{/* Delete */}
+                          {/* Delete */}
                           <Tooltip color="danger" content="Delete">
                             <span className="text-lg text-danger cursor-pointer active:opacity-50">
                               <DeleteIcon />
@@ -255,17 +309,17 @@ const ManageTour = ({  handleLinkClick  }) => {
 
         <div className="flex w-full justify-center">
           <Pagination
-          isCompact
-          showControls
-          showShadow
-          page={currentPage}
-          total={Math.ceil(tours.length / toursPerPage)}
-          onChange={handlePageChange}
+            isCompact
+            showControls
+            showShadow
+            page={currentPage}
+            total={Math.ceil(tours.length / toursPerPage)}
+            onChange={handlePageChange}
           />
         </div>
       </div>
     </div>
   );
-}
+};
 
-export default ManageTour
+export default ManageTour;

@@ -1,29 +1,30 @@
 /* eslint-disable react/prop-types */
 import { createContext, useContext, useEffect, useState } from "react";
 import firebase from "../firebaseConfig";
-import { useDispatch } from "react-redux";
-import { loginSuccess, logout } from "../redux/userSlice";
 import { GoogleAuthProvider, FacebookAuthProvider } from "firebase/auth";
+import axios from "axios";
+// import Cookies from "js-cookie";
 
 const userAuthContext = createContext();
 
 export function UserAuthContextProvider({ children }) {
   const [user, setUser] = useState(null);
-  const dispatch = useDispatch();
+  const [isEmailPasswordLoggedIn, setEmailPasswordLoggedIn] = useState(false);
 
-//   function logIn(email, password) {
-//     return firebase
-//       .auth()
-//       .signInWithEmailAndPassword(email, password)
-//       .then((currentUser) => {
-//         setUser(currentUser.user);
-//       });
-//   }
+  // đăng nhập với email và password với server spring
+  async function emailAndPassword(dataLogin) {
+    const response = await axios.post(
+      `http://localhost:8080/api/v1/auth/login`,
+      dataLogin
+    );
+    localStorage.setItem("accessToken", response.data.data.token);
+    localStorage.setItem("userInfo", JSON.stringify(response.data.data.user));
+    setEmailPasswordLoggedIn(true);
+  }
 
-  // function signUp(email, password) {
-  //   return firebase.auth().createUserWithEmailAndPassword(email, password);
-  // }
+  const token = localStorage.getItem("accessToken");
 
+  // đăng nhập với google
   async function googleSignIn() {
     const googleAuthProvider = new GoogleAuthProvider();
     try {
@@ -35,6 +36,7 @@ export function UserAuthContextProvider({ children }) {
     }
   }
 
+  // đăng nhập với facebook
   async function fbSignIn() {
     const fbProvider = new FacebookAuthProvider();
     try {
@@ -47,12 +49,35 @@ export function UserAuthContextProvider({ children }) {
     }
   }
 
+  // logout server
+  const logOutServer = async () => {
+    try {
+      await axios.post(
+        `http://localhost:8080/api/v1/auth/logout`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+    } catch (error) {
+      console.log("loi roi: ", error);
+    }
+  };
+
   function logOut() {
     return firebase
       .auth()
       .signOut()
       .then(() => {
-        dispatch(logout());
+        localStorage.clear();
+
+        if (isEmailPasswordLoggedIn) {
+          logOutServer();
+        }
+        setEmailPasswordLoggedIn(false);
+        return;
       })
       .catch((error) => {
         console.log("lỗi: ", error);
@@ -68,11 +93,16 @@ export function UserAuthContextProvider({ children }) {
           const userData = {
             userName: currentUser.displayName,
             avatarUrl: currentUser.photoURL,
+            email: currentUser.email,
+            phoneNumber: currentUser.phoneNumber,
           };
 
-          console.log("user:", currentUser);
+          localStorage.setItem(
+            "accessToken",
+            currentUser.multiFactor.user.accessToken
+          );
 
-          dispatch(loginSuccess(userData));
+          localStorage.setItem("userInfo", JSON.stringify(userData));
 
           setUser(currentUser);
         } else {
@@ -84,11 +114,18 @@ export function UserAuthContextProvider({ children }) {
     return () => {
       unsubscribe();
     };
-  }, [dispatch]);
+  }, []);
 
   return (
     <userAuthContext.Provider
-      value={{ user, logOut, googleSignIn, fbSignIn }}
+      value={{
+        user,
+        isEmailPasswordLoggedIn,
+        logOut,
+        googleSignIn,
+        fbSignIn,
+        emailAndPassword,
+      }}
     >
       {children}
     </userAuthContext.Provider>

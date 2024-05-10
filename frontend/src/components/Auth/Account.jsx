@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { useUserAuth } from "../../contexts/userAuthContext";
 import { NotificationIcon } from "../../assets/NotificationIcon";
 
@@ -16,39 +15,37 @@ import {
   DropdownMenu,
   DropdownItem,
   Badge,
-  Popover, PopoverTrigger, PopoverContent
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
 } from "@nextui-org/react";
 import Login from "./Login";
 import { Link } from "react-router-dom";
-
-
+import getDataFromLocalStorage from "../../contexts/getDataFromLocalStorage";
+import { Alert } from "../Alert/Alert";
 
 const Account = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [backdrop] = React.useState("blur");
 
-  const userRedux = useSelector((state) => state.user.userData);
-  const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
+  const userInfo = getDataFromLocalStorage("userInfo");
+
   const { logOut } = useUserAuth();
-
-  console.log(userRedux)
-
 
   useEffect(() => {
     // Đóng modal khi đăng nhập thành công
-    if (isLoggedIn) {
+    if (userInfo) {
       onClose();
     }
-  }, [isLoggedIn, onClose]);
+  }, [userInfo, onClose]);
 
   const handleLogout = async () => {
     try {
       await logOut();
     } catch (error) {
-      alert("Lỗi!");
+      Alert(2000, "Đăng xuất", "Thất bại", "error", "OK");
     }
   };
-
 
   // scroll display
   const [isScrolled, setIsScrolled] = useState(false);
@@ -69,7 +66,7 @@ const Account = () => {
 
   return (
     <>
-      {isLoggedIn ? (
+      {userInfo ? (
         <NavbarContent justify="end">
           {/* notification */}
           <NavbarItem>
@@ -99,8 +96,12 @@ const Account = () => {
               </Badge>
               <PopoverContent>
                 <div className="px-1 py-2 w-52">
-                  <div className="text-small font-bold text-center">Notification</div>
-                  <div className="text-tiny">➢ Notification 1 Notification 1 Notification 1</div>
+                  <div className="text-small font-bold text-center">
+                    Notification
+                  </div>
+                  <div className="text-tiny">
+                    ➢ Notification 1 Notification 1 Notification 1
+                  </div>
                   <div className="text-tiny">➢ Notification 2</div>
                 </div>
               </PopoverContent>
@@ -115,19 +116,17 @@ const Account = () => {
                   isBordered
                   as="button"
                   className="transition-transform transform scale-90"
-                  src={userRedux.avatarUrl}
+                  src={userInfo.avatarUrl}
                 />
               </DropdownTrigger>
               <DropdownMenu aria-label="Profile Actions" variant="flat">
                 <DropdownItem key="profile" className="h-7 gap-2">
-                  <p className="font-semibold">{userRedux.userName}</p>
+                  <p className="font-semibold">
+                    {userInfo.userName || userInfo.data.username}
+                  </p>
                 </DropdownItem>
 
-                <DropdownItem
-                  color="warning"            
-                >
-                  Upgrade to Host
-                </DropdownItem>
+                <DropdownItem color="warning">Upgrade to Host</DropdownItem>
 
                 <DropdownItem as={Link} to={`/profile`} key="settings">
                   My Settings

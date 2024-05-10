@@ -5,12 +5,10 @@ import { FacebookIcon } from "../../assets/FacebookIcon";
 import { useUserAuth } from "../../contexts/userAuthContext";
 import { useState } from "react";
 import Register from "./Register";
-import axios from "axios";
 import { Alert } from "../Alert/Alert";
 
 const Login = () => {
-  //login with GG FB
-  const { googleSignIn, fbSignIn } = useUserAuth();
+  const { googleSignIn, fbSignIn, emailAndPassword } = useUserAuth();
   const [selected, setSelected] = useState("login");
   const [dataLogin, setDataLogin] = useState();
   const [message, setMessage] = useState();
@@ -33,30 +31,29 @@ const Login = () => {
         return;
       }
 
-      await axios.post(`http://localhost:8080/api/v1/auth/login`, dataLogin);
+      await emailAndPassword(dataLogin);
 
       Alert(2000, "Đăng nhập", "Thành công", "success", "OK");
     } catch (error) {
-      console.log("loi: ", error.response.data);
       setMessage(error.response.data);
     }
   };
 
-  // đăng nhập với facebook
+  // đăng nhập với google
   const handleSignInGg = async () => {
     try {
       await googleSignIn();
     } catch (error) {
-      alert("lỗi!");
+      Alert(2000, "Đăng nhập", "Thất bại", "error", "OK");
     }
   };
 
-  // đăng nhập với gg
+  // đăng nhập với facebook
   const handleFb = async () => {
     try {
       await fbSignIn();
     } catch (error) {
-      alert("lỗi!");
+      Alert(2000, "Đăng nhập", "Thất bại", "error", "OK");
     }
   };
 
