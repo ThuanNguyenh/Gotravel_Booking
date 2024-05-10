@@ -78,36 +78,6 @@ const ManageTour = ({ handleLinkClick }) => {
     getDataTour();
   }, []);
 
-  const statusColorMap = {
-    Active: "success",
-    Paused: "danger",
-    Ongoing: "primary",
-  };
-
-  const statusOptions = [
-    { name: "Active", uid: "active" },
-    { name: "Paused", uid: "paused" },
-    { name: "Ongoing", uid: "ongoing" },
-  ];
-
-  const tours = [
-    { id: 1, name: "Da Nang", status: "Active" },
-    { id: 2, name: "Hue", status: "Paused" },
-    { id: 3, name: "Vung Tau", status: "Active" },
-    { id: 4, name: "Da Lat", status: "Ongoing" },
-    { id: 5, name: "Ho Chi Minh City", status: "Active" },
-    { id: 6, name: "Hanoi", status: "Paused" },
-    { id: 7, name: "Nha Trang", status: "Active" },
-    { id: 8, name: "Phu Quoc", status: "Ongoing" },
-    { id: 9, name: "Mui Ne", status: "Active" },
-    { id: 10, name: "Hoi An", status: "Paused" },
-    { id: 11, name: "Sapa", status: "Active" },
-    { id: 12, name: "Can Tho", status: "Ongoing" },
-    { id: 13, name: "Phan Thiet", status: "Active" },
-    { id: 14, name: "Quy Nhon", status: "Paused" },
-    { id: 15, name: "Hai Phong", status: "Active" },
-    { id: 16, name: "Ha Long Bay", status: "Ongoing" },
-  ];
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -121,7 +91,7 @@ const ManageTour = ({ handleLinkClick }) => {
   // Calculate indexes for slicing tours array based on current page
   const indexOfLastTour = currentPage * toursPerPage;
   const indexOfFirstTour = indexOfLastTour - toursPerPage;
-  const currentTours = tours.slice(indexOfFirstTour, indexOfLastTour);
+  const currentTours = dataTour.slice(indexOfFirstTour, indexOfLastTour);
 
   //search
   const [searchQuery, setSearchQuery] = useState("");
@@ -129,33 +99,33 @@ const ManageTour = ({ handleLinkClick }) => {
     setSearchQuery(event.target.value);
   };
 
-  //filter status
+  // //filter status
   const [selectedStatusFilters, setSelectedStatusFilters] = useState([]);
-  const toggleStatusFilter = (status) => {
-    if (selectedStatusFilters.includes(status)) {
+  const toggleStatusFilter = (province) => {
+    if (selectedStatusFilters.includes(province)) {
       setSelectedStatusFilters(
-        selectedStatusFilters.filter((s) => s !== status)
+        selectedStatusFilters.filter((s) => s !== province)
       );
     } else {
-      setSelectedStatusFilters([...selectedStatusFilters, status]);
+      setSelectedStatusFilters([...selectedStatusFilters, province]);
     }
   };
-  const isTourVisible = (tour) => {
-    const matchesSearchQuery = tour.name
+  const isTourVisible = (dataTour) => {
+    const matchesSearchQuery = dataTour.tourName
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
     const matchesStatusFilter =
       selectedStatusFilters.length === 0 ||
-      selectedStatusFilters.includes(tour.status);
+      selectedStatusFilters.includes(dataTour.province);
     return matchesSearchQuery && matchesStatusFilter;
   };
 
   // Filter tours based on the search query
   const filteredTours = currentTours.filter(
-    (tour) =>
-      tour.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+    (dataTour) =>
+      dataTour.tourName.toLowerCase().includes(searchQuery.toLowerCase()) &&
       (selectedStatusFilters.length === 0 ||
-        selectedStatusFilters.includes(tour.status))
+        selectedStatusFilters.includes(dataTour.tourName))
   );
 
   //Caplock
@@ -164,9 +134,7 @@ const ManageTour = ({ handleLinkClick }) => {
   }
 
   if (message) {
-    return (
-      <div>{message}</div>
-    );
+    return <div>{message}</div>;
   }
 
   return (
@@ -199,13 +167,13 @@ const ManageTour = ({ handleLinkClick }) => {
                 disallowEmptySelection
                 selectionMode="single"
               >
-                {statusOptions.map((status) => (
+                {dataTour.map((dataTour) => (
                   <DropdownItem
-                    key={status.name}
+                    key={dataTour.tourId}
                     className="capitalize"
-                    onClick={() => toggleStatusFilter(status.name)}
+                    onClick={() => toggleStatusFilter(dataTour.province)}
                   >
-                    {capitalize(status.name)}
+                    {capitalize(dataTour.province)}
                   </DropdownItem>
                 ))}
               </DropdownMenu>
@@ -230,19 +198,18 @@ const ManageTour = ({ handleLinkClick }) => {
             </TableHeader>
             <TableBody>
               {/* Map over the data to render each row dynamically */}
-              {filteredTours.map((tour) => {
+              {dataTour.map((tour) => {
                 if (isTourVisible(tour)) {
                   return (
-                    <TableRow key={tour.id}>
-                      <TableCell>{tour.name}</TableCell>
+                    <TableRow key={tour.tourId}>
+                      <TableCell>{tour.tourName}</TableCell>
                       <TableCell>
                         <Chip
                           className="capitalize"
-                          color={statusColorMap[tour.status]}
                           size="sm"
                           variant="flat"
                         >
-                          {tour.status}
+                          {tour.province}
                         </Chip>
                       </TableCell>
                       <TableCell>
@@ -313,7 +280,7 @@ const ManageTour = ({ handleLinkClick }) => {
             showControls
             showShadow
             page={currentPage}
-            total={Math.ceil(tours.length / toursPerPage)}
+            total={Math.ceil(dataTour.length / toursPerPage)}
             onChange={handlePageChange}
           />
         </div>

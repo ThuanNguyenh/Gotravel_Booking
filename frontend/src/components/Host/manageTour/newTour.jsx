@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Amenities from "../amenities";
 import Category from "../category";
-import { Button } from "@nextui-org/react";
+import { Button, Card, Input, Textarea } from "@nextui-org/react";
 import { DeleteIcon } from "../../../assets/DeleteIcon";
 import { PlusIcon } from "../../../assets/PlusIcon";
 import SelectAddress from "../../SelectAddress";
@@ -160,17 +160,17 @@ function NewTourForm() {
   };
 
   //Schedule
-  const [schedules, setSchedules] = useState([""]); // State to store schedules
+  const [schedules, setSchedules] = useState([{ date: "", activity: "" }]); // State to store schedules
 
   // Function to handle adding a new schedule field
   const handleAddSchedule = () => {
-    setSchedules([...schedules, ""]);
+    setSchedules([...schedules, { date: "", activity: "" }]);
   };
 
   // Function to handle updating schedule value
-  const handleScheduleChange = (index, value) => {
+  const handleScheduleChange = (index, field, value) => {
     const newSchedules = [...schedules];
-    newSchedules[index] = value;
+    newSchedules[index][field] = value;
     setSchedules(newSchedules);
   };
 
@@ -373,14 +373,26 @@ function NewTourForm() {
           </label>
           {schedules.map((schedule, index) => (
             <div key={index} className="mb-4 flex items-center gap-1">
-              <textarea
-                id={`schedule-${index}`}
-                name={`schedule-${index}`}
-                rows="2"
-                className="bg-slate-200 mt-1 block w-[30%] rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                value={schedule}
-                onChange={(e) => handleScheduleChange(index, e.target.value)}
-              ></textarea>
+              <Card className="p-2">
+                <Input
+                  type="date"
+                  size="sm"
+                  id={`schedule-date-${index}`}
+                  name={`schedule-date-${index}`}
+                  className="bg-slate-200 mt-1 block  rounded-md border-gray-300 "
+                  value={schedule.date}
+                  onChange={(e) => handleScheduleChange(index, "date", e.target.value)}
+                />
+                <Textarea
+                  id={`schedule-activity-${index}`}
+                  name={`schedule-activity-${index}`}
+                  size="sm"
+                  placeholder="Your Schedule"
+                  className="bg-slate-200 mt-1 block  rounded-md border-gray-300"
+                  value={schedule.activity}
+                  onChange={(e) => handleScheduleChange(index, "activity", e.target.value)}
+                ></Textarea>
+              </Card>
               {index > 0 && (
                 <Button
                   color="danger"
