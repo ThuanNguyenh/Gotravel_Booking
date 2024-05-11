@@ -466,12 +466,12 @@ function NewTourForm() {
             </div>
           ))}
           <Button
-            isIconOnly
             color="primary"
             className="add-schedule-btn"
             onClick={handleAddSchedule}
+            startContent={<PlusIcon/>}
           >
-            <PlusIcon />
+            New Schedule
           </Button>
         </div>
 
