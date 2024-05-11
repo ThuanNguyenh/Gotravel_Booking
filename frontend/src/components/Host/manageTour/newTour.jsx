@@ -1,13 +1,21 @@
 import { useEffect, useState } from "react";
-import Amenities from "../amenities";
-import Category from "../category";
+import Amenities from "../../directory/amenities";
+import Category from "../../directory/category";
 import { Button } from "@nextui-org/react";
 import { DeleteIcon } from "../../../assets/DeleteIcon";
 import { PlusIcon } from "../../../assets/PlusIcon";
 import SelectAddress from "../../SelectAddress";
 import * as ProvinceService from "../../../services/ProvinceService";
+import Rules from "../../directory/Rules";
+import { XMarkIcon } from "@heroicons/react/24/solid";
+import { storage } from "../../../firebaseConfig";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 function NewTourForm() {
+  const userString = localStorage.getItem("userInfo");
+  const user = JSON.parse(userString);
+  const userId = user.userId;
+
   // address
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
@@ -80,6 +88,92 @@ function NewTourForm() {
     district && resultWard(district);
   }, [district, ward]);
 
+  // images
+  const [images, setImages] = useState([]);
+  const [urls, setUrls] = useState([]);
+
+  // handle remove url
+  const handleRemoveUrl = (index) => {
+    const newUrls1 = [...urls];
+    // remove image at index
+    newUrls1.splice(index, 1);
+
+    setUrls(newUrls1);
+  };
+
+  // handle change image
+  const handleChange = (e) => {
+    for (let i = 0; i < e.target.files.length; i++) {
+      const newImage = e.target.files[i];
+      newImage["id"] = Math.random();
+      setImages((prevState) => [...prevState, newImage]);
+
+      setUrls((prev) => [...prev, URL.createObjectURL(newImage)]);
+    }
+  };
+
+  // Images upload
+  const uploadMultipleFiles = async (images) => {
+    const storageRef = ref(storage); // Thay 'storage' bằng đường dẫn đến thư mục bạn muốn lưu trữ ảnh
+
+    try {
+      const uploadPromises = images.map(async (file) => {
+        const imageRef = ref(storageRef, `images/${file.name}`);
+        await uploadBytes(imageRef, file);
+        const downloadUrl = await getDownloadURL(imageRef);
+        return downloadUrl;
+      });
+
+      const downloadUrls = await Promise.all(uploadPromises);
+      return downloadUrls;
+    } catch (error) {
+      console.error("Error: ", error);
+    }
+  };
+
+  // Utilities - get all util id
+  const [selectAmen, setSelectAmen] = useState([]);
+
+  const handleAmenChange = (newAmen) => {
+    setSelectAmen(newAmen);
+  };
+
+  // Category - get all category id
+  const [selectCate, setSelectCate] = useState([]);
+
+  const handleCateChange = (newCate) => {
+    setSelectCate(newCate);
+  };
+
+  // Rule - get all rule id
+  const [selectRule, setSelectRule] = useState([]);
+
+  const handleRuleChange = (newRule) => {
+    setSelectRule(newRule);
+  };
+
+  //Schedule
+  const [schedules, setSchedules] = useState([""]); // State to store schedules
+
+  // Function to handle adding a new schedule field
+  const handleAddSchedule = () => {
+    setSchedules([...schedules, ""]);
+  };
+
+  // Function to handle updating schedule value
+  const handleScheduleChange = (index, value) => {
+    const newSchedules = [...schedules];
+    newSchedules[index] = value;
+    setSchedules(newSchedules);
+  };
+
+  // Function to handle removing a schedule field
+  const handleRemoveSchedule = (index) => {
+    const newSchedules = [...schedules];
+    newSchedules.splice(index, 1);
+    setSchedules(newSchedules);
+  };
+
   // dữ liệu nhập vào
   const [dataInput, setDataInput] = useState({
     tourName: "",
@@ -131,8 +225,22 @@ function NewTourForm() {
       province: provinceName,
       district: districtName,
       ward: wardName,
+      categories: selectCate.map((id) => ({ utilityId: id })),
+      utilities: selectAmen.map((id) => ({ utilityId: id })),
+      rules: selectRule.map((id) => ({ ruleId: id })),
+      owner: {
+        userId: userId,
+      },
     }));
-  }, [provinceName, districtName, wardName]);
+  }, [
+    provinceName,
+    districtName,
+    wardName,
+    selectCate,
+    selectAmen,
+    selectRule,
+    userId,
+  ]);
 
   // input change
   const change = (e) => {
@@ -145,41 +253,14 @@ function NewTourForm() {
 
   console.log("du lieu nhap vao: ", dataInput);
 
-  // Utilities - get all util id
-  const [selectAmen, setSelectAmen] = useState([]);
-
-  const handleAmenChange = (newAmen) => {
-    setSelectAmen(newAmen);
-  };
-
-  // Category - get all category id
-  const [selectCate, setSelectCate] = useState([]);
-
-  const handleCateChange = (newCate) => {
-    setSelectCate(newCate);
-  };
-
-  //Schedule
-  const [schedules, setSchedules] = useState([""]); // State to store schedules
-
-  // Function to handle adding a new schedule field
-  const handleAddSchedule = () => {
-    setSchedules([...schedules, ""]);
-  };
-
-  // Function to handle updating schedule value
-  const handleScheduleChange = (index, value) => {
-    const newSchedules = [...schedules];
-    newSchedules[index] = value;
-    setSchedules(newSchedules);
-  };
-
-  // Function to handle removing a schedule field
-  const handleRemoveSchedule = (index) => {
-    const newSchedules = [...schedules];
-    newSchedules.splice(index, 1);
-    setSchedules(newSchedules);
-  };
+  const uploadAndSave = async (e) => {
+    e.preventDefault();
+    try {
+      await uploadMultipleFiles(images);
+    } catch (error) {
+      console.log("loi ", error);
+    }
+  }
 
   return (
     <div className="mx-auto p-8">
@@ -272,8 +353,9 @@ function NewTourForm() {
 
         {/* Amenities*/}
         <div className="mb-4 flex gap-5">
-          <Amenities Utils={handleAmenChange} value={selectAmen} />
           <Category Cates={handleCateChange} value={selectCate} />
+          <Amenities Utils={handleAmenChange} value={selectAmen} />
+          <Rules Rules={handleRuleChange} value={selectRule} />
         </div>
 
         <div className="flex gap-2">
@@ -327,7 +409,7 @@ function NewTourForm() {
           />
         </div>
 
-        {/*  */}
+        {/* DATE */}
         <div className="flex gap-2">
           {/* Start Date */}
           <div className="mb-4">
@@ -404,7 +486,7 @@ function NewTourForm() {
           </Button>
         </div>
 
-        {/* Thumbnail */}
+        {/* Images */}
         <div className="mb-4">
           <label
             htmlFor="thumbnail"
@@ -416,25 +498,29 @@ function NewTourForm() {
             type="file"
             multiple // Allow multiple file selection
             id="thumbnail"
-            // onChange={handleThumbnailChange}
+            onChange={handleChange}
             name="thumbnail"
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
           />
         </div>
         <div className="py-2 grid grid-cols-3 gap-4">
-          {/* {thumbnails.map((thumbnail, index) => (
-            <img
-              key={index}
-              src={thumbnail}
-              alt={`Thumbnail ${index + 1}`}
-              className="rounded-md border-gray-300 shadow-sm"
-            />
-          ))} */}
+          {urls?.map((url, index) => (
+            <div key={index} className="relative sm:col-span-2">
+              <button
+                onClick={() => handleRemoveUrl(index)}
+                className="bg-pink-600 absolute right-0"
+              >
+                <XMarkIcon className="w-7 text-white" />
+              </button>
+              <img className="h-96 border w-full" src={url} alt="preview" />
+            </div>
+          ))}
         </div>
 
         {/* Submit button */}
         <div>
           <button
+            onClick={uploadAndSave}
             type="submit"
             className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
