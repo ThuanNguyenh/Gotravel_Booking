@@ -160,11 +160,11 @@ function NewTourForm() {
   };
 
   //Schedule
-  const [schedules, setSchedules] = useState([{ date: "", activity: "" }]); // State to store schedules
+  const [schedules, setSchedules] = useState([{ date: "", activities: [""] }]); // State to store schedules
 
   // Function to handle adding a new schedule field
   const handleAddSchedule = () => {
-    setSchedules([...schedules, { date: "", activity: "" }]);
+    setSchedules([...schedules, { date: "", activities: [""] }]);
   };
 
   // Function to handle updating schedule value
@@ -178,6 +178,28 @@ function NewTourForm() {
   const handleRemoveSchedule = (index) => {
     const newSchedules = [...schedules];
     newSchedules.splice(index, 1);
+    setSchedules(newSchedules);
+  };
+
+  
+  // Function to handle adding a new activity for a specific date
+  const handleAddActivity = (index) => {
+    const newSchedules = [...schedules];
+    newSchedules[index].activities.push("");
+    setSchedules(newSchedules);
+  };
+
+  // Function to handle removing an activity for a specific date
+  const handleRemoveActivity = (dateIndex, activityIndex) => {
+    const newSchedules = [...schedules];
+    newSchedules[dateIndex].activities.splice(activityIndex, 1);
+    setSchedules(newSchedules);
+  };
+
+  // Function to handle updating activity value for a specific date
+  const handleActivityChange = (dateIndex, activityIndex, value) => {
+    const newSchedules = [...schedules];
+    newSchedules[dateIndex].activities[activityIndex] = value;
     setSchedules(newSchedules);
   };
 
@@ -371,39 +393,76 @@ function NewTourForm() {
           >
             Schedule
           </label>
-          {schedules.map((schedule, index) => (
-            <div key={index} className="mb-4 flex items-center gap-1">
-              <Card className="p-2">
+          {schedules.map((schedule, dateIndex) => (
+            <div key={dateIndex} className="mb-4 flex items-center gap-3">
+              <Card className="w-[30%] p-2">
                 <Input
-                  type="date"
+                  type="text"
                   size="sm"
-                  id={`schedule-date-${index}`}
-                  name={`schedule-date-${index}`}
-                  className="bg-slate-200 mt-1 block  rounded-md border-gray-300 "
+                  placeholder="Date"
+                  id={`schedule-date-${dateIndex}`}
+                  name={`schedule-date-${dateIndex}`}
+                  className="bg-slate-200 mt-1 block rounded-md"
                   value={schedule.date}
-                  onChange={(e) => handleScheduleChange(index, "date", e.target.value)}
+                  onChange={(e) =>
+                    handleScheduleChange(dateIndex, "date", e.target.value)
+                  }
                 />
-                <Textarea
-                  id={`schedule-activity-${index}`}
-                  name={`schedule-activity-${index}`}
-                  size="sm"
-                  placeholder="Your Schedule"
-                  className="bg-slate-200 mt-1 block  rounded-md border-gray-300"
-                  value={schedule.activity}
-                  onChange={(e) => handleScheduleChange(index, "activity", e.target.value)}
-                ></Textarea>
-              </Card>
-              {index > 0 && (
+                {schedule.activities.map((activity, activityIndex) => (
+                  <div
+                    key={activityIndex}
+                    className="mb-2 flex items-center gap-1"
+                  >
+                    <Textarea
+                      size="sm"
+                      placeholder="Activities"
+                      id={`schedule-activity-${dateIndex}-${activityIndex}`}
+                      name={`schedule-activity-${dateIndex}-${activityIndex}`}
+                      className="bg-slate-200 mt-1 block  rounded-md"
+                      value={activity}
+                      onChange={(e) =>
+                        handleActivityChange(
+                          dateIndex,
+                          activityIndex,
+                          e.target.value
+                        )
+                      }
+                    ></Textarea>
+                    {activityIndex > 0 && (
+                      <Button
+                        color="danger"
+                        size="sm"
+                        isIconOnly
+                        className="remove-activity-btn"
+                        onClick={() =>
+                          handleRemoveActivity(dateIndex, activityIndex)
+                        }
+                      >
+                        <DeleteIcon />
+                      </Button>
+                    )}
+                  </div>
+                ))}
                 <Button
-                  color="danger"
-                  size="sm"
                   isIconOnly
-                  className="remove-schedule-btn"
-                  onClick={() => handleRemoveSchedule(index)}
+                  color="primary"
+                  className="add-activity-btn"
+                  onClick={() => handleAddActivity(dateIndex)}
                 >
-                  <DeleteIcon />
+                  <PlusIcon/>
                 </Button>
-              )}
+              </Card>
+              {dateIndex > 0 && (
+                  <Button
+                    color="danger"
+                    size="sm"
+                    isIconOnly
+                    className="remove-schedule-btn"
+                    onClick={() => handleRemoveSchedule(dateIndex)}
+                  >
+                    <DeleteIcon />
+                  </Button>
+                )}
             </div>
           ))}
           <Button
