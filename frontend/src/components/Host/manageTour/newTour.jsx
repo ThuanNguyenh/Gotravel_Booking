@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Amenities from "../../directory/amenities";
 import Category from "../../directory/category";
-import { Button } from "@nextui-org/react";
+import { Button, Card, Input, Textarea } from "@nextui-org/react";
 import { DeleteIcon } from "../../../assets/DeleteIcon";
 import { PlusIcon } from "../../../assets/PlusIcon";
 import SelectAddress from "../../SelectAddress";
@@ -10,11 +10,16 @@ import Rules from "../../directory/Rules";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { storage } from "../../../firebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import axios from "axios";
 
 function NewTourForm() {
+  // get userId from localStorage
   const userString = localStorage.getItem("userInfo");
   const user = JSON.parse(userString);
   const userId = user.userId;
+
+  // get accessToken from localStorage
+  const token = localStorage.getItem("accessToken");
 
   // address
   const [provinces, setProvinces] = useState([]);
@@ -178,7 +183,7 @@ function NewTourForm() {
   const [dataInput, setDataInput] = useState({
     tourName: "",
     description: "",
-    thumbnail: "",
+    thumbnail: "images2",
     province: "",
     district: "",
     ward: "",
@@ -193,7 +198,7 @@ function NewTourForm() {
     },
     images: [
       {
-        url: "",
+        url: "image1",
       },
     ],
     categories: [
@@ -213,8 +218,8 @@ function NewTourForm() {
     ],
     schedules: [
       {
-        date: "",
-        activity: "",
+        date: "1",
+        activity: "tam bien",
       },
     ],
   });
@@ -225,7 +230,7 @@ function NewTourForm() {
       province: provinceName,
       district: districtName,
       ward: wardName,
-      categories: selectCate.map((id) => ({ utilityId: id })),
+      categories: selectCate.map((id) => ({ categoryId: id })),
       utilities: selectAmen.map((id) => ({ utilityId: id })),
       rules: selectRule.map((id) => ({ ruleId: id })),
       owner: {
@@ -253,10 +258,38 @@ function NewTourForm() {
 
   console.log("du lieu nhap vao: ", dataInput);
 
+  // save tour
+  const saveTour = async(listImage) => {
+    const dataRequest = {
+      ...dataInput,
+      thumbnail: listImage[0],
+      images: [...listImage.map((url) => ({url}))]
+    };
+
+    try {
+      const response = await axios.post(`http://localhost:8080/api/v1/tour/add`,
+        dataRequest,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      console.log("ket qua da luu: ", response);
+    } catch (error) {
+      console.log("loi roi: ", error);
+    }
+
+  }
+
+
+  // UploadAndSave
   const uploadAndSave = async (e) => {
     e.preventDefault();
     try {
-      await uploadMultipleFiles(images);
+      const listImage = await uploadMultipleFiles(images);
+      console.log("hinh anh: ", listImage);
+      await saveTour(listImage);
     } catch (error) {
       console.log("loi ", error);
     }
@@ -455,14 +488,26 @@ function NewTourForm() {
           </label>
           {schedules.map((schedule, index) => (
             <div key={index} className="mb-4 flex items-center gap-1">
-              <textarea
-                id={`schedule-${index}`}
-                name={`schedule-${index}`}
-                rows="2"
-                className="bg-slate-200 mt-1 block w-[30%] rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                value={schedule}
-                onChange={(e) => handleScheduleChange(index, e.target.value)}
-              ></textarea>
+              <Card className="p-2">
+                <Input
+                  type="date"
+                  size="sm"
+                  id={`schedule-date-${index}`}
+                  name={`schedule-date-${index}`}
+                  className="bg-slate-200 mt-1 block  rounded-md border-gray-300 "
+                  value={schedule.date}
+                  onChange={(e) => handleScheduleChange(index, "date", e.target.value)}
+                />
+                <Textarea
+                  id={`schedule-activity-${index}`}
+                  name={`schedule-activity-${index}`}
+                  size="sm"
+                  placeholder="Your Schedule"
+                  className="bg-slate-200 mt-1 block  rounded-md border-gray-300"
+                  value={schedule.activity}
+                  onChange={(e) => handleScheduleChange(index, "activity", e.target.value)}
+                ></Textarea>
+              </Card>
               {index > 0 && (
                 <Button
                   color="danger"
