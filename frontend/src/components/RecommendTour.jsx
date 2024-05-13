@@ -5,10 +5,19 @@ import { StarIcon } from "../assets/starIcon";
 import { HeartIcon } from "../assets/heart";
 
 function RecommendTour() {
-  //heart button
-  const [liked, setLiked] = useState(false);
+  // State to store liked status for each product
+  const [likedProducts, setLikedProducts] = useState([]);
 
-  //fetch api
+  // Function to toggle liked status for a product
+  const toggleLike = (index) => {
+    setLikedProducts((prevLikedProducts) => {
+      const newLikedProducts = [...prevLikedProducts];
+      newLikedProducts[index] = !newLikedProducts[index];
+      return newLikedProducts;
+    });
+  };
+  
+  // Fetch API data
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
@@ -18,7 +27,10 @@ function RecommendTour() {
         const data = await response.json();
         // Limit the products to the first 20 items
         const first20Products = data.products.slice(0, 8);
+        // Initialize liked status for each product to false
+        const initialLikedStatus = first20Products.map(() => false);
         setProducts(first20Products);
+        setLikedProducts(initialLikedStatus);
       } catch (error) {
         console.error("Error fetching product data:", error);
       }
@@ -27,11 +39,13 @@ function RecommendTour() {
     fetchData();
   }, []);
 
+
+
   return (
     <div>
-        <h1 className="py-10 text-3xl font-extrabold">Recommended Tour</h1>
-        <div className="gap-4 grid grid-cols-1 sm:grid-cols-4">
-        {products.map((product) => (
+      <h1 className="py-10 text-3xl font-extrabold">Recommended Tour</h1>
+      <div className="gap-4 grid grid-cols-1 sm:grid-cols-4">
+        {products.map((product, index) => (
           <Card key={product.id} className="border-small border-blue-400">
             <div className="flip-card">
               <div className="flip-card-inner">
@@ -61,13 +75,15 @@ function RecommendTour() {
                             className="text-default-900/60 data-[hover]:bg-foreground/10 -translate-y-2 translate-x-2"
                             radius="full"
                             variant="light"
-                            onPress={() => setLiked((v) => !v)}
+                            onPress={() => toggleLike(index)}
                           >
                             <HeartIcon
                               className={
-                                liked ? "[&>path]:stroke-transparent" : ""
+                                likedProducts[index]
+                                  ? "[&>path]:stroke-transparent"
+                                  : ""
                               }
-                              fill={liked ? "red" : "none"}
+                              fill={likedProducts[index] ? "red" : "none"}
                             />
                           </Button>
                         </div>
@@ -76,11 +92,14 @@ function RecommendTour() {
                   </CardBody>
                   <CardFooter className="justify-between">
                     <div className="flex flex-col font-semibold text-lg">
-                      <h1 className="">{product.title.length > 10 ? product.title.substring(0, 12) + '...' : product.title}</h1>
+                      <h1 className="">
+                        {product.title.length > 10
+                          ? product.title.substring(0, 12) + "..."
+                          : product.title}
+                      </h1>
                       <p className="text-medium font-light">{product.brand}</p>
                       <h1>
-                        ${product.price}{" "}
-                        <span className="font-light">night</span>
+                        ${product.price} <span className="font-light">night</span>
                       </h1>
                     </div>
                     <div>

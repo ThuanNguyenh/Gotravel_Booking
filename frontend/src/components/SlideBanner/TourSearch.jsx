@@ -1,45 +1,71 @@
-import { Autocomplete, AutocompleteItem, Button, Input, Link } from "@nextui-org/react";
-import { animals } from "../../models/data";
+import { Autocomplete, AutocompleteItem, Button, Input } from "@nextui-org/react";
 import { LocationIcon } from "../../assets/LocationIcon";
 import { DateIcon } from "../../assets/DateIcon";
 import { PerRoomIcon } from "../../assets/PerRoom";
 import "./slide.scss";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { SearchIcon } from "../../assets/SearchIcon";
+import * as ProvinceService from "../../services/ProvinceService";
+
 
 const TourSearch = () => {
+  const [provinces, setProvinces] = useState([]);
+  const [location, setLocation] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [tourType, setTourType] = useState("");
+
+  useEffect(() => {
+    const fetchProvinces = async () => {
+      const result = await ProvinceService.resProvince();
+      if (result.status === 200) {
+        setProvinces(result?.data.results);
+      }
+    };
+
+    fetchProvinces();
+  }, []);
+
+  const handleSearch = () => {
+    // Redirect to search page with query parameters
+    const queryParams = {
+      location,
+      startDate,
+      endDate,
+      tourType,
+    };
+    // Convert queryParams to query string
+    const queryString = new URLSearchParams(queryParams).toString();
+    // Redirect to search page with query string
+    window.location.href = `/search?${queryString}`;
+  };
+
   return (
     <div>
       <div className="flex mt-2 mb-4 ml-2">
-        {/* địa điểm */}
         <div className="w-1/4">
           <div className="flex flex-col gap-3">
-            <h2 className="font-semibold text-neutral-800">
-              Địa điểm hoặc thành phố
-            </h2>
+            <h2 className="font-semibold text-neutral-800">Địa điểm hoặc thành phố</h2>
             <Autocomplete
-              defaultItems={animals}
+              defaultItems={provinces}
               placeholder="Thành phố, địa điểm,..."
               className="location max-w-xs"
-              startContent={React.cloneElement(<LocationIcon />, {
-                stroke: "#0194F3",
-              })}
+              startContent={React.cloneElement(<LocationIcon />, { stroke: "#0194F3" })}
               size="sm"
               variant="bordered"
+              onChange={(value) => setLocation(value)}
             >
-              {(animal) => (
-                <AutocompleteItem key={animal.value}>
-                  {animal.label}
+              {(province) => (
+                <AutocompleteItem key={province.province_id}>
+                  {province.province_name}
                 </AutocompleteItem>
               )}
             </Autocomplete>
           </div>
         </div>
-        {/* ngày đi */}
-        <div className=" w-1/4">
+        <div className="w-1/4">
           <div className="flex flex-col gap-3">
             <h2 className="font-semibold text-neutral-800">Ngày đi</h2>
-
             <Input
               className="max-w-xs date"
               startContent={<DateIcon />}
@@ -47,11 +73,10 @@ const TourSearch = () => {
               radius="none"
               size="sm"
               variant="bordered"
+              onChange={(e) => setStartDate(e.target.value)}
             />
           </div>
         </div>
-
-        {/* ngay ve */}
         <div className="w-1/4">
           <div className="flex flex-col gap-3">
             <h2 className="font-semibold text-neutral-800">Ngày về</h2>
@@ -62,25 +87,25 @@ const TourSearch = () => {
               radius="none"
               size="sm"
               variant="bordered"
+              onChange={(e) => setEndDate(e.target.value)}
             />
           </div>
         </div>
-
-        {/* Loại hình */}
         <div className="w-1/4">
           <div className="flex flex-col gap-3">
             <h2 className="font-semibold text-neutral-800">Loại hình</h2>
             <Autocomplete
-              defaultItems={animals}
+              defaultItems={provinces}
               placeholder="Loại hình mong muốn"
               className="type max-w-xs"
               startContent={<PerRoomIcon/>}
               size="sm"
               variant="bordered"
+              onChange={(value) => setTourType(value)}
             >
-              {(animal) => (
-                <AutocompleteItem key={animal.value}>
-                  {animal.label}
+              {(province) => (
+                <AutocompleteItem key={province.province_id}>
+                  {province.province_type}
                 </AutocompleteItem>
               )}
             </Autocomplete>
@@ -88,8 +113,7 @@ const TourSearch = () => {
         </div>
         <div className="pl-5 pt-2">
           <Button
-            as={Link}
-            href="/search"
+            onClick={handleSearch}
             isIconOnly
             variant="ghost"
             className="bg-gradient-to-tl text-white to-cyan-500 from-[#73D8FC] mr-4 mt-6"

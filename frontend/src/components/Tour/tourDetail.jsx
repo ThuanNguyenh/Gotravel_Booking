@@ -10,7 +10,9 @@ import { useState, useEffect } from 'react';
 
 function TourDetail() {
 
-
+    //heart button
+    const [liked, setLiked] = useState(false);
+    
     //fetch tour detail based id
     const { productId } = useParams();
     const [product, setProduct] = useState(null);
@@ -48,7 +50,12 @@ function TourDetail() {
                 <div className="flex flex-col gap-5 items-end justify-between">
                     <h1 className="text-3xl font-bold">${product.price}/night</h1>
                     <div className="flex flex-row gap-3">
-                        <Button isIconOnly variant="bordered" className="border-[#01B7F2]"><HeartIcon/></Button>
+                        <Button isIconOnly variant="bordered" className="border-[#01B7F2]" onPress={() => setLiked((v) => !v)}>
+                            <HeartIcon className={
+                                liked ? "[&>path]:stroke-transparent" : ""
+                              }
+                              fill={liked ? "red" : "none"}/>
+                        </Button>
                         <Button isIconOnly variant="bordered" className="border-[#01B7F2]"><ShareIcon/></Button>
                         <Link to={`/checkout`}>
                             <Button className="bg-[#01B7F2] text-white font-semibold">Book Now</Button>

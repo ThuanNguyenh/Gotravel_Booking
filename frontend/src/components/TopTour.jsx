@@ -5,8 +5,17 @@ import { StarIcon } from "../assets/starIcon";
 import { HeartIcon } from "../assets/heart";
 
 function TopTour() {
-  //heart button
-  const [liked, setLiked] = useState(false);
+  // State to store liked status for each product
+  const [likedProducts, setLikedProducts] = useState([]);
+
+  // Function to toggle liked status for a product
+  const toggleLike = (index) => {
+    setLikedProducts((prevLikedProducts) => {
+      const newLikedProducts = [...prevLikedProducts];
+      newLikedProducts[index] = !newLikedProducts[index];
+      return newLikedProducts;
+    });
+  };
 
   //fetch api
   const [products, setProducts] = useState([]);
@@ -31,7 +40,7 @@ function TopTour() {
     <div>
       <h1 className="py-10 text-3xl font-extrabold">Top Tour</h1>
       <div className="gap-4 grid grid-cols-1 sm:grid-cols-4">
-        {products.map((product) => (
+        {products.map((product, index) => (
           <Card key={product.id} className="border-small border-blue-400">
             <div className="flip-card">
               <div className="flip-card-inner">
@@ -58,13 +67,15 @@ function TopTour() {
                             className="text-default-900/60 data-[hover]:bg-foreground/10 -translate-y-2 translate-x-2"
                             radius="full"
                             variant="light"
-                            onPress={() => setLiked((v) => !v)}
+                            onPress={() => toggleLike(index)}
                           >
                             <HeartIcon
                               className={
-                                liked ? "[&>path]:stroke-transparent" : ""
+                                likedProducts[index]
+                                  ? "[&>path]:stroke-transparent"
+                                  : ""
                               }
-                              fill={liked ? "red" : "none"}
+                              fill={likedProducts[index] ? "red" : "none"}
                             />
                           </Button>
                         </div>
