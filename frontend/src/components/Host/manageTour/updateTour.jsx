@@ -1,6 +1,6 @@
 import { useState } from "react";
-import Amenities from "../amenities";
-import Category from "../category";
+import Amenities from "../../directory/amenities";
+import Category from "../../directory/category";
 import { Button } from "@nextui-org/react";
 import { DeleteIcon } from "../../../assets/DeleteIcon";
 import { PlusIcon } from "../../../assets/PlusIcon";
