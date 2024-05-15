@@ -1,8 +1,9 @@
 // Import the functions you need from the SDKs you need
 // import { initializeApp } from "firebase/app";
-import firebase from 'firebase/compat/app'
-import 'firebase/compat/auth'
-import 'firebase/compat/database'
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+import "firebase/compat/database";
+import { getStorage } from "firebase/storage";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -15,9 +16,11 @@ const firebaseConfig = {
   storageBucket: "web-travel-eb829.appspot.com",
   messagingSenderId: "293689938652",
   appId: "1:293689938652:web:86a99cc3ccd209ffef1a19",
-  measurementId: "G-E0J3ZPG59V"
+  measurementId: "G-E0J3ZPG59V",
 };
 
 // Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig);
 export default app;
+
+export const storage = getStorage(app);
