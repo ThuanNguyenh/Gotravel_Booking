@@ -101,22 +101,29 @@ function NewTourForm() {
 
   // handle remove url
   const handleRemoveUrl = (index) => {
-    const newUrls1 = [...urls];
-    // remove image at index
-    newUrls1.splice(index, 1);
+    const newUrls = [...urls];
+    newUrls.splice(index, 1);
+    setUrls(newUrls);
 
-    setUrls(newUrls1);
+    const newImages = [...images];
+    newImages.splice(index, 1);
+    setImages(newImages);
   };
 
   // handle change image
   const handleChange = (e) => {
+    const newImages = [];
+    const newUrls = [];
+
     for (let i = 0; i < e.target.files.length; i++) {
       const newImage = e.target.files[i];
       newImage["id"] = Math.random();
-      setImages((prevState) => [...prevState, newImage]);
-
-      setUrls((prev) => [...prev, URL.createObjectURL(newImage)]);
+      newImages.push(newImage);
+      newUrls.push(URL.createObjectURL(newImage));
     }
+
+    setImages((prevState) => [...prevState, ...newImages]);
+    setUrls((prev) => [...prev, ...newUrls]);
   };
 
   // Images upload
@@ -320,7 +327,7 @@ function NewTourForm() {
     try {
       const listImage = await uploadMultipleFiles(images);
       await saveTour(listImage);
-      // Alert(2000, "Tạo tour", "Thành công", "success", "OK");
+      Alert(2000, "Tạo tour", "Thành công", "success", "OK");
     } catch (error) {
       Alert(2000, "Tạo tour", "Thất bại", "error", "OK");
     }
@@ -328,7 +335,7 @@ function NewTourForm() {
 
   return (
     <div className="mx-auto p-8">
-      <h1 className="text-2xl font-semibold text-center">Create Tour</h1>
+      <h1 className="text-2xl font-semibold text-center">Tạo Tour</h1>
       <form >
         {/* Tour Name */}
         <div className="mb-4">
@@ -339,7 +346,7 @@ function NewTourForm() {
             type="text"
             id="tourName"
             name="tourName" // Update name attribute to match the field name
-            className="bg-slate-200 mt-1 block w-1/2 rounded-md border-gray-300 shadow-sm"
+            className=" mt-1 block w-1/2 "
           />
         </div>
         {/* Description */}
@@ -350,11 +357,11 @@ function NewTourForm() {
             required
             onChange={change}
             name="description" // Update name attribute to match the field name
-            className="bg-slate-200 mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+            className=" mt-1 block w-full "
           ></Textarea>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex w-full gap-2">
           {/* Province */}
           <SelectAddress
             value={province}
@@ -389,7 +396,7 @@ function NewTourForm() {
           />
 
           {/* Detail Address */}
-          <div className="">
+          <div className="w-[25%]">
             <Input
               label="Địa chỉ chi tiết"
               onChange={change}
@@ -397,7 +404,7 @@ function NewTourForm() {
               type="text"
               id="detailAddress"
               name="detailAddress" // Update name attribute to match the field name
-              className="bg-slate-200 block w-full rounded-md border-gray-300 shadow-sm"
+              className=" block w-full "
             />
           </div>
         </div>
@@ -420,7 +427,7 @@ function NewTourForm() {
               type="number"
               id="numGuest"
               name="numGuest" // Update name attribute to match the field name
-              className="bg-slate-200 mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+              className=" mt-1 block w-full "
             />
           </div>
 
@@ -432,7 +439,7 @@ function NewTourForm() {
               type="number"
               id="discount"
               name="discount" // Update name attribute to match the field name
-              className="bg-slate-200 mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+              className=" mt-1 block w-full "
             />
           </div>
           {/* Price */}
@@ -444,7 +451,7 @@ function NewTourForm() {
               type="number"
               id="price"
               name="price" // Update name attribute to match the field name
-              className="bg-slate-200 mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+              className=" mt-1 block w-full "
             />
           </div>
         </div>
@@ -462,7 +469,7 @@ function NewTourForm() {
               type="date"
               id="startDate"
               name="startDate" // Update name attribute to match the field name
-              className="bg-slate-200 mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+              className=" mt-1 block w-full "
             />
           </div>
           {/* End Date */}
@@ -475,15 +482,15 @@ function NewTourForm() {
               type="date"
               id="endDate"
               name="endDate" // Update name attribute to match the field name
-              className="bg-slate-200 mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+              className=" mt-1 block w-full "
             />
           </div>
         </div>
 
         {/* Schedule */}
-        <div className="mb-4 w-[30%] flex flex-col justify-center">
+        <div className="mb-4 grid grid-cols-2 gap-3 justify-center">
           {schedules?.map((schedule, dateIndex) => (
-            <div key={dateIndex} className="mb-4 flex items-center gap-3">
+            <div key={dateIndex} className="mb-4 flex items-start gap-3">
               <Card className="p-2 w-full items-center">
                 <div className="text-center font-semibold">Hoạt động {dateIndex+1}</div>
                 <Input
@@ -492,7 +499,7 @@ function NewTourForm() {
                   placeholder="Ngày"
                   id={`schedule-date-${dateIndex}`}
                   name={`schedule-date-${dateIndex}`}
-                  className="bg-slate-200 mt-1 block rounded-md"
+                  className=" mt-1 block rounded-md"
                   value={schedule.date}
                   onChange={(e) =>
                     handleScheduleChange(dateIndex, "date", e.target.value)
@@ -508,7 +515,7 @@ function NewTourForm() {
                       placeholder="Hoạt động"
                       id={`schedule-activity-${dateIndex}-${activityIndex}`}
                       name={`schedule-activity-${dateIndex}-${activityIndex}`}
-                      className="bg-slate-200 mt-1 block rounded-md"
+                      className=" mt-1 block rounded-md"
                       value={activity}
                       onChange={(e) =>
                         handleActivityChange(
@@ -542,19 +549,24 @@ function NewTourForm() {
                   <PlusIcon />
                 </Button>
               </Card>
-              {dateIndex > 0 && (
-                <Button
-                  color="danger"
-                  size="sm"
-                  isIconOnly
-                  className="remove-schedule-btn"
-                  onClick={() => handleRemoveSchedule(dateIndex)}
-                >
-                  <DeleteIcon />
-                </Button>
-              )}
+              <div className="w-10">
+                {dateIndex > 0 && (
+                  <Button
+                    color="danger"
+                    size="sm"
+                    isIconOnly
+                    className="remove-schedule-btn"
+                    onClick={() => handleRemoveSchedule(dateIndex)}
+                  >
+                    <DeleteIcon />
+                  </Button>
+                )}
+              </div>
             </div>
           ))}
+
+        </div>
+        <div className="flex w-full justify-center pb-5">
           <Button
             color="primary"
             className="add-schedule-btn"
@@ -578,24 +590,23 @@ function NewTourForm() {
                 id="thumbnail"
                 onChange={handleChange}
                 name="thumbnail"/>
-            </div>
-            <div className="py-2 grid grid-cols-4 gap-2">
-              {urls?.map((url, index) => (
-                <div key={index}>
-                  <div className="relative">
-                    <Button
-                      isIconOnly
-                      size="sm"
-                      radius="full"
-                      onClick={() => handleRemoveUrl(index)}
-                      className="bg-pink-600 absolute left-0"
-                    >
-                      <XMarkIcon className="text-white" />
-                    </Button>
-                    <img className="h-32 w-40 border" src={url} alt="preview" />
+              <div className="py-2 grid grid-cols-3 gap-2">
+                {urls?.map((url, index) => (
+                  <div key={index}>
+                    <div className="relative">
+                      <Button
+                        isIconOnly
+                        size="sm"
+                        onClick={() => handleRemoveUrl(index)}
+                        className="bg-pink-600 absolute right-0"
+                      >
+                        <XMarkIcon className="text-white" />
+                      </Button>
+                      <img className="h-52 w-80 border" src={url} alt="preview" />
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </Card>
         </div>
@@ -607,7 +618,7 @@ function NewTourForm() {
             type="submit"
             color="primary"
             onClick={uploadAndSave}
-            className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-white"
+            className="w-full py-2 px-4 border border-transparent shadow-sm text-white"
           >
             Create Tour
           </Button>

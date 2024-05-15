@@ -328,7 +328,7 @@ function UpdateTourForm() {
 
   return (
     <div className="mx-auto p-8">
-      <h1 className="text-2xl font-semibold text-center">Create Tour</h1>
+      <h1 className="text-2xl font-semibold text-center">Chỉnh sửa Tour</h1>
       <form >
         {/* Tour Name */}
         <div className="mb-4">
