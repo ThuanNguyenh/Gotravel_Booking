@@ -12,6 +12,7 @@ import { storage } from "../../../firebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import axios from "axios";
 import { Alert } from "../../Alert/Alert";
+import "../../../index.css"
 
 function NewTourForm() {
   // get userId from localStorage
@@ -331,37 +332,26 @@ function NewTourForm() {
       <form >
         {/* Tour Name */}
         <div className="mb-4">
-          <label
-            htmlFor="tourName"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Tour Name
-          </label>
-          <input
+          <Input
+            label="Tên tour"
             onChange={change}
             required
             type="text"
             id="tourName"
             name="tourName" // Update name attribute to match the field name
-            className="bg-slate-200 mt-1 block w-1/2 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            className="bg-slate-200 mt-1 block w-1/2 rounded-md border-gray-300 shadow-sm"
           />
         </div>
         {/* Description */}
         <div className="mb-4">
-          <label
-            htmlFor="description"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Description
-          </label>
-          <textarea
+          <Textarea
+            label="Mô tả"
             id="description"
             required
             onChange={change}
             name="description" // Update name attribute to match the field name
-            rows="2"
-            className="bg-slate-200 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-          ></textarea>
+            className="bg-slate-200 mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+          ></Textarea>
         </div>
 
         <div className="flex gap-2">
@@ -399,20 +389,15 @@ function NewTourForm() {
           />
 
           {/* Detail Address */}
-          <div className="mb-4">
-            <label
-              htmlFor="detailAddress"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Detail Address
-            </label>
-            <input
+          <div className="">
+            <Input
+              label="Địa chỉ chi tiết"
               onChange={change}
               required
               type="text"
               id="detailAddress"
               name="detailAddress" // Update name attribute to match the field name
-              className="bg-slate-200 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              className="bg-slate-200 block w-full rounded-md border-gray-300 shadow-sm"
             />
           </div>
         </div>
@@ -425,114 +410,86 @@ function NewTourForm() {
         </div>
 
         <div className="flex gap-2">
+
+          {/* Number of Guests */}
+          <div className="mb-4">
+            <Input
+              label="Số lượng khách"
+              onChange={change}
+              required
+              type="number"
+              id="numGuest"
+              name="numGuest" // Update name attribute to match the field name
+              className="bg-slate-200 mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+            />
+          </div>
+
           {/* Discount */}
           <div className="mb-4">
-            <label
-              htmlFor="discount"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Discount %
-            </label>
-            <input
+            <Input
+              label="Giảm giá %"
               onChange={change}
-              value={0}
               type="number"
               id="discount"
               name="discount" // Update name attribute to match the field name
-              className="bg-slate-200 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              className="bg-slate-200 mt-1 block w-full rounded-md border-gray-300 shadow-sm"
             />
           </div>
           {/* Price */}
           <div className="mb-4">
-            <label
-              htmlFor="price"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Price
-            </label>
-            <input
+            <Input
+              label="Giá tour"
               onChange={change}
-              value={0}
               required
               type="number"
               id="price"
               name="price" // Update name attribute to match the field name
-              className="bg-slate-200 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              className="bg-slate-200 mt-1 block w-full rounded-md border-gray-300 shadow-sm"
             />
           </div>
         </div>
-        {/* Number of Guests */}
-        <div className="mb-4">
-          <label
-            htmlFor="numGuest"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Number of Guests
-          </label>
-          <input
-            onChange={change}
-            value={0}
-            required
-            type="number"
-            id="numGuest"
-            name="numGuest" // Update name attribute to match the field name
-            className="bg-slate-200 mt-1 block w-1/12 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-          />
-        </div>
+
 
         {/* DATE */}
         <div className="flex gap-2">
           {/* Start Date */}
           <div className="mb-4">
-            <label
-              htmlFor="startDate"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Start Date
-            </label>
-            <input
+            <Input
+              label="Ngày đi"
               onChange={change}
               required
+              placeholder="date"
               type="date"
               id="startDate"
               name="startDate" // Update name attribute to match the field name
-              className="bg-slate-200 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              className="bg-slate-200 mt-1 block w-full rounded-md border-gray-300 shadow-sm"
             />
           </div>
           {/* End Date */}
           <div className="mb-4">
-            <label
-              htmlFor="endDate"
-              className="block text-sm font-medium text-gray-700"
-            >
-              End Date
-            </label>
-            <input
+            <Input
+              label="Ngày về"
+              placeholder="date"
               onChange={change}
               required
               type="date"
               id="endDate"
               name="endDate" // Update name attribute to match the field name
-              className="bg-slate-200 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              className="bg-slate-200 mt-1 block w-full rounded-md border-gray-300 shadow-sm"
             />
           </div>
         </div>
 
         {/* Schedule */}
-        <div className="mb-4">
-          <label
-            htmlFor="schedule"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Schedule
-          </label>
+        <div className="mb-4 w-[30%] flex flex-col justify-center">
           {schedules?.map((schedule, dateIndex) => (
             <div key={dateIndex} className="mb-4 flex items-center gap-3">
-              <Card className="w-[30%] p-2">
+              <Card className="p-2 w-full items-center">
+                <div className="text-center font-semibold">Hoạt động {dateIndex+1}</div>
                 <Input
                   type="number"
                   size="sm"
-                  placeholder="Date"
+                  placeholder="Ngày"
                   id={`schedule-date-${dateIndex}`}
                   name={`schedule-date-${dateIndex}`}
                   className="bg-slate-200 mt-1 block rounded-md"
@@ -544,14 +501,14 @@ function NewTourForm() {
                 {schedule?.activities?.map((activity, activityIndex) => (
                   <div
                     key={activityIndex}
-                    className="mb-2 flex items-center gap-1"
+                    className="mb-2 w-full flex items-center gap-1"
                   >
                     <Textarea
                       size="sm"
-                      placeholder="Activities"
+                      placeholder="Hoạt động"
                       id={`schedule-activity-${dateIndex}-${activityIndex}`}
                       name={`schedule-activity-${dateIndex}-${activityIndex}`}
-                      className="bg-slate-200 mt-1 block  rounded-md"
+                      className="bg-slate-200 mt-1 block rounded-md"
                       value={activity}
                       onChange={(e) =>
                         handleActivityChange(
@@ -604,51 +561,56 @@ function NewTourForm() {
             onClick={handleAddSchedule}
             startContent={<PlusIcon />}
           >
-            New Schedule
+            Thêm hoạt động
           </Button>
         </div>
 
         {/* Images */}
-        <div className="mb-4">
-          <label
-            htmlFor="thumbnail"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Images
-          </label>
-          <input
-            required
-            type="file"
-            multiple // Allow multiple file selection
-            id="thumbnail"
-            onChange={handleChange}
-            name="thumbnail"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-          />
-        </div>
-        <div className="py-2 grid grid-cols-3 gap-4">
-          {urls?.map((url, index) => (
-            <div key={index} className="relative sm:col-span-2">
-              <button
-                onClick={() => handleRemoveUrl(index)}
-                className="bg-pink-600 absolute right-0"
-              >
-                <XMarkIcon className="w-7 text-white" />
-              </button>
-              <img className="h-96 border w-full" src={url} alt="preview" />
+        <div className="mb-4 w-full">
+          <Card>
+            <div className="file-upload">
+              <h3 className="font-semibold">Tải ảnh lên</h3>
+              <input 
+                label="Hình ảnh"
+                required
+                type="file"
+                multiple // Allow multiple file selection
+                id="thumbnail"
+                onChange={handleChange}
+                name="thumbnail"/>
             </div>
-          ))}
+            <div className="py-2 grid grid-cols-4 gap-2">
+              {urls?.map((url, index) => (
+                <div key={index}>
+                  <div className="relative">
+                    <Button
+                      isIconOnly
+                      size="sm"
+                      radius="full"
+                      onClick={() => handleRemoveUrl(index)}
+                      className="bg-pink-600 absolute left-0"
+                    >
+                      <XMarkIcon className="text-white" />
+                    </Button>
+                    <img className="h-32 w-40 border" src={url} alt="preview" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
         </div>
+
 
         {/* Submit button */}
         <div>
-          <button
+          <Button
             type="submit"
+            color="primary"
             onClick={uploadAndSave}
-            className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-white"
           >
             Create Tour
-          </button>
+          </Button>
         </div>
       </form>
     </div>

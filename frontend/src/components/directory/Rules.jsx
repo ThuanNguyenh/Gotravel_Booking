@@ -33,14 +33,14 @@ function Rules({ Rules, value }) {
 
   return (
     <div className="col-span-1">
-      <div className="font-medium leading-6 text-gray-900">Rules</div>
       <Button
-        className="hover:cursor-pointer flex mt-3 items-center justify-center h-16 rounded-md p-2 px-4 ring-1 ring-gray-300 bg-white"
+        variant="faded"
+        className="flex mt-3 items-center justify-center h-14 w-32 rounded-md"
         onPress={onOpen}
       >
         {value && value.length > 0
-          ? `Selected ${value.length}`
-          : "--- Select ---"}
+          ? `Đã chọn ${value.length} luật`
+          : "Luật"}
       </Button>
       <Modal
         hideCloseButton
@@ -52,7 +52,7 @@ function Rules({ Rules, value }) {
           {(onClose) => (
             <div className="p-5">
               <div className="mb-3 items-center flex justify-center">
-                <span className="font-bold text-lg">Rules</span>
+                <span className="font-bold text-lg">Luật</span>
               </div>
 
               <div className="border-y py-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-4 ">
