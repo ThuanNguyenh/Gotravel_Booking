@@ -11,6 +11,26 @@ export const Alert = (timer, title, message, icon, confirmButtonText) => {
   });
 };
 
+//loading
+export const LoadingAlert = (timer, title) => {
+  let timerInterval;
+  Swal.fire({
+    timer: timer, //1500
+    title: title, //'Đăng nhập'
+    timerProgressBar: true,
+    didOpen: () => {
+      Swal.showLoading();
+      const timer = Swal.getPopup().querySelector("b");
+      timerInterval = setInterval(() => {
+        timer.textContent = `${Swal.getTimerLeft()}`;
+      }, 100);
+    },
+    willClose: () => {
+      clearInterval(timerInterval);
+    }
+  })
+};
+
 // delete
 export const DeleteAlert = (onDelete) => {
   Swal.fire({

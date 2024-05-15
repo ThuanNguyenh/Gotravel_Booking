@@ -32,11 +32,8 @@ import { PlusIcon } from "../../../assets/PlusIcon";
 import { useEffect, useState } from "react";
 import { Percent } from "../../../assets/Percent";
 import axios from "axios";
-
-import NewTourForm from "./newTour";
-import UpdateTourForm from "./updateTour";
 import "./manageTour.css";
-import { Link } from "react-router-dom";
+
 
 const ManageTour = ({ handleLinkClick }) => {
   const newTourModal = useDisclosure();

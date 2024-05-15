@@ -42,7 +42,7 @@ const Host = ({ children }) => {
           {selectedContent === 'ManageTour' && <ManageTour handleLinkClick={handleLinkClick} />}
           {selectedContent === 'ManageRevenue' && <ManageRevenue />}
           {selectedContent === 'RequestBooking' && <RequestBooking />}
-          {selectedContent === 'NewTour' && <NewTourForm />}
+          {selectedContent === 'NewTour' && <NewTourForm handleSave={handleLinkClick}/>}
           {selectedContent === 'UpdateTour' && <UpdateTourForm />}
         </div>
       </div>

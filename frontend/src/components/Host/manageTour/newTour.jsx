@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import Amenities from "../../directory/amenities";
 import Category from "../../directory/category";
@@ -11,10 +12,10 @@ import { XMarkIcon } from "@heroicons/react/24/solid";
 import { storage } from "../../../firebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import axios from "axios";
-import { Alert } from "../../Alert/Alert";
+import { Alert, LoadingAlert } from "../../Alert/Alert";
 import "../../../index.css"
 
-function NewTourForm() {
+const NewTourForm = ({ handleSave }) => {
   // get userId from localStorage
   const userString = localStorage.getItem("userInfo");
   const user = JSON.parse(userString);
@@ -314,20 +315,24 @@ function NewTourForm() {
         }
       );
       console.log("ket qua da luu: ", response);
+      Alert(1000, "Tạo tour", "Thành công", "success", "OK");
+
     } catch (error) {
       console.log("loi roi: ", error);
       setMessage(error?.response.data);
       alert(message);
+      Alert(2000, "Tạo tour", "Thất bại", "error", "OK");
     }
+    handleSave("ManageTour")
   };
 
   // UploadAndSave
   const uploadAndSave = async (e) => {
     e.preventDefault();
     try {
+      LoadingAlert(3000, "Đang tạo tour");
       const listImage = await uploadMultipleFiles(images);
       await saveTour(listImage);
-      Alert(2000, "Tạo tour", "Thành công", "success", "OK");
     } catch (error) {
       Alert(2000, "Tạo tour", "Thất bại", "error", "OK");
     }
