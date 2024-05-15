@@ -1,5 +1,6 @@
 // import RecommendSys from "./RecommendSys";
 import RecommendTour from  "./RecommendTour";
+import AboutUsSlide from "./aboutUsSlide";
 import TopTour from "./TopTour";
 
 export default function ListTour() {
@@ -8,8 +9,8 @@ export default function ListTour() {
       {/* <RecommendSys/> */}
 
       <RecommendTour/>
-
       <TopTour />
+      <AboutUsSlide/>
     </div>
   );
 }
