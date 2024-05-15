@@ -11,12 +11,13 @@ import { XMarkIcon } from "@heroicons/react/24/solid";
 import { storage } from "../../../firebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import axios from "axios";
+import { Alert } from "../../Alert/Alert";
 
 function NewTourForm() {
   // get userId from localStorage
   const userString = localStorage.getItem("userInfo");
   const user = JSON.parse(userString);
-  const userId = user.userId;
+  const userId = user?.userId;
 
   // get accessToken from localStorage
   const token = localStorage.getItem("accessToken");
@@ -158,17 +159,17 @@ function NewTourForm() {
   };
 
   //Schedule
-  const [schedules, setSchedules] = useState([""]); // State to store schedules
+  const [schedules, setSchedules] = useState([{ date: "", activities: [""] }]); // State to store schedules
 
   // Function to handle adding a new schedule field
   const handleAddSchedule = () => {
-    setSchedules([...schedules, ""]);
+    setSchedules([...schedules, { date: "", activities: [""] }]);
   };
 
   // Function to handle updating schedule value
-  const handleScheduleChange = (index, value) => {
+  const handleScheduleChange = (index, field, value) => {
     const newSchedules = [...schedules];
-    newSchedules[index] = value;
+    newSchedules[index][field] = value;
     setSchedules(newSchedules);
   };
 
@@ -179,11 +180,32 @@ function NewTourForm() {
     setSchedules(newSchedules);
   };
 
+  // Function to handle adding a new activity for a specific date
+  const handleAddActivity = (index) => {
+    const newSchedules = [...schedules];
+    newSchedules[index].activities.push("");
+    setSchedules(newSchedules);
+  };
+
+  // Function to handle removing an activity for a specific date
+  const handleRemoveActivity = (dateIndex, activityIndex) => {
+    const newSchedules = [...schedules];
+    newSchedules[dateIndex].activities.splice(activityIndex, 1);
+    setSchedules(newSchedules);
+  };
+
+  // Function to handle updating activity value for a specific date
+  const handleActivityChange = (dateIndex, activityIndex, value) => {
+    const newSchedules = [...schedules];
+    newSchedules[dateIndex].activities[activityIndex] = value;
+    setSchedules(newSchedules);
+  };
+
   // dữ liệu nhập vào
   const [dataInput, setDataInput] = useState({
     tourName: "",
     description: "",
-    thumbnail: "images2",
+    thumbnail: "",
     province: "",
     district: "",
     ward: "",
@@ -198,7 +220,7 @@ function NewTourForm() {
     },
     images: [
       {
-        url: "image1",
+        url: "",
       },
     ],
     categories: [
@@ -218,8 +240,12 @@ function NewTourForm() {
     ],
     schedules: [
       {
-        date: "1",
-        activity: "tam bien",
+        date: 0,
+        activities: [
+          {
+            context: "",
+          },
+        ],
       },
     ],
   });
@@ -236,6 +262,7 @@ function NewTourForm() {
       owner: {
         userId: userId,
       },
+      schedules: schedules,
     }));
   }, [
     provinceName,
@@ -245,6 +272,7 @@ function NewTourForm() {
     selectAmen,
     selectRule,
     userId,
+    schedules,
   ]);
 
   // input change
@@ -256,49 +284,51 @@ function NewTourForm() {
     });
   };
 
-  console.log("du lieu nhap vao: ", dataInput);
+  // message
+  const [message, setMessage] = useState("vui lòng điền đầy đủ thông tin");
 
   // save tour
-  const saveTour = async(listImage) => {
+  const saveTour = async (listImage) => {
     const dataRequest = {
       ...dataInput,
       thumbnail: listImage[0],
-      images: [...listImage.map((url) => ({url}))]
+      images: [...listImage.map((url) => ({ url }))],
     };
 
     try {
-      const response = await axios.post(`http://localhost:8080/api/v1/tour/add`,
+      const response = await axios.post(
+        `http://localhost:8080/api/v1/tour/add`,
         dataRequest,
         {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
       console.log("ket qua da luu: ", response);
     } catch (error) {
       console.log("loi roi: ", error);
+      setMessage(error?.response.data);
+      alert(message);
     }
-
-  }
-
+  };
 
   // UploadAndSave
   const uploadAndSave = async (e) => {
     e.preventDefault();
     try {
       const listImage = await uploadMultipleFiles(images);
-      console.log("hinh anh: ", listImage);
       await saveTour(listImage);
+      // Alert(2000, "Tạo tour", "Thành công", "success", "OK");
     } catch (error) {
-      console.log("loi ", error);
+      Alert(2000, "Tạo tour", "Thất bại", "error", "OK");
     }
-  }
+  };
 
   return (
     <div className="mx-auto p-8">
       <h1 className="text-2xl font-semibold text-center">Create Tour</h1>
-      <form>
+      <form >
         {/* Tour Name */}
         <div className="mb-4">
           <label
@@ -309,6 +339,7 @@ function NewTourForm() {
           </label>
           <input
             onChange={change}
+            required
             type="text"
             id="tourName"
             name="tourName" // Update name attribute to match the field name
@@ -325,6 +356,7 @@ function NewTourForm() {
           </label>
           <textarea
             id="description"
+            required
             onChange={change}
             name="description" // Update name attribute to match the field name
             rows="2"
@@ -376,6 +408,7 @@ function NewTourForm() {
             </label>
             <input
               onChange={change}
+              required
               type="text"
               id="detailAddress"
               name="detailAddress" // Update name attribute to match the field name
@@ -402,6 +435,7 @@ function NewTourForm() {
             </label>
             <input
               onChange={change}
+              value={0}
               type="number"
               id="discount"
               name="discount" // Update name attribute to match the field name
@@ -418,6 +452,8 @@ function NewTourForm() {
             </label>
             <input
               onChange={change}
+              value={0}
+              required
               type="number"
               id="price"
               name="price" // Update name attribute to match the field name
@@ -435,6 +471,8 @@ function NewTourForm() {
           </label>
           <input
             onChange={change}
+            value={0}
+            required
             type="number"
             id="numGuest"
             name="numGuest" // Update name attribute to match the field name
@@ -454,6 +492,7 @@ function NewTourForm() {
             </label>
             <input
               onChange={change}
+              required
               type="date"
               id="startDate"
               name="startDate" // Update name attribute to match the field name
@@ -470,6 +509,7 @@ function NewTourForm() {
             </label>
             <input
               onChange={change}
+              required
               type="date"
               id="endDate"
               name="endDate" // Update name attribute to match the field name
@@ -486,35 +526,72 @@ function NewTourForm() {
           >
             Schedule
           </label>
-          {schedules.map((schedule, index) => (
-            <div key={index} className="mb-4 flex items-center gap-1">
-              <Card className="p-2">
+          {schedules?.map((schedule, dateIndex) => (
+            <div key={dateIndex} className="mb-4 flex items-center gap-3">
+              <Card className="w-[30%] p-2">
                 <Input
-                  type="date"
+                  type="number"
                   size="sm"
-                  id={`schedule-date-${index}`}
-                  name={`schedule-date-${index}`}
-                  className="bg-slate-200 mt-1 block  rounded-md border-gray-300 "
+                  placeholder="Date"
+                  id={`schedule-date-${dateIndex}`}
+                  name={`schedule-date-${dateIndex}`}
+                  className="bg-slate-200 mt-1 block rounded-md"
                   value={schedule.date}
-                  onChange={(e) => handleScheduleChange(index, "date", e.target.value)}
+                  onChange={(e) =>
+                    handleScheduleChange(dateIndex, "date", e.target.value)
+                  }
                 />
-                <Textarea
-                  id={`schedule-activity-${index}`}
-                  name={`schedule-activity-${index}`}
-                  size="sm"
-                  placeholder="Your Schedule"
-                  className="bg-slate-200 mt-1 block  rounded-md border-gray-300"
-                  value={schedule.activity}
-                  onChange={(e) => handleScheduleChange(index, "activity", e.target.value)}
-                ></Textarea>
+                {schedule?.activities?.map((activity, activityIndex) => (
+                  <div
+                    key={activityIndex}
+                    className="mb-2 flex items-center gap-1"
+                  >
+                    <Textarea
+                      size="sm"
+                      placeholder="Activities"
+                      id={`schedule-activity-${dateIndex}-${activityIndex}`}
+                      name={`schedule-activity-${dateIndex}-${activityIndex}`}
+                      className="bg-slate-200 mt-1 block  rounded-md"
+                      value={activity}
+                      onChange={(e) =>
+                        handleActivityChange(
+                          dateIndex,
+                          activityIndex,
+                          e.target.value
+                        )
+                      }
+                    ></Textarea>
+                    {activityIndex > 0 && (
+                      <Button
+                        color="danger"
+                        size="sm"
+                        isIconOnly
+                        className="remove-activity-btn"
+                        onClick={() =>
+                          handleRemoveActivity(dateIndex, activityIndex)
+                        }
+                      >
+                        <DeleteIcon />
+                      </Button>
+                    )}
+                  </div>
+                ))}
+                <Button
+                  isIconOnly
+                  color="primary"
+                  className="add-activity-btn"
+                  onClick={() => handleAddActivity(dateIndex)}
+                >
+                  <PlusIcon />
+                </Button>
               </Card>
-              {index > 0 && (
+              {dateIndex > 0 && (
                 <Button
                   color="danger"
                   size="sm"
                   isIconOnly
                   className="remove-schedule-btn"
-                  onClick={() => handleRemoveSchedule(index)}
+                  onClick={() => handleRemoveSchedule(dateIndex)}
                 >
                   <DeleteIcon />
                 </Button>
@@ -522,12 +599,12 @@ function NewTourForm() {
             </div>
           ))}
           <Button
-            isIconOnly
             color="primary"
             className="add-schedule-btn"
             onClick={handleAddSchedule}
+            startContent={<PlusIcon />}
           >
-            <PlusIcon />
+            New Schedule
           </Button>
         </div>
 
@@ -540,6 +617,7 @@ function NewTourForm() {
             Images
           </label>
           <input
+            required
             type="file"
             multiple // Allow multiple file selection
             id="thumbnail"
@@ -565,8 +643,8 @@ function NewTourForm() {
         {/* Submit button */}
         <div>
           <button
-            onClick={uploadAndSave}
             type="submit"
+            onClick={uploadAndSave}
             className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             Create Tour
