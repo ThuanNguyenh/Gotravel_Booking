@@ -1,15 +1,21 @@
 import RecommendSys from "./RecommendSys";
-import RecommendTour from  "./RecommendTour";
+import RecommendTour from "./RecommendTour";
 import TopTour from "./TopTour";
 
+// eslint-disable-next-line react/prop-types
 export default function ListTour() {
+
   return (
     <div>
-      <RecommendSys/>
-
-      <RecommendTour/>
-
-      <TopTour />
+      <div>
+        <RecommendSys />
+      </div>
+      <div>
+        <RecommendTour />
+      </div>
+      <div>
+        <TopTour />
+      </div>
     </div>
   );
 }
