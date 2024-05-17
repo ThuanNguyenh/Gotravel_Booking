@@ -31,6 +31,8 @@ function Category({ Cates, value }) {
     });
   };
 
+  console.log(data)
+
   return (
     <div className="col-span-1">
       <Button

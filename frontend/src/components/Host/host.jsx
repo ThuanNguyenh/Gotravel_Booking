@@ -17,7 +17,8 @@ import UpdateTourForm from './manageTour/updateTour';
 
 const Host = ({ children }) => {
   const [selectedContent, setSelectedContent] = useState('DashBoard');
-
+  const [selectedTourId, setSelectedTourId] = useState(null);
+  
   const handleLinkClick = (content) => {
     setSelectedContent(content);
   };
@@ -43,7 +44,7 @@ const Host = ({ children }) => {
           {selectedContent === 'ManageRevenue' && <ManageRevenue />}
           {selectedContent === 'RequestBooking' && <RequestBooking />}
           {selectedContent === 'NewTour' && <NewTourForm handleSave={handleLinkClick}/>}
-          {selectedContent === 'UpdateTour' && <UpdateTourForm />}
+          {selectedContent === 'UpdateTour' && <UpdateTourForm tourId={selectedTourId}/>}
         </div>
       </div>
     </div>

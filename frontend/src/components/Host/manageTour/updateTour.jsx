@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import Amenities from "../../directory/amenities";
 import Category from "../../directory/category";
@@ -14,7 +15,7 @@ import axios from "axios";
 import { Alert } from "../../Alert/Alert";
 import "../../../index.css"
 
-function UpdateTourForm() {
+function UpdateTourForm({tourId}) {
   // get userId from localStorage
   const userString = localStorage.getItem("userInfo");
   const user = JSON.parse(userString);
@@ -23,6 +24,7 @@ function UpdateTourForm() {
   // get accessToken from localStorage
   const token = localStorage.getItem("accessToken");
 
+  const [dataTour, setDataTour] = useState([]);
   // address
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
@@ -288,6 +290,35 @@ function UpdateTourForm() {
   // message
   const [message, setMessage] = useState("vui lòng điền đầy đủ thông tin");
 
+  //get detail tour
+  const getTourDetail = async () => {
+    try {
+      if (!token) {
+        return;
+      }
+
+      // Thêm token vào tiêu đề "Authorization"
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const response = await axios.get(
+        `http://localhost:8080/api/v1/tour/${tourId}`,
+        config
+      );
+      setDataTour(response.data);
+      console.log("danh sach tour: ", response.data);
+    } catch (error) {
+      setMessage(error.response.data.message);
+    }
+  };
+
+  useEffect(() => {
+    getTourDetail();
+  }, []);
+
   // save tour
   const saveTour = async (listImage) => {
     const dataRequest = {
@@ -297,9 +328,19 @@ function UpdateTourForm() {
     };
 
     try {
+      if (!token) {
+        return;
+      }
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
       const response = await axios.post(
-        `http://localhost:8080/api/v1/tour/update`,
+        `http://localhost:8080/api/v1/tour/update/${tourId}`,
         dataRequest,
+        config,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -336,6 +377,7 @@ function UpdateTourForm() {
             label="Tên tour"
             onChange={change}
             required
+            value={dataTour.tourName}
             type="text"
             id="tourName"
             name="tourName" // Update name attribute to match the field name

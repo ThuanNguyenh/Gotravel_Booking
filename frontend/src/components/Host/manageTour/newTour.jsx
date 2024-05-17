@@ -284,6 +284,8 @@ const NewTourForm = ({ handleSave }) => {
     schedules,
   ]);
 
+  console.log(selectCate)
+
   // input change
   const change = (e) => {
     const { name, value } = e.target;

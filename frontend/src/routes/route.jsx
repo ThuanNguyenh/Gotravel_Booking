@@ -13,7 +13,7 @@ const publicRoutes = [
 
     // route
     {path: '/', component: ListTour},
-    {path: '/tourDetail/:productId', component:TourDetail, layout: HeaderOnly},
+    {path: '/tourDetail/:tourId', component:TourDetail, layout: HeaderOnly},
     {path: '/profile', component:Profile, layout: HeaderOnly},
     {path: '/checkout', component:CheckOut, layout: HeaderOnly},
     {path: '/search', component:Search},
