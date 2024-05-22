@@ -38,15 +38,13 @@ import "./manageTour.css";
 
 
 
-const ManageTour = ({ handleLinkClick }) => {
-  const newTourModal = useDisclosure();
-  const updateModal = useDisclosure();
+const ManageTour = ({ handleLinkClick, selectedTourId }) => {
+
   const voucherModal = useDisclosure();
 
   // state data
   const [dataTour, setDataTour] = useState([]);
   const [message, setMessage] = useState(null);
-  const [selectedTourId, setSelectedTourId] = useState(null);
 
   // get token from localStorage
   const token = localStorage.getItem("accessToken");
@@ -111,8 +109,8 @@ const ManageTour = ({ handleLinkClick }) => {
   }, []);
 
   //update button
-  const handleUpdate = (tourId) => {
-    setSelectedTourId(tourId);
+  const handleUpdate = async (tourId) => {
+    selectedTourId(tourId);
     handleLinkClick("UpdateTour");
   };
 

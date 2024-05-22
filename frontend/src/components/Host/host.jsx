@@ -17,11 +17,16 @@ import UpdateTourForm from './manageTour/updateTour';
 
 const Host = ({ children }) => {
   const [selectedContent, setSelectedContent] = useState('DashBoard');
-  const [selectedTourId, setSelectedTourId] = useState(null);
+  const [tourId, setTourId] = useState();
   
   const handleLinkClick = (content) => {
     setSelectedContent(content);
+
   };
+
+  const selectedTourId = (tourId) => {
+    setTourId(tourId); // Set the selectedTourId when navigating to the UpdateTour page
+  }
 
   return (
     <div className="flex">
@@ -40,11 +45,11 @@ const Host = ({ children }) => {
       <div className="w-full pl-28">
         <div className="px-8">
           {selectedContent === 'DashBoard' && <DashBoard />}
-          {selectedContent === 'ManageTour' && <ManageTour handleLinkClick={handleLinkClick} />}
+          {selectedContent === 'ManageTour' && <ManageTour selectedTourId={selectedTourId} handleLinkClick={handleLinkClick} />}
           {selectedContent === 'ManageRevenue' && <ManageRevenue />}
           {selectedContent === 'RequestBooking' && <RequestBooking />}
           {selectedContent === 'NewTour' && <NewTourForm handleSave={handleLinkClick}/>}
-          {selectedContent === 'UpdateTour' && <UpdateTourForm tourId={selectedTourId}/>}
+          {selectedContent === 'UpdateTour' && <UpdateTourForm handleSave={handleLinkClick} tourId={tourId}/>}
         </div>
       </div>
     </div>
@@ -52,3 +57,4 @@ const Host = ({ children }) => {
 };
 
 export default Host;
+

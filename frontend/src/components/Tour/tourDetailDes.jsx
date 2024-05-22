@@ -7,7 +7,7 @@ function TourDetailDes() {
 
   //fetch des
   const { tourId } = useParams();
-  const [des, setDes] = useState('');
+  const [des, setDes] = useState([]);
 
   // get token from localStorage
   const token = localStorage.getItem("accessToken");
@@ -44,21 +44,35 @@ function TourDetailDes() {
     <div className="w-full flex-col ">
       {/* description */}
       <div className="py-3">
-        {des.description}
+        <p>Tour bắt đầu từ {des.startDate} đến {des.endDate}</p> 
+        <p>{des.description}</p>
+      </div>
+
+      <div className="py-3">
+        <div className="font-semibold text-xl">Lịch trình</div>
+        <div className="w-1/5">
+          <div className="grid-rows-4 gap-2">
+          {des && des.schedules && des.schedules.map((schedule, index) => (
+            <div key={index} className="transition-aorder bg-gray-300 text-gray-600 inline-flex h-8 items-center text-sm px-2 m-1 rounded-full">
+              {schedule.date} - {schedule.activity}
+            </div>
+          ))}
+          </div>
+        </div>
       </div>
 
       <div className="">
         <div className="font-semibold text-xl">Tiện ích</div>
         <div className="w-1/5">
           <div className="grid-rows-2 gap-2">
-            {des?.utilities.map((item, index) => (
+            {/* {des?.utilities.map((item, index) => (
               <div
                 key={index}
                 className="transition-aorder bg-gray-300 text-gray-600 inline-flex h-8 items-center text-sm px-2 m-1 rounded-full"
               >
                 {item}
               </div>
-            ))}
+            ))} */}
           </div>
         </div>
       </div>

@@ -8,11 +8,31 @@ function Amenities({ Utils, value }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [data, setData] = useState([]);
 
+  // get token from localStorage
+  const token = localStorage.getItem("accessToken");
+
   const loadData = async () => {
-    const result = await axios.get(
-      `http://localhost:8080/api/v1/directory/utilities`
-    );
-    setData(result.data);
+    try {
+      if (!token) {
+        return;
+      }
+
+      // Thêm token vào tiêu đề "Authorization"
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const response = await axios.get(
+        `http://localhost:8080/api/v1/directory/utilities`,
+        config
+      );
+      setData(response.data);
+      console.log("utilities: ", response.data);
+    } catch (error) {
+      console.log("Error")
+    }
   };
 
   useEffect(() => {

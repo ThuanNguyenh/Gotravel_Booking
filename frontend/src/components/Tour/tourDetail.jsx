@@ -112,7 +112,7 @@ function TourDetail() {
                   <iframe
                       className=" flex w-4/5 h-96"
                       src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d13594.86430887069!2d77.3405611!3d31.5868329!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3905af6c857711cf%3A0x443ba8a6671fa200!2sWhispering%20Pines%20Cottages%2C%20Tandi!5e0!3m2!1svi!2s!4v1706603462304!5m2!1svi!2s"
-                      allowfullscreen=""
+                      allowFullScreen=""
                       loading="lazy"
                       referrerPolicy="no-referrer-when-downgrade"
                   />

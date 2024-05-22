@@ -15,7 +15,9 @@ import axios from "axios";
 import { Alert } from "../../Alert/Alert";
 import "../../../index.css"
 
-function UpdateTourForm({tourId}) {
+function UpdateTourForm({tourId, handleSave}) {
+
+  console.log(tourId)
   // get userId from localStorage
   const userString = localStorage.getItem("userInfo");
   const user = JSON.parse(userString);
@@ -281,10 +283,10 @@ function UpdateTourForm({tourId}) {
   // input change
   const change = (e) => {
     const { name, value } = e.target;
-    setDataInput({
-      ...dataInput,
+    setDataTour((prevData) => ({
+      ...prevData,
       [name]: value,
-    });
+    }));
   };
 
   // message
@@ -309,7 +311,7 @@ function UpdateTourForm({tourId}) {
         config
       );
       setDataTour(response.data);
-      console.log("danh sach tour: ", response.data);
+      console.log("update tour: ", response.data);
     } catch (error) {
       setMessage(error.response.data.message);
     }
@@ -353,6 +355,7 @@ function UpdateTourForm({tourId}) {
       setMessage(error?.response.data);
       alert(message);
     }
+    handleSave("ManageTour")
   };
 
   // UploadAndSave
@@ -361,9 +364,9 @@ function UpdateTourForm({tourId}) {
     try {
       const listImage = await uploadMultipleFiles(images);
       await saveTour(listImage);
-      // Alert(2000, "Tạo tour", "Thành công", "success", "OK");
+      Alert(2000, "Update tour", "Thành công", "success", "OK");
     } catch (error) {
-      Alert(2000, "Tạo tour", "Thất bại", "error", "OK");
+      Alert(2000, "Update tour", "Thất bại", "error", "OK");
     }
   };
 
@@ -381,7 +384,7 @@ function UpdateTourForm({tourId}) {
             type="text"
             id="tourName"
             name="tourName" // Update name attribute to match the field name
-            className="bg-slate-200 mt-1 block w-1/2 rounded-md border-gray-300 shadow-sm"
+            className=" mt-1 block w-1/2 "
           />
         </div>
         {/* Description */}
@@ -390,9 +393,10 @@ function UpdateTourForm({tourId}) {
             label="Mô tả"
             id="description"
             required
+            value={dataTour.description}
             onChange={change}
             name="description" // Update name attribute to match the field name
-            className="bg-slate-200 mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+            className=" mt-1 block w-full "
           ></Textarea>
         </div>
 
@@ -431,15 +435,16 @@ function UpdateTourForm({tourId}) {
           />
 
           {/* Detail Address */}
-          <div className="">
+          <div className="w-[25%]">
             <Input
               label="Địa chỉ chi tiết"
               onChange={change}
+              value={dataTour.detailAddress}
               required
               type="text"
               id="detailAddress"
               name="detailAddress" // Update name attribute to match the field name
-              className="bg-slate-200 block w-full rounded-md border-gray-300 shadow-sm"
+              className=" block w-full "
             />
           </div>
         </div>
@@ -458,11 +463,12 @@ function UpdateTourForm({tourId}) {
             <Input
               label="Số lượng khách"
               onChange={change}
+              value={dataTour.numGuest}
               required
               type="number"
               id="numGuest"
               name="numGuest" // Update name attribute to match the field name
-              className="bg-slate-200 mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+              className=" mt-1 block w-full "
             />
           </div>
 
@@ -471,10 +477,11 @@ function UpdateTourForm({tourId}) {
             <Input
               label="Giảm giá %"
               onChange={change}
+              value={dataTour.discount}
               type="number"
               id="discount"
               name="discount" // Update name attribute to match the field name
-              className="bg-slate-200 mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+              className=" mt-1 block w-full "
             />
           </div>
           {/* Price */}
@@ -482,11 +489,12 @@ function UpdateTourForm({tourId}) {
             <Input
               label="Giá tour"
               onChange={change}
+              value={dataTour.price}
               required
               type="number"
               id="price"
               name="price" // Update name attribute to match the field name
-              className="bg-slate-200 mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+              className=" mt-1 block w-full "
             />
           </div>
         </div>
@@ -499,12 +507,13 @@ function UpdateTourForm({tourId}) {
             <Input
               label="Ngày đi"
               onChange={change}
+              value={dataTour.startDate}
               required
               placeholder="date"
               type="date"
               id="startDate"
               name="startDate" // Update name attribute to match the field name
-              className="bg-slate-200 mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+              className=" mt-1 block w-full "
             />
           </div>
           {/* End Date */}
@@ -513,19 +522,20 @@ function UpdateTourForm({tourId}) {
               label="Ngày về"
               placeholder="date"
               onChange={change}
+              value={dataTour.endDate}
               required
               type="date"
               id="endDate"
               name="endDate" // Update name attribute to match the field name
-              className="bg-slate-200 mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+              className=" mt-1 block w-full "
             />
           </div>
         </div>
 
         {/* Schedule */}
-        <div className="mb-4 w-[30%] flex flex-col justify-center">
+        <div className="mb-4 grid grid-cols-2 gap-3 justify-center">
           {schedules?.map((schedule, dateIndex) => (
-            <div key={dateIndex} className="mb-4 flex items-center gap-3">
+            <div key={dateIndex} className="mb-4 flex items-start gap-3">
               <Card className="p-2 w-full items-center">
                 <div className="text-center font-semibold">Hoạt động {dateIndex+1}</div>
                 <Input
@@ -534,7 +544,7 @@ function UpdateTourForm({tourId}) {
                   placeholder="Ngày"
                   id={`schedule-date-${dateIndex}`}
                   name={`schedule-date-${dateIndex}`}
-                  className="bg-slate-200 mt-1 block rounded-md"
+                  className=" mt-1 block rounded-md"
                   value={schedule.date}
                   onChange={(e) =>
                     handleScheduleChange(dateIndex, "date", e.target.value)
@@ -550,7 +560,7 @@ function UpdateTourForm({tourId}) {
                       placeholder="Hoạt động"
                       id={`schedule-activity-${dateIndex}-${activityIndex}`}
                       name={`schedule-activity-${dateIndex}-${activityIndex}`}
-                      className="bg-slate-200 mt-1 block rounded-md"
+                      className=" mt-1 block rounded-md"
                       value={activity}
                       onChange={(e) =>
                         handleActivityChange(
@@ -584,19 +594,24 @@ function UpdateTourForm({tourId}) {
                   <PlusIcon />
                 </Button>
               </Card>
-              {dateIndex > 0 && (
-                <Button
-                  color="danger"
-                  size="sm"
-                  isIconOnly
-                  className="remove-schedule-btn"
-                  onClick={() => handleRemoveSchedule(dateIndex)}
-                >
-                  <DeleteIcon />
-                </Button>
-              )}
+              <div className="w-10">
+                {dateIndex > 0 && (
+                  <Button
+                    color="danger"
+                    size="sm"
+                    isIconOnly
+                    className="remove-schedule-btn"
+                    onClick={() => handleRemoveSchedule(dateIndex)}
+                  >
+                    <DeleteIcon />
+                  </Button>
+                )}
+              </div>
             </div>
           ))}
+
+        </div>
+        <div className="flex w-full justify-center pb-5">
           <Button
             color="primary"
             className="add-schedule-btn"
@@ -620,24 +635,23 @@ function UpdateTourForm({tourId}) {
                 id="thumbnail"
                 onChange={handleChange}
                 name="thumbnail"/>
-            </div>
-            <div className="py-2 grid grid-cols-4 gap-2">
-              {urls?.map((url, index) => (
-                <div key={index}>
-                  <div className="relative">
-                    <Button
-                      isIconOnly
-                      size="sm"
-                      radius="full"
-                      onClick={() => handleRemoveUrl(index)}
-                      className="bg-pink-600 absolute left-0"
-                    >
-                      <XMarkIcon className="text-white" />
-                    </Button>
-                    <img className="h-32 w-40 border" src={url} alt="preview" />
+              <div className="py-2 grid grid-cols-3 gap-2">
+                {urls?.map((url, index) => (
+                  <div key={index}>
+                    <div className="relative">
+                      <Button
+                        isIconOnly
+                        size="sm"
+                        onClick={() => handleRemoveUrl(index)}
+                        className="bg-pink-600 absolute right-0"
+                      >
+                        <XMarkIcon className="text-white" />
+                      </Button>
+                      <img className="h-52 w-80 border" src={url} alt="preview" />
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </Card>
         </div>
@@ -651,7 +665,7 @@ function UpdateTourForm({tourId}) {
             onClick={uploadAndSave}
             className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-white"
           >
-            Create Tour
+            Update Tour
           </Button>
         </div>
       </form>

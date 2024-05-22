@@ -8,11 +8,31 @@ function Rules({ Rules, value }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [data, setData] = useState([]);
 
+  // get token from localStorage
+  const token = localStorage.getItem("accessToken");
+
   const loadData = async () => {
-    const result = await axios.get(
-      `http://localhost:8080/api/v1/directory/rules`
-    );
-    setData(result?.data);
+    try {
+      if (!token) {
+        return;
+      }
+
+      // Thêm token vào tiêu đề "Authorization"
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const response = await axios.get(
+        `http://localhost:8080/api/v1/directory/rules`,
+        config
+      );
+      setData(response.data);
+      console.log("rules: ", response.data);
+    } catch (error) {
+      console.log("Error")
+    }
   };
 
   useEffect(() => {
