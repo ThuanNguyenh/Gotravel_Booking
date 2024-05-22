@@ -1,6 +1,7 @@
 import { Button, Card, CardBody, Image } from "@nextui-org/react";
 import { LocationIcon } from "../assets/LocationIcon";
 import { useState } from "react";
+import PaypalButton from "./Payment/PaypalButton";
 
 function CheckOut() {
 
@@ -145,6 +146,10 @@ function CheckOut() {
             <Button className="w-full text-lg text-white bg-[#73D8FC]">
                 Reserve Now
             </Button>
+        </div>
+        <div>
+          <p>Thanh toán</p>
+          <PaypalButton/>
         </div>
       </div>
     </div>

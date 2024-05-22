@@ -12,7 +12,7 @@ import { storage } from "../../../firebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import axios from "axios";
 import { Alert } from "../../Alert/Alert";
-import "../../../index.css"
+import "../../../index.css";
 
 function NewTourForm() {
   // get userId from localStorage
@@ -329,7 +329,7 @@ function NewTourForm() {
   return (
     <div className="mx-auto p-8">
       <h1 className="text-2xl font-semibold text-center">Create Tour</h1>
-      <form >
+      <form>
         {/* Tour Name */}
         <div className="mb-4">
           <Input
@@ -410,7 +410,6 @@ function NewTourForm() {
         </div>
 
         <div className="flex gap-2">
-
           {/* Number of Guests */}
           <div className="mb-4">
             <Input
@@ -449,7 +448,6 @@ function NewTourForm() {
           </div>
         </div>
 
-
         {/* DATE */}
         <div className="flex gap-2">
           {/* Start Date */}
@@ -485,7 +483,9 @@ function NewTourForm() {
           {schedules?.map((schedule, dateIndex) => (
             <div key={dateIndex} className="mb-4 flex items-center gap-3">
               <Card className="p-2 w-full items-center">
-                <div className="text-center font-semibold">Hoạt động {dateIndex+1}</div>
+                <div className="text-center font-semibold">
+                  Hoạt động {dateIndex + 1}
+                </div>
                 <Input
                   type="number"
                   size="sm"
@@ -570,14 +570,15 @@ function NewTourForm() {
           <Card>
             <div className="file-upload">
               <h3 className="font-semibold">Tải ảnh lên</h3>
-              <input 
+              <input
                 label="Hình ảnh"
                 required
                 type="file"
                 multiple // Allow multiple file selection
                 id="thumbnail"
                 onChange={handleChange}
-                name="thumbnail"/>
+                name="thumbnail"
+              />
             </div>
             <div className="py-2 grid grid-cols-4 gap-2">
               {urls?.map((url, index) => (
@@ -599,7 +600,6 @@ function NewTourForm() {
             </div>
           </Card>
         </div>
-
 
         {/* Submit button */}
         <div>
