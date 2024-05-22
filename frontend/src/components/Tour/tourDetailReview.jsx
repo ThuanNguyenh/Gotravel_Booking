@@ -89,7 +89,7 @@ function TourDetailReview() {
 
         <div className="flex flex-row gap-5 items-center">
           <div className=" flex text-5xl font-semibold pl-3">
-            {product.rating.toFixed(1)}
+            {product.rating}
             <div className="rating2">
               <label title="text" htmlFor="star1"></label>
             </div>

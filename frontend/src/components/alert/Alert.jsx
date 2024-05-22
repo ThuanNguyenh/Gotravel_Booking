@@ -1,14 +1,34 @@
 import Swal from "sweetalert2";
 
 // success
-export const Alert = (timer, title, message, icon, confirmButtonText) => {
+export const Alert = (timer, title, message, icon) => {
   Swal.fire({
     timer: timer, //1500
     title: title, //'Đăng nhập'
     text: message, //'Thành công'
     icon: icon, //'success' or 'error' or 'warning'
-    confirmButtonText: confirmButtonText, //'OK'
+    showConfirmButton: 'false',
   });
+};
+
+//loading
+export const LoadingAlert = (timer, title) => {
+  let timerInterval;
+  Swal.fire({
+    timer: timer, //1500
+    title: title, //'Đăng nhập'
+    timerProgressBar: true,
+    didOpen: () => {
+      Swal.showLoading();
+      const timer = Swal.getPopup().querySelector("b");
+      timerInterval = setInterval(() => {
+        timer.textContent = `${Swal.getTimerLeft()}`;
+      }, 100);
+    },
+    willClose: () => {
+      clearInterval(timerInterval);
+    }
+  })
 };
 
 // delete

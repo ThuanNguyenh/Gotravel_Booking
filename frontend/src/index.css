@@ -326,9 +326,11 @@
   .file-upload {
     text-align: center;
     border: 3px dashed rgb(210, 227, 244);
+    border-radius: 15px;
     padding: 1.5rem;
     position: relative;
     cursor: pointer;
+    height: full;
   }
   .file-upload p {
     font-size: 0.87rem;

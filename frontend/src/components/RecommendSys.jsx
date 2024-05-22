@@ -1,77 +1,82 @@
-import { useState } from 'react';
-import { Autocomplete, AutocompleteItem, Button} from '@nextui-org/react';
-
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { Card } from '@nextui-org/react';
+import { Link } from 'react-router-dom';
 
 function RecommendSys() {
-    const [filmName, setFilmName] = useState('');
     const [recommendations, setRecommendations] = useState([]);
-    const [hints, setHints] = useState([]);
+    const [tours, setTours] = useState([]);
 
-    const handleInputChange = (e) => {
-        const inputValue = e.target.value;
-        setFilmName(inputValue);
-
-        // Fetch hints when input changes
-        fetchHints(inputValue);
-    };
-
-    const fetchHints = (input) => {
-        fetch(`http://localhost:5000/api/hint?input=${encodeURIComponent(input)}`)
-            .then(response => response.json())
-            .then(data => {
-                setHints(data.suggestions.slice(0,5));
+    const getTours = () => {
+        axios.get(`https://6645c30ab8925626f89310d5.mockapi.io/api/v1/tour`)
+            .then(response => {
+                setTours(response.data);
             })
             .catch(error => {
-                console.error('Error fetching hints:', error);
+                console.error('Error fetching tours:', error);
             });
     };
 
-    const handleRecommendation = () => {
-        fetch(`http://localhost:5000/api/recommend?filmName=${encodeURIComponent(filmName)}`)
+    useEffect(() => {
+        getTours();
+        // Load recommendations from local storage if available
+        const savedRecommendations = localStorage.getItem('recommendations');
+        if (savedRecommendations) {
+            setRecommendations(JSON.parse(savedRecommendations));
+        }
+    }, []);
+
+    const handleRecommendation = (tourName) => {
+        console.log('Fetching recommendations for:', tourName);  // Debug log
+        axios.get(`http://localhost:5000/api/recommend?tourName=${encodeURIComponent(tourName)}`)
             .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                setRecommendations(data.recommendations);
+                console.log('Received recommendations:', response.data.recommendations);  // Debug log
+                setRecommendations(response.data.recommendations);
+                // Save recommendations to local storage
+                localStorage.setItem('recommendations', JSON.stringify(response.data.recommendations));
             })
             .catch(error => {
                 console.error('Error fetching recommendations:', error);
             });
     };
 
+    const handleTourClick = (tourName) => {
+        console.log('Tour clicked:', tourName);  // Debug log
+        handleRecommendation(tourName);
+    };
+
     return (
-        <div className=''>
-            <div className='flex justify-center w-[50%]'>
-                <Autocomplete
-                    type="text"
-                    placeholder="Enter Film Name"
-                    selectorIcon=''
-                    menuTrigger='input'
-                    value={filmName}
-                    onInput={handleInputChange}
-                    onSelect={handleInputChange}
-                >
-                        {hints.map((hint) => (
-                        <AutocompleteItem key={hint} value={hint}>
-                            {hint}
-                        </AutocompleteItem>
-                        ))}
-                </Autocomplete>
-                <Button onClick={handleRecommendation}>Get Recommendations</Button>
+        <div>
+            <div className='gap-2 grid grid-cols-10'>
+                {tours.map((tour, index) => (
+                    <Card
+                        isPressable
+                        className='flex p-3 w-20 cursor-pointer'
+                        key={index}
+                        onPress={() => handleTourClick(tour.tourName)}
+                        as={Link}
+                        to={`/search`}
+                    >
+                        {tour.tourName}
+                    </Card>
+                ))}
             </div>
 
             <div>
                 <h2>Recommendations:</h2>
-                <ul>
-                    {recommendations.map((movie, index) => (
-                        <li key={index}>{movie}</li>
+                <div className='flex gap-2'>
+                    {recommendations.map((recommendTour, index) => (
+                        <Card 
+                            className='p-3' 
+                            key={index}
+                            isPressable
+                            as={Link}
+                            to={`/search`}
+                            onPress={() => handleRecommendation(recommendTour)}
+                        >{recommendTour}</Card>
                     ))}
-                </ul>
+                </div>
             </div>
-
         </div>
     );
 }
