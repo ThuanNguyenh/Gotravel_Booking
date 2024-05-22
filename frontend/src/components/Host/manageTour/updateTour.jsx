@@ -344,6 +344,7 @@ function UpdateTourForm({ tourId, handleSave }) {
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
         },
       };
       const response = await axios.post(
