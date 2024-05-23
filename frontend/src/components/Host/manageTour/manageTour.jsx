@@ -68,7 +68,6 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
         config
       );
       setDataTour(response.data);
-      console.log("danh sach tour: ", response.data);
     } catch (error) {
       setMessage(error.response.data.message);
     }

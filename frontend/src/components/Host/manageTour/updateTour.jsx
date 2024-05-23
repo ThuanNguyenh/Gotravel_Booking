@@ -13,11 +13,9 @@ import { storage } from "../../../firebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import axios from "axios";
 import { Alert } from "../../Alert/Alert";
-import "../../../index.css"
+import "../../../index.css";
 
-function UpdateTourForm({tourId, handleSave}) {
-
-  console.log(tourId)
+function UpdateTourForm({ tourId, handleSave }) {
   // get userId from localStorage
   const userString = localStorage.getItem("userInfo");
   const user = JSON.parse(userString);
@@ -26,7 +24,7 @@ function UpdateTourForm({tourId, handleSave}) {
   // get accessToken from localStorage
   const token = localStorage.getItem("accessToken");
 
-  const [dataTour, setDataTour] = useState([]);
+  // const [dataTour, setDataTour] = useState([]);
   // address
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
@@ -100,7 +98,7 @@ function UpdateTourForm({tourId, handleSave}) {
   }, [district, ward]);
 
   // images
-  const [images, setImages] = useState([]);
+  const [imageList, setImageList] = useState([]);
   const [urls, setUrls] = useState([]);
 
   // handle remove url
@@ -117,7 +115,7 @@ function UpdateTourForm({tourId, handleSave}) {
     for (let i = 0; i < e.target.files.length; i++) {
       const newImage = e.target.files[i];
       newImage["id"] = Math.random();
-      setImages((prevState) => [...prevState, newImage]);
+      setImageList((prevState) => [...prevState, newImage]);
 
       setUrls((prev) => [...prev, URL.createObjectURL(newImage)]);
     }
@@ -207,7 +205,7 @@ function UpdateTourForm({tourId, handleSave}) {
   };
 
   // dữ liệu nhập vào
-  const [dataInput, setDataInput] = useState({
+  const [dataTour, setDataTour] = useState({
     tourName: "",
     description: "",
     thumbnail: "",
@@ -255,30 +253,38 @@ function UpdateTourForm({tourId, handleSave}) {
     ],
   });
 
+  const {
+    tourName,
+    description,
+    // thumbnail,
+    // province,
+    // district,
+    // ward,
+    detailAddress,
+    price,
+    numGuest,
+    discount,
+    startDate,
+    endDate,
+    // owner,
+    images,
+    categories,
+    utilities,
+    rules,
+    // schedules
+  } = dataTour;
+
   useEffect(() => {
-    setDataInput((prevData) => ({
-      ...prevData,
-      province: provinceName,
-      district: districtName,
-      ward: wardName,
-      categories: selectCate.map((id) => ({ categoryId: id })),
-      utilities: selectAmen.map((id) => ({ utilityId: id })),
-      rules: selectRule.map((id) => ({ ruleId: id })),
-      owner: {
-        userId: userId,
-      },
-      schedules: schedules,
-    }));
-  }, [
-    provinceName,
-    districtName,
-    wardName,
-    selectCate,
-    selectAmen,
-    selectRule,
-    userId,
-    schedules,
-  ]);
+    setSelectCate(...categories.map((item) => item.categoryId));
+  }, [categories])
+
+  useEffect(() => {
+    setSelectRule(...rules.map((item) => item.ruleId));
+  }, [rules])
+
+  useEffect(() => {
+    setSelectAmen(...utilities.map((item) => item.utilityId));
+  }, [utilities])
 
   // input change
   const change = (e) => {
@@ -288,6 +294,8 @@ function UpdateTourForm({tourId, handleSave}) {
       [name]: value,
     }));
   };
+
+
 
   // message
   const [message, setMessage] = useState("vui lòng điền đầy đủ thông tin");
@@ -311,7 +319,6 @@ function UpdateTourForm({tourId, handleSave}) {
         config
       );
       setDataTour(response.data);
-      console.log("update tour: ", response.data);
     } catch (error) {
       setMessage(error.response.data.message);
     }
@@ -324,7 +331,7 @@ function UpdateTourForm({tourId, handleSave}) {
   // save tour
   const saveTour = async (listImage) => {
     const dataRequest = {
-      ...dataInput,
+      ...dataTour,
       thumbnail: listImage[0],
       images: [...listImage.map((url) => ({ url }))],
     };
@@ -356,7 +363,7 @@ function UpdateTourForm({tourId, handleSave}) {
       setMessage(error?.response.data);
       alert(message);
     }
-    handleSave("ManageTour")
+    handleSave("ManageTour");
   };
 
   // UploadAndSave
@@ -374,14 +381,14 @@ function UpdateTourForm({tourId, handleSave}) {
   return (
     <div className="mx-auto p-8">
       <h1 className="text-2xl font-semibold text-center">Chỉnh sửa Tour</h1>
-      <form >
+      <form>
         {/* Tour Name */}
         <div className="mb-4">
           <Input
             label="Tên tour"
             onChange={change}
             required
-            value={dataTour.tourName}
+            value={tourName}
             type="text"
             id="tourName"
             name="tourName" // Update name attribute to match the field name
@@ -394,7 +401,7 @@ function UpdateTourForm({tourId, handleSave}) {
             label="Mô tả"
             id="description"
             required
-            value={dataTour.description}
+            value={description}
             onChange={change}
             name="description" // Update name attribute to match the field name
             className=" mt-1 block w-full "
@@ -440,7 +447,7 @@ function UpdateTourForm({tourId, handleSave}) {
             <Input
               label="Địa chỉ chi tiết"
               onChange={change}
-              value={dataTour.detailAddress}
+              value={detailAddress}
               required
               type="text"
               id="detailAddress"
@@ -458,13 +465,12 @@ function UpdateTourForm({tourId, handleSave}) {
         </div>
 
         <div className="flex gap-2">
-
           {/* Number of Guests */}
           <div className="mb-4">
             <Input
               label="Số lượng khách"
               onChange={change}
-              value={dataTour.numGuest}
+              value={numGuest}
               required
               type="number"
               id="numGuest"
@@ -478,7 +484,7 @@ function UpdateTourForm({tourId, handleSave}) {
             <Input
               label="Giảm giá %"
               onChange={change}
-              value={dataTour.discount}
+              value={discount}
               type="number"
               id="discount"
               name="discount" // Update name attribute to match the field name
@@ -490,7 +496,7 @@ function UpdateTourForm({tourId, handleSave}) {
             <Input
               label="Giá tour"
               onChange={change}
-              value={dataTour.price}
+              value={price}
               required
               type="number"
               id="price"
@@ -500,7 +506,6 @@ function UpdateTourForm({tourId, handleSave}) {
           </div>
         </div>
 
-
         {/* DATE */}
         <div className="flex gap-2">
           {/* Start Date */}
@@ -508,7 +513,7 @@ function UpdateTourForm({tourId, handleSave}) {
             <Input
               label="Ngày đi"
               onChange={change}
-              value={dataTour.startDate}
+              value={startDate}
               required
               placeholder="date"
               type="date"
@@ -523,7 +528,7 @@ function UpdateTourForm({tourId, handleSave}) {
               label="Ngày về"
               placeholder="date"
               onChange={change}
-              value={dataTour.endDate}
+              value={endDate}
               required
               type="date"
               id="endDate"
@@ -538,7 +543,9 @@ function UpdateTourForm({tourId, handleSave}) {
           {schedules?.map((schedule, dateIndex) => (
             <div key={dateIndex} className="mb-4 flex items-start gap-3">
               <Card className="p-2 w-full items-center">
-                <div className="text-center font-semibold">Hoạt động {dateIndex+1}</div>
+                <div className="text-center font-semibold">
+                  Hoạt động {dateIndex + 1}
+                </div>
                 <Input
                   type="number"
                   size="sm"
@@ -610,7 +617,6 @@ function UpdateTourForm({tourId, handleSave}) {
               </div>
             </div>
           ))}
-
         </div>
         <div className="flex w-full justify-center pb-5">
           <Button
@@ -628,14 +634,15 @@ function UpdateTourForm({tourId, handleSave}) {
           <Card>
             <div className="file-upload">
               <h3 className="font-semibold">Tải ảnh lên</h3>
-              <input 
+              <input
                 label="Hình ảnh"
                 required
                 type="file"
                 multiple // Allow multiple file selection
                 id="thumbnail"
                 onChange={handleChange}
-                name="thumbnail"/>
+                name="thumbnail"
+              />
               <div className="py-2 grid grid-cols-3 gap-2">
                 {urls?.map((url, index) => (
                   <div key={index}>
@@ -648,7 +655,11 @@ function UpdateTourForm({tourId, handleSave}) {
                       >
                         <XMarkIcon className="text-white" />
                       </Button>
-                      <img className="h-52 w-80 border" src={url} alt="preview" />
+                      <img
+                        className="h-52 w-80 border"
+                        src={url}
+                        alt="preview"
+                      />
                     </div>
                   </div>
                 ))}
@@ -656,7 +667,6 @@ function UpdateTourForm({tourId, handleSave}) {
             </div>
           </Card>
         </div>
-
 
         {/* Submit button */}
         <div>

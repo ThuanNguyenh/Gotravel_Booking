@@ -29,9 +29,8 @@ function Category({ Cates, value }) {
         config
       );
       setData(response.data);
-      console.log("categories: ", response.data);
     } catch (error) {
-      console.log("Error")
+      console.log("Error");
     }
   };
 
@@ -50,8 +49,6 @@ function Category({ Cates, value }) {
       }
     });
   };
-
-  console.log(data)
 
   return (
     <div className="col-span-1">

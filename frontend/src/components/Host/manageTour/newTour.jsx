@@ -12,8 +12,8 @@ import { XMarkIcon } from "@heroicons/react/24/solid";
 import { storage } from "../../../firebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import axios from "axios";
-import { Alert, LoadingAlert } from "../../alert/Alert";
-import "../../../index.css"
+import { Alert, LoadingAlert } from "../../Alert/Alert";
+import "../../../index.css";
 
 const NewTourForm = ({ handleSave }) => {
   // get userId from localStorage
@@ -284,8 +284,6 @@ const NewTourForm = ({ handleSave }) => {
     schedules,
   ]);
 
-  console.log(selectCate)
-
   // input change
   const change = (e) => {
     const { name, value } = e.target;
@@ -318,14 +316,13 @@ const NewTourForm = ({ handleSave }) => {
       );
       console.log("ket qua da luu: ", response);
       Alert(1000, "Tạo tour", "Thành công", "success", "OK");
-
     } catch (error) {
       console.log("loi roi: ", error);
       setMessage(error?.response.data);
       alert(message);
       Alert(2000, "Tạo tour", "Thất bại", "error", "OK");
     }
-    handleSave("ManageTour")
+    handleSave("ManageTour");
   };
 
   // UploadAndSave
@@ -343,7 +340,7 @@ const NewTourForm = ({ handleSave }) => {
   return (
     <div className="mx-auto p-8">
       <h1 className="text-2xl font-semibold text-center">Tạo Tour</h1>
-      <form >
+      <form>
         {/* Tour Name */}
         <div className="mb-4">
           <Input
@@ -424,7 +421,6 @@ const NewTourForm = ({ handleSave }) => {
         </div>
 
         <div className="flex gap-2">
-
           {/* Number of Guests */}
           <div className="mb-4">
             <Input
@@ -463,7 +459,6 @@ const NewTourForm = ({ handleSave }) => {
           </div>
         </div>
 
-
         {/* DATE */}
         <div className="flex gap-2">
           {/* Start Date */}
@@ -499,7 +494,9 @@ const NewTourForm = ({ handleSave }) => {
           {schedules?.map((schedule, dateIndex) => (
             <div key={dateIndex} className="mb-4 flex items-start gap-3">
               <Card className="p-2 w-full items-center">
-                <div className="text-center font-semibold">Hoạt động {dateIndex+1}</div>
+                <div className="text-center font-semibold">
+                  Hoạt động {dateIndex + 1}
+                </div>
                 <Input
                   type="number"
                   size="sm"
@@ -571,7 +568,6 @@ const NewTourForm = ({ handleSave }) => {
               </div>
             </div>
           ))}
-
         </div>
         <div className="flex w-full justify-center pb-5">
           <Button
@@ -589,14 +585,15 @@ const NewTourForm = ({ handleSave }) => {
           <Card>
             <div className="file-upload">
               <h3 className="font-semibold">Tải ảnh lên</h3>
-              <input 
+              <input
                 label="Hình ảnh"
                 required
                 type="file"
                 multiple // Allow multiple file selection
                 id="thumbnail"
                 onChange={handleChange}
-                name="thumbnail"/>
+                name="thumbnail"
+              />
               <div className="py-2 grid grid-cols-3 gap-2">
                 {urls?.map((url, index) => (
                   <div key={index}>
@@ -609,7 +606,11 @@ const NewTourForm = ({ handleSave }) => {
                       >
                         <XMarkIcon className="text-white" />
                       </Button>
-                      <img className="h-52 w-80 border" src={url} alt="preview" />
+                      <img
+                        className="h-52 w-80 border"
+                        src={url}
+                        alt="preview"
+                      />
                     </div>
                   </div>
                 ))}
@@ -617,7 +618,6 @@ const NewTourForm = ({ handleSave }) => {
             </div>
           </Card>
         </div>
-
 
         {/* Submit button */}
         <div>
@@ -633,6 +633,6 @@ const NewTourForm = ({ handleSave }) => {
       </form>
     </div>
   );
-}
+};
 
 export default NewTourForm;
