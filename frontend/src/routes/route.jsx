@@ -10,20 +10,19 @@ import Admin from "../components/admin/admin";
 
 // không cần đăng nhập
 const publicRoutes = [
+  // route
+  { path: "/", component: ListTour },
+  { path: "/tourDetail/:tourId", component: TourDetail, layout: HeaderOnly },
+  { path: "/profile", component: Profile, layout: HeaderOnly },
+  { path: "/checkout/:tourId", component: CheckOut, layout: HeaderOnly },
+  { path: "/search", component: Search },
 
-    // route
-    {path: '/', component: ListTour},
-    {path: '/tourDetail/:tourId', component:TourDetail, layout: HeaderOnly},
-    {path: '/profile', component:Profile, layout: HeaderOnly},
-    {path: '/checkout/:tourId', component:CheckOut, layout: HeaderOnly},
-    {path: '/search', component:Search},
-    {path: '/host', component:Host ,layout:HeaderOnly},
-    {path: '/admin', component:Admin, layout: HeaderOnly},
-
-
+  { path: "/admin", component: Admin, layout: HeaderOnly },
 ];
 
 // bắt buộc đăng nhập
-const privateRoutes = [];
+const privateRoutes = [
+    { path: "/host", component: Host, layout: HeaderOnly }
+];
 
 export { publicRoutes, privateRoutes };

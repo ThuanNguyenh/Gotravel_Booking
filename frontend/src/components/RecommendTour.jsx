@@ -34,20 +34,8 @@ function RecommendTour() {
   // get all tour
   const getDataTour = async () => {
     try {
-      if (!token) {
-        return;
-      }
-
-      // Thêm token vào tiêu đề "Authorization"
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-
       const response = await axios.get(
-        `http://localhost:8080/api/v1/tour`,
-        config
+        `http://localhost:8080/api/v1/tour`
       );
       setDataTour(response.data);
       console.log("danh sach tour: ", response.data);

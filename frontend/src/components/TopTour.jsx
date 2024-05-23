@@ -13,7 +13,7 @@ function TopTour() {
   const [tourId, setTourId] = useState(null);
 
   // Function to handle the selection of a tour
-  const handleSelectTour= (tourId) => {
+  const handleSelectTour = (tourId) => {
     setTourId(tourId);
   };
 
@@ -25,8 +25,6 @@ function TopTour() {
       return newLikedProducts;
     });
   };
-  
-
 
   // get token from localStorage
   const token = localStorage.getItem("accessToken");
@@ -34,32 +32,17 @@ function TopTour() {
   // get all tour
   const getDataTour = async () => {
     try {
-      if (!token) {
-        return;
-      }
-
-      // Thêm token vào tiêu đề "Authorization"
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-
-      const response = await axios.get(
-        `http://localhost:8080/api/v1/tour`,
-        config
-      );
+      const response = await axios.get(`http://localhost:8080/api/v1/tour`);
       setDataTour(response.data);
       console.log("danh sach tour: ", response.data);
     } catch (error) {
-      console.log("Error")
+      console.log("Error");
     }
   };
 
   useEffect(() => {
     getDataTour();
   }, []);
-
 
   return (
     <div>
@@ -72,10 +55,12 @@ function TopTour() {
                 <div className="flip-card-front">
                   <CardBody className="p-0">
                     <div className="relative group">
-                      <Link to={`/tourDetail/${tour.tourId}`} onClick={() => handleSelectTour(tour.tourId)}>
+                      <Link
+                        to={`/tourDetail/${tour.tourId}`}
+                        onClick={() => handleSelectTour(tour.tourId)}
+                      >
                         <Image
                           isZoomed
-                          
                           shadow="sm"
                           radius="lg"
                           width="100%"
@@ -88,21 +73,21 @@ function TopTour() {
                       <div className="absolute top-0 right-0 text-white p-2">
                         <div className="z-10 relative flex gap-1">
                           <Button
-                              isIconOnly
-                              className="text-default-900/60 data-[hover]:bg-foreground/10 -translate-y-2 translate-x-2"
-                              radius="full"
-                              variant="light"
-                              onPress={() => toggleLike(index)}
-                            >
-                              <HeartIcon
-                                className={
-                                  likedTours[index]
-                                    ? "[&>path]:stroke-transparent"
-                                    : ""
-                                }
-                                fill={likedTours[index] ? "red" : "none"}
-                              />
-                            </Button>
+                            isIconOnly
+                            className="text-default-900/60 data-[hover]:bg-foreground/10 -translate-y-2 translate-x-2"
+                            radius="full"
+                            variant="light"
+                            onPress={() => toggleLike(index)}
+                          >
+                            <HeartIcon
+                              className={
+                                likedTours[index]
+                                  ? "[&>path]:stroke-transparent"
+                                  : ""
+                              }
+                              fill={likedTours[index] ? "red" : "none"}
+                            />
+                          </Button>
                         </div>
                       </div>
 
@@ -117,7 +102,7 @@ function TopTour() {
                                   : tour.tourName}
                               </h1>
                               <p className="text-medium font-light">
-                                 {tour.province}
+                                {tour.province}
                               </p>
                             </div>
                           </CardFooter>

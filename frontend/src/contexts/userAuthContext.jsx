@@ -41,7 +41,6 @@ export function UserAuthContextProvider({ children }) {
     const fbProvider = new FacebookAuthProvider();
     try {
       const result = await firebase.auth().signInWithPopup(fbProvider);
-
       return result;
     } catch (error) {
       console.error("Lỗi Đăng nhập Facebook: ", error);
