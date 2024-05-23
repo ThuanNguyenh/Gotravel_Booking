@@ -321,6 +321,10 @@
   }
 
 
+
+  /* custom css slide home Duy code 
+  */
+=======
   /* input image */
 
   .file-upload {
@@ -351,7 +355,247 @@
   }
 
 
+
+  
+
+.swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-slide {
+  text-align: center;
+  font-size: 18px;
+  background: #fff;
+
+  /* Center slide text vertically */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.swiper-slide img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
   
   
-  
-  
+/* home  */
+.frame {
+  align-items: center;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 50px 0px 50px 70px;
+  position: relative;
+}
+
+.frame .rectangle {
+  background-color: #01b7f2;
+  border-radius: 50px;
+  height: 375px;
+  left: -9px;
+  position: absolute;
+  top: 120px;
+  width: 1319px;
+}
+
+.frame .about-us {
+  height: 516px;
+  position: relative;
+  width: 1231.14px;
+}
+
+.frame .overlap-group {
+  height: 726px;
+  left: -105px;
+  position: relative;
+  top: -95px;
+  width: 1336px;
+}
+
+.frame .div {
+  align-items: flex-start;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 22px;
+  left: 841px;
+  position: absolute;
+  top: 199px;
+}
+
+.frame .div-2 {
+  align-items: flex-start;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 15px;
+  position: relative;
+}
+
+.frame .div-3 {
+  align-items: flex-start;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+}
+
+.frame .discover-our-story {
+  color: #ffffff;
+  font-family: "Poppins-Bold", Helvetica;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: normal;
+  margin-top: -1px;
+  position: relative;
+  width: 495.14px;
+}
+
+.frame .div-4 {
+  align-items: flex-start;
+  align-self: stretch;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  width: 100%;
+}
+
+.frame .li-europan-lingues {
+  align-self: stretch;
+  color: #ffffff;
+  font-family: "Poppins-Regular", Helvetica;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 19px;
+  margin-top: -1px;
+  position: relative;
+}
+
+.frame .text-wrapper {
+  align-self: stretch;
+  color: #ffffff;
+  font-family: "Poppins-Regular", Helvetica;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 19px;
+  position: relative;
+}
+
+.frame .list {
+  align-items: flex-start;
+  display: flex;
+  flex: 0 0 auto;
+  gap: 25px;
+  position: relative;
+  width: 410px;
+}
+
+.frame .div-5 {
+  align-items: flex-start;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 2px;
+  position: relative;
+}
+
+.frame .item {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  padding: 0px 0px 0.19px;
+  position: relative;
+}
+
+.frame .text-wrapper-2 {
+  color: #ffffff;
+  font-family: "Font Awesome 5 Free-Solid", Helvetica;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 14px;
+  position: relative;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.frame .text-wrapper-3 {
+  color: #ffffff;
+  font-family: "Poppins-Regular", Helvetica;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 25.2px;
+  margin-top: -1px;
+  position: relative;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.frame .div-6 {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-right: -96.5px;
+  position: relative;
+  width: 310.5px;
+}
+
+.frame .group {
+  height: 44px;
+  position: relative;
+  width: 136px;
+}
+
+.frame .div-wrapper {
+  align-items: center;
+  background-color: #ffffff;
+  border-radius: 30px;
+  display: inline-flex;
+  gap: 10px;
+  justify-content: center;
+  padding: 10px 25px;
+  position: relative;
+}
+
+.frame .text-wrapper-4 {
+  color: #3b3b3b;
+  font-family: "Poppins-SemiBold", Helvetica;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 24px;
+  margin-top: -1px;
+  position: relative;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.frame .img {
+  height: 726px;
+  left: 0;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  width: 604px;
+}
+
+.frame .rectangle-2 {
+  height: 575px;
+  left: 479px;
+  object-fit: cover;
+  position: absolute;
+  top: 125px;
+  width: 381px;
+}
