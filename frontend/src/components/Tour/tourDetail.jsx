@@ -16,9 +16,10 @@ function TourDetail() {
   const [liked, setLiked] = useState(false);
 
   //fetch tour detail based id
+  const { tourId } = useParams();
   const [dataTour, setDataTour] = useState([]);
 
-  const { tourId } = useParams();
+
   console.log(tourId)
 
   // get token from localStorage
@@ -58,7 +59,7 @@ function TourDetail() {
           <div className="flex flex-row justify-between pt-10">
               <div className="flex flex-col gap-2">
                   <h1 className="text-3xl font-bold pb-5">{dataTour.tourName}</h1>
-                  <div className="flex flex-row"><LocationIcon/>{dataTour.detailAddress},{dataTour.ward},{dataTour.district},{dataTour.province}</div>
+                  <div className="flex flex-row font-semibold"><LocationIcon/>{dataTour.detailAddress}, {dataTour.ward}, {dataTour.district}, {dataTour.province}</div>
                   <div className="flex flex-row gap-1 items-center">
                       <p className="rounded-md bg-[#01B7F2] p-1 text-white font-semibold">{dataTour.discount}</p>
                       <p className="font-semibold">Rất tốt</p>
@@ -76,7 +77,7 @@ function TourDetail() {
                             fill={liked ? "red" : "none"}/>
                       </Button>
                       <Button isIconOnly variant="bordered" className="border-[#01B7F2]"><ShareIcon/></Button>
-                      <Link to={`/checkout`}>
+                      <Link to={`/checkout/${dataTour.tourId}`}>
                           <Button className="bg-[#01B7F2] text-white font-semibold">Đặt chỗ ngay</Button>
                       </Link>
                   </div>
@@ -85,13 +86,13 @@ function TourDetail() {
           </div>
           <div className="">
               <div className="grid grid-cols-2">
-                  <Image className="h-full px-2" src={dataTour.thumbnail}/>
-                  <div className="grid grid-cols-2 gap-2">
-                      {/* {dataTour.images.map((url, index) => (
-                          <Image key={index} className="w-80 h-48" src={url}/>
-                      ))} */}
+                    <Image isBlurred className="h-full w-full px-2" src={dataTour.thumbnail}/>
+                    <div className="grid grid-cols-2 gap-2">
+                      {dataTour.images && dataTour.images.map((image, index) => (
+                          <Image key={index} isBlurred className="w-80 h-48" src={image.url}/>
+                      ))}
 
-                  </div>
+                    </div>
               </div>
           </div>
           <div>

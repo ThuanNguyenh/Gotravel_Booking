@@ -260,6 +260,7 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
                               <ModalBody>
                                 <div className="input-container">
                                   <input
+                                    value={tour.discount}
                                     placeholder="Add % Sale here"
                                     type="text"
                                   />

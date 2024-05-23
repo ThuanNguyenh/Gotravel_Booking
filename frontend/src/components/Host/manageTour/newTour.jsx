@@ -329,7 +329,7 @@ const NewTourForm = ({ handleSave }) => {
   const uploadAndSave = async (e) => {
     e.preventDefault();
     try {
-      LoadingAlert(3000, "Đang tạo tour");
+      LoadingAlert(3000, "Đang tạo tour",);
       const listImage = await uploadMultipleFiles(images);
       await saveTour(listImage);
     } catch (error) {

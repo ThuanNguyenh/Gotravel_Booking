@@ -7,28 +7,31 @@ export const Alert = (timer, title, message, icon) => {
     title: title, //'Đăng nhập'
     text: message, //'Thành công'
     icon: icon, //'success' or 'error' or 'warning'
-    showConfirmButton: 'false',
+    showConfirmButton: false,
   });
 };
 
-//loading
+// loading
 export const LoadingAlert = (timer, title) => {
   let timerInterval;
   Swal.fire({
     timer: timer, //1500
     title: title, //'Đăng nhập'
+    html: 'Loading <b></b>', // Added element to display timer
     timerProgressBar: true,
     didOpen: () => {
       Swal.showLoading();
-      const timer = Swal.getPopup().querySelector("b");
+      const b = Swal.getHtmlContainer().querySelector('b');
       timerInterval = setInterval(() => {
-        timer.textContent = `${Swal.getTimerLeft()}`;
+        if (b) {
+          b.textContent = Swal.getTimerLeft();
+        }
       }, 100);
     },
     willClose: () => {
       clearInterval(timerInterval);
     }
-  })
+  });
 };
 
 // delete

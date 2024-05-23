@@ -42,6 +42,10 @@ const Account = () => {
   const handleLogout = async () => {
     try {
       await logOut();
+      Alert(2000, "Đăng xuất", "Thành công", "success", "OK");
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     } catch (error) {
       Alert(2000, "Đăng xuất", "Thất bại", "error", "OK");
     }

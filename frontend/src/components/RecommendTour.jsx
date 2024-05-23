@@ -63,7 +63,7 @@ function RecommendTour() {
 
   return (
     <div>
-      <h1 className="py-10 text-3xl font-extrabold">Đề xuất cho bạn</h1>
+      <h1 className="py-10 text-3xl font-extrabold">Recommend Tour</h1>
       <div className="gap-4 grid grid-cols-1 sm:grid-cols-4">
         {dataTour.map((tour, index) => (
           <Card key={tour.tourId} className="border-small border-blue-400">

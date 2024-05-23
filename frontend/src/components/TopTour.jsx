@@ -1,14 +1,23 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import { Card, CardBody, CardFooter, Image, Button } from "@nextui-org/react";
 import { Link } from "react-router-dom";
 import { StarIcon } from "../assets/starIcon";
 import { HeartIcon } from "../assets/heart";
+import axios from "axios";
 
 function TopTour() {
-  // State to store liked status for each product
-  const [likedProducts, setLikedProducts] = useState([]);
+  // State to store liked status for each tour
+  const [dataTour, setDataTour] = useState([]);
+  const [likedTours, setLikedProducts] = useState([]);
+  const [tourId, setTourId] = useState(null);
 
-  // Function to toggle liked status for a product
+  // Function to handle the selection of a tour
+  const handleSelectTour= (tourId) => {
+    setTourId(tourId);
+  };
+
+  // Function to toggle liked status for a tour
   const toggleLike = (index) => {
     setLikedProducts((prevLikedProducts) => {
       const newLikedProducts = [...prevLikedProducts];
@@ -16,46 +25,62 @@ function TopTour() {
       return newLikedProducts;
     });
   };
+  
 
-  //fetch api
-  const [products, setProducts] = useState([]);
+
+  // get token from localStorage
+  const token = localStorage.getItem("accessToken");
+
+  // get all tour
+  const getDataTour = async () => {
+    try {
+      if (!token) {
+        return;
+      }
+
+      // Thêm token vào tiêu đề "Authorization"
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const response = await axios.get(
+        `http://localhost:8080/api/v1/tour`,
+        config
+      );
+      setDataTour(response.data);
+      console.log("danh sach tour: ", response.data);
+    } catch (error) {
+      console.log("Error")
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("https://dummyjson.com/products");
-        const data = await response.json();
-        // Limit the products to the first 20 items
-        const first8Products = data.products.slice(0, 8);
-        setProducts(first8Products);
-      } catch (error) {
-        console.error("Error fetching product data:", error);
-      }
-    };
-
-    fetchData();
+    getDataTour();
   }, []);
+
 
   return (
     <div>
       <h1 className="py-10 text-3xl font-extrabold">Top Tour</h1>
       <div className="gap-4 grid grid-cols-1 sm:grid-cols-4">
-        {products.map((product, index) => (
-          <Card key={product.id} className="border-small border-blue-400">
+        {dataTour.map((tour, index) => (
+          <Card key={tour.tourId} className="border-small border-blue-400">
             <div className="flip-card">
               <div className="flip-card-inner">
                 <div className="flip-card-front">
                   <CardBody className="p-0">
                     <div className="relative group">
-                      <Link to={`/tourDetail/${product.id}`}>
+                      <Link to={`/tourDetail/${tour.tourId}`} onClick={() => handleSelectTour(tour.tourId)}>
                         <Image
                           isZoomed
+                          
                           shadow="sm"
                           radius="lg"
                           width="100%"
                           className="w-full object-cover h-[400px]"
-                          src={product.thumbnail}
-                          alt={product.title}
+                          src={tour.thumbnail}
                         />
                       </Link>
 
@@ -63,21 +88,21 @@ function TopTour() {
                       <div className="absolute top-0 right-0 text-white p-2">
                         <div className="z-10 relative flex gap-1">
                           <Button
-                            isIconOnly
-                            className="text-default-900/60 data-[hover]:bg-foreground/10 -translate-y-2 translate-x-2"
-                            radius="full"
-                            variant="light"
-                            onPress={() => toggleLike(index)}
-                          >
-                            <HeartIcon
-                              className={
-                                likedProducts[index]
-                                  ? "[&>path]:stroke-transparent"
-                                  : ""
-                              }
-                              fill={likedProducts[index] ? "red" : "none"}
-                            />
-                          </Button>
+                              isIconOnly
+                              className="text-default-900/60 data-[hover]:bg-foreground/10 -translate-y-2 translate-x-2"
+                              radius="full"
+                              variant="light"
+                              onPress={() => toggleLike(index)}
+                            >
+                              <HeartIcon
+                                className={
+                                  likedTours[index]
+                                    ? "[&>path]:stroke-transparent"
+                                    : ""
+                                }
+                                fill={likedTours[index] ? "red" : "none"}
+                              />
+                            </Button>
                         </div>
                       </div>
 
@@ -87,19 +112,19 @@ function TopTour() {
                           <CardFooter className="justify-between">
                             <div className="flex flex-col font-semibold text-lg">
                               <h1 className="">
-                                {product.title.length > 10
-                                  ? product.title.substring(0, 20) + "..."
-                                  : product.title}
+                                {tour.tourName.length > 10
+                                  ? tour.tourName.substring(0, 20) + "..."
+                                  : tour.tourName}
                               </h1>
                               <p className="text-medium font-light">
-                                {product.stock} Orders
+                                 {tour.province}
                               </p>
                             </div>
                           </CardFooter>
                         </div>
                         <div className="relative flex gap-1 items-center">
                           <StarIcon />
-                          {parseFloat(product.rating).toFixed(1)}
+                          {parseFloat(tour.price).toFixed(1)}
                         </div>
                       </div>
                     </div>
