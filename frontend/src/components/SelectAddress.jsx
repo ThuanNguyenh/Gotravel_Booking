@@ -10,13 +10,14 @@ export default function SelectAddress({
 }) {
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-slate-800 font-medium">{label}</p>
+
 
       {/* tỉnh/ thành phố */}
       <Autocomplete
+
         variant="bordered"
         label={label}
-        className="max-w-xs"
+        className="max-w-xs bg-[#F4F4f5] rounded-lg"
         value={value}
         onChange={(e) => setValue(e.target.value)}
       >

@@ -1,8 +1,49 @@
 import { Button, Card, CardBody, Image } from "@nextui-org/react";
 import { LocationIcon } from "../assets/LocationIcon";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import PaypalButton from "./Payment/PaypalButton";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 
 function CheckOut() {
+
+  const { tourId } = useParams();
+  const [dataTour, setDataTour] = useState([]);
+
+  // get token from localStorage
+  const token = localStorage.getItem("accessToken");
+
+  // get data tour
+  const getDataTour = async () => {
+    try {
+      if (!token) {
+        return;
+      }
+
+      // Thêm token vào tiêu đề "Authorization"
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const response = await axios.get(
+        `http://localhost:8080/api/v1/tour/${tourId}`,
+        config
+      );
+      setDataTour(response.data);
+      console.log("chi tiet tour: ", response.data);
+    } catch (error) {
+      console.log("Error")
+    }
+  };
+
+  useEffect(() => {
+    getDataTour();
+  }, []);
+
+
+
 
   //Select number of customer
   const [adult, setAdult] = useState(0);
@@ -56,21 +97,21 @@ function CheckOut() {
                   <Image
                     height={150}
                     shadow="md"
-                    src="https://img.directbooking.ro/getimage.ashx?f=Statiuni&w=600&h=399&file=Statiune_2cc49871-736f-43c5-a388-b4d0c4d1c06b.jpg"
+                    src={dataTour.thumbnail}
                     width="100%"
                   />
                 </div>
 
-                <div className="flex flex-col col-span-5 md:col-span-5">
-                  <div className="flex flex-col justify-between gap-5">
+                <div className="flex flex-col col-span-6 md:col-span-6">
+                  <div className="flex flex-col  justify-between gap-5">
                     <div className="flex flex-col gap-0">
                       <h3 className="font-semibold text-2xl text-foreground/90">
-                        Ha noi
+                        {dataTour.tourName}
                       </h3>
                       <div className="flex flex-row">
                         <LocationIcon />
                         <p className="text-small text-foreground/80 text-[#73D8FC]">
-                          Viet Nam
+                          {dataTour.detailAddress}, {dataTour.ward}, {dataTour.district}, {dataTour.province}
                         </p>
                       </div>
                     </div>
@@ -78,11 +119,11 @@ function CheckOut() {
                     <div className="flex flex-row bg-slate-100 w-fit gap-5 p-3 justify-between text-medium font-lights text-slate-500">
                       <div>
                         <h1 className="">Check in</h1>
-                        <h1 className="">Date</h1>
+                        <h1 className="">{dataTour.startDate}</h1>
                       </div>
                       <div>
                         <h1 className="">Check out</h1>
-                        <h1 className="">Date</h1>
+                        <h1 className="">{dataTour.endDate}</h1>
                       </div>
                     </div>
                   </div>
@@ -92,6 +133,7 @@ function CheckOut() {
             </CardBody>
           </Card>
           <div>
+            <div>Limit guest {dataTour.numGuest}</div>
             <div>
               Number of Adult
             </div>
@@ -126,12 +168,12 @@ function CheckOut() {
 
                 <div className="py-2.5 border-b border-gray-300 w-full flex justify-between">
                     <div className="text-sm font-medium text-gray-600">Base Price</div>
-                    <div className="font-semibold">${price}</div>
+                    <div className="font-semibold">${dataTour.price}</div>
                 </div>
 
                 <div className="py-2.5 border-b border-gray-300 w-full flex justify-between">
                     <div className="text-sm font-medium text-blue-500">Total Discount</div>
-                    <div className="font-semibold">${discount}</div>
+                    <div className="font-semibold">${dataTour.discount}</div>
                 </div>
 
                 <div className="py-2.5 w-full flex justify-between">
@@ -145,6 +187,9 @@ function CheckOut() {
             <Button className="w-full text-lg text-white bg-[#73D8FC]">
                 Reserve Now
             </Button>
+        </div>
+        <div className="pt-5">
+          <PaypalButton/>
         </div>
       </div>
     </div>

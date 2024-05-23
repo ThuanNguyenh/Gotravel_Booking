@@ -1,9 +1,13 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import { Card, CardBody, CardFooter, Image, Button } from "@nextui-org/react";
 import { Link } from "react-router-dom";
 import { StarIcon } from "../assets/starIcon";
 import { HeartIcon } from "../assets/heart";
 import { Swiper, SwiperSlide } from 'swiper/react';
+
+import axios from "axios";
+
 
 import 'swiper/css';
 import 'swiper/css/scrollbar';
@@ -14,7 +18,14 @@ import '../../src/index.css'
 import { Navigation, Pagination ,Autoplay} from 'swiper/modules';
 function RecommendTour() {
   // State to store liked status for each product
-  const [likedProducts, setLikedProducts] = useState([]);
+  const [dataTour, setDataTour] = useState([]);
+  const [likedTours, setLikedProducts] = useState([]);
+  const [tourId, setTourId] = useState(null);
+
+  // Function to handle the selection of a tour
+  const handleSelectTour= (tourId) => {
+    setTourId(tourId);
+  };
 
   // Function to toggle liked status for a product
   const toggleLike = (index) => {
@@ -25,28 +36,41 @@ function RecommendTour() {
     });
   };
 
-  // Fetch API data
   const [products, setProducts] = useState([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("https://dummyjson.com/products");
-        const data = await response.json();
-        // Limit the products to the first 20 items
-        const first20Products = data.products.slice(0, 8);
-        // Initialize liked status for each product to false
-        const initialLikedStatus = first20Products.map(() => false);
-        setProducts(first20Products);
-        setLikedProducts(initialLikedStatus);
-      } catch (error) {
-        console.error("Error fetching product data:", error);
+
+
+  // get token from localStorage
+  const token = localStorage.getItem("accessToken");
+
+  // get all tour
+  const getDataTour = async () => {
+    try {
+      if (!token) {
+        return;
       }
-    };
 
-    fetchData();
+      // Thêm token vào tiêu đề "Authorization"
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const response = await axios.get(
+        `http://localhost:8080/api/v1/tour`,
+        config
+      );
+      setDataTour(response.data);
+      console.log("danh sach tour: ", response.data);
+    } catch (error) {
+      console.log("Error")
+    }
+  };
+
+  useEffect(() => {
+    getDataTour();
   }, []);
-
 
 
   return (
@@ -92,6 +116,7 @@ function RecommendTour() {
                             <StarIcon />
                             {parseFloat(product.rating).toFixed(1)}
                           </p>
+
                         </div>
                         <div className="absolute top-0 right-0 text-white p-2">
                           <div className="z-10 relative flex gap-1">
@@ -111,6 +136,7 @@ function RecommendTour() {
                           ${product.price} <span className="font-light">night</span>
                         </h1>
                       </div>
+
                       <div>
                         <Button
                           radius="full"
@@ -121,6 +147,7 @@ function RecommendTour() {
                       </div>
                     </CardFooter>
                   </div>
+
                 </div>
               </div>
             </Card>

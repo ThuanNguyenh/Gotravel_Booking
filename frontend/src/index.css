@@ -321,8 +321,41 @@
   }
 
 
+
   /* custom css slide home Duy code 
   */
+=======
+  /* input image */
+
+  .file-upload {
+    text-align: center;
+    border: 3px dashed rgb(210, 227, 244);
+    border-radius: 15px;
+    padding: 1.5rem;
+    position: relative;
+    cursor: pointer;
+    height: full;
+  }
+  .file-upload p {
+    font-size: 0.87rem;
+    margin-top: 10px;
+    color: #bbcada;
+  }
+  .file-upload input {
+    display: block;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+
+
   
 
 .swiper {
