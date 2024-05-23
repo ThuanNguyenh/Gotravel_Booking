@@ -77,7 +77,7 @@ function TourDetail() {
                             fill={liked ? "red" : "none"}/>
                       </Button>
                       <Button isIconOnly variant="bordered" className="border-[#01B7F2]"><ShareIcon/></Button>
-                      <Link to={`/checkout`}>
+                      <Link to={`/checkout/${dataTour.tourId}`}>
                           <Button className="bg-[#01B7F2] text-white font-semibold">Đặt chỗ ngay</Button>
                       </Link>
                   </div>
