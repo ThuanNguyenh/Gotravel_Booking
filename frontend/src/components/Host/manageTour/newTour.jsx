@@ -321,6 +321,7 @@ const NewTourForm = ({ handleSave }) => {
       setMessage(error?.response.data);
       alert(message);
       Alert(2000, "Tạo tour", "Thất bại", "error", "OK");
+      return;
     }
     handleSave("ManageTour");
   };
@@ -334,6 +335,7 @@ const NewTourForm = ({ handleSave }) => {
       await saveTour(listImage);
     } catch (error) {
       Alert(2000, "Tạo tour", "Thất bại", "error", "OK");
+      return;
     }
   };
 
