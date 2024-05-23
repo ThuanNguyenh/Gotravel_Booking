@@ -7,26 +7,12 @@ function TourDetailDes() {
   const { tourId } = useParams();
   const [dataTour, setDataTour] = useState(null);
 
-  // Get token from localStorage
-  const token = localStorage.getItem("accessToken");
 
   // Get data tour
   const getDataTour = async () => {
     try {
-      if (!token) {
-        return;
-      }
-
-      // Add token to "Authorization" header
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-
       const response = await axios.get(
-        `http://localhost:8080/api/v1/tour/${tourId}`,
-        config
+        `http://localhost:8080/api/v1/tour/${tourId}`
       );
       setDataTour(response.data);
       console.log("Tour details: ", response.data);

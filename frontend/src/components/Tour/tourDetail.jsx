@@ -1,5 +1,6 @@
-/* eslint-disable react/prop-types */
-import { Button, Image, Tabs, Tab } from "@nextui-org/react";
+/* eslint-disable no-unused-vars */
+
+import { Button, Image, Tabs, Tab, Card, CardBody, CardFooter } from "@nextui-org/react";
 import { LocationIcon } from "../../assets/LocationIcon";
 import { HeartIcon } from "../../assets/heart";
 import { ShareIcon } from "../../assets/Share";
@@ -18,30 +19,20 @@ function TourDetail() {
   //fetch tour detail based id
   const { tourId } = useParams();
   const [dataTour, setDataTour] = useState([]);
+  const [recommend, setRecommend] = useState([]);
 
+  const [nextTourId, setNextTourId] = useState(null);
+  // Function to handle the selection of a tour
+  const handleSelectTour = (tourId) => {
+    setNextTourId(tourId);
+  };
 
-  console.log(tourId)
-
-  // get token from localStorage
-  const token = localStorage.getItem("accessToken");
 
   // get data tour
   const getDataTour = async () => {
     try {
-      if (!token) {
-        return;
-      }
-
-      // Thêm token vào tiêu đề "Authorization"
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-
       const response = await axios.get(
-        `http://localhost:8080/api/v1/tour/${tourId}`,
-        config
+        `http://localhost:8080/api/v1/tour/${tourId}`
       );
       setDataTour(response.data);
       console.log("chi tiet tour: ", response.data);
@@ -53,6 +44,25 @@ function TourDetail() {
   useEffect(() => {
     getDataTour();
   }, []);
+
+    //recommend
+    const getRecommend = async (tourName) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/recommend?tourName=${encodeURIComponent(tourName)}`
+      );
+      setRecommend(response.data);
+      console.log("recommend: ", response.data);
+    } catch (error) {
+      console.log("Error")
+    }
+  };
+  
+  useEffect(() => {
+    if (dataTour.tourName) {
+      getRecommend(dataTour.tourName);
+    }
+  }, [dataTour]);
 
   return(
       <div className="flex flex-col gap-10">
@@ -119,6 +129,52 @@ function TourDetail() {
                   />
               </div>
           </div>
+          <div>
+          <div>
+            <div className="text-xl font-semibold pb-5">Có thể bạn thích ?</div>
+            <div className="gap-4 grid grid-cols-1 sm:grid-cols-4">
+                {recommend && Array.isArray(recommend.recommendations) ? (
+                    recommend.recommendations.slice(0,4).map((recommendTour, index) => (
+                        <Card key={index} className="border-small border-blue-400">
+                            <div className="flip-card">
+                            <div className="flip-card-inner">
+                                <div className="flip-card-front">
+                                <CardBody className="p-0">
+                                    <div className="relative group">
+                                    <Link to={`/tourDetail/${recommendTour.tourId}`}  onClick={() => handleSelectTour(recommendTour.tourId)}>
+                                        <Image
+                                        isZoomed
+                                        shadow="sm"
+                                        radius="lg"
+                                        width="100%"
+                                        className="w-full object-cover h-[400px]"
+                                        src={recommendTour.thumbnail}
+                                        />
+                                    </Link>
+
+                                    {/* footer */}
+                                    <div className="z-10 absolute bottom-0 w-full text-white p-2 flex justify-between bg-gradient-to-t from-[#4bacf1] to-transparent">
+                                        <div className="relative flex gap-1">
+                                        <CardFooter className="justify-center">
+                                            <div className="flex flex-col font-semibold text-lg">
+                                                {recommendTour.tourName.length > 10 ? recommendTour.tourName.substring(0, 20) + "..." : recommendTour.tourName}
+                                            </div>
+                                        </CardFooter>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </CardBody>
+                                </div>
+                            </div>
+                            </div>
+                        </Card>
+                    ))
+                ) : (
+                    <p>No recommendations available</p>
+                )}
+            </div>
+            </div>
+        </div>
       </div>
   )
 

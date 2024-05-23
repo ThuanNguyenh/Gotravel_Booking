@@ -1,4 +1,3 @@
-import RecommendSys from "./RecommendSys";
 import RecommendTour from "./RecommendTour";
 import TopTour from "./TopTour";
 
@@ -8,13 +7,10 @@ export default function ListTour() {
   return (
     <div>
       <div>
-        <RecommendSys />
+        <TopTour />
       </div>
       <div>
         <RecommendTour />
-      </div>
-      <div>
-        <TopTour />
       </div>
     </div>
   );

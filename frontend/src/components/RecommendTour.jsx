@@ -7,52 +7,43 @@ import { HeartIcon } from "../assets/heart";
 import axios from "axios";
 
 function RecommendTour() {
-  // State to store liked status for each product
-  const [dataTour, setDataTour] = useState([]);
-  const [likedTours, setLikedProducts] = useState([]);
+  const [allTours, setAllTours] = useState([]);
+  const [likedTours, setLikedTours] = useState([]);
   const [tourId, setTourId] = useState(null);
 
-  // Function to handle the selection of a tour
-  const handleSelectTour= (tourId) => {
+  const handleSelectTour = (tourId) => {
     setTourId(tourId);
   };
 
-  // Function to toggle liked status for a product
   const toggleLike = (index) => {
-    setLikedProducts((prevLikedProducts) => {
-      const newLikedProducts = [...prevLikedProducts];
-      newLikedProducts[index] = !newLikedProducts[index];
-      return newLikedProducts;
+    setLikedTours((prevLikedTours) => {
+      const newLikedTours = [...prevLikedTours];
+      newLikedTours[index] = !newLikedTours[index];
+      return newLikedTours;
     });
   };
-  
 
+  const calculateAverageRating = (ratings) => {
+    if (!ratings || ratings.length === 0) {
+      return "No ratings";
+    }
 
-  // get token from localStorage
-  const token = localStorage.getItem("accessToken");
+    const totalRating = ratings.reduce((acc, curr) => acc + curr, 0);
+    const averageRating = totalRating / ratings.length;
+    return averageRating.toFixed(1);
+  };
 
-  // get all tour
   const getDataTour = async () => {
     try {
-      if (!token) {
-        return;
-      }
-
-      // Thêm token vào tiêu đề "Authorization"
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-
-      const response = await axios.get(
-        `http://localhost:8080/api/v1/tour`,
-        config
-      );
-      setDataTour(response.data);
-      console.log("danh sach tour: ", response.data);
+      const response = await axios.get(`http://localhost:8080/api/v1/tour`);
+      const toursWithAverageRating = response.data.map((tour) => ({
+        ...tour,
+        averageRating: calculateAverageRating(tour.ratings),
+      }));
+      setAllTours(toursWithAverageRating);
+      console.log("Fetched tours: ", toursWithAverageRating);
     } catch (error) {
-      console.log("Error")
+      console.log("Error fetching tours", error);
     }
   };
 
@@ -63,16 +54,21 @@ function RecommendTour() {
 
   return (
     <div>
-      <h1 className="py-10 text-3xl font-extrabold">Recommend Tour</h1>
+      <h1 className="py-10 text-3xl font-extrabold">Tour</h1>
+
       <div className="gap-4 grid grid-cols-1 sm:grid-cols-4">
-        {dataTour.map((tour, index) => (
+        {allTours.slice(0, 4).map((tour, index) => (
           <Card key={tour.tourId} className="border-small border-blue-400">
             <div className="flip-card">
               <div className="flip-card-inner">
                 <div className="flip-card-front">
                   <CardBody className="p-0">
                     <div className="relative group">
-                      <Link to={`/tourDetail/${tour.tourId}`} onClick={() => handleSelectTour(tour.tourId)}>
+                      <Link 
+                        to={`/tourDetail/${tour.tourId}`} 
+                        onClick={(event) => {
+                          handleSelectTour(tour.tourId);
+                        }}>
                         <Image
                           shadow="sm"
                           radius="lg"
@@ -85,7 +81,7 @@ function RecommendTour() {
                       <div className="absolute bottom-0 right-0 text-white p-2">
                         <p className="z-10 relative flex gap-1">
                           <StarIcon />
-                          {parseFloat(tour.discount).toFixed(1)}
+                          {tour.averageRating}
                         </p>
                       </div>
                       <div className="absolute top-0 right-0 text-white p-2">
