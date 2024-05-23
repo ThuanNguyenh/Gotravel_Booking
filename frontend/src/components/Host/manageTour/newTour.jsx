@@ -12,7 +12,7 @@ import { XMarkIcon } from "@heroicons/react/24/solid";
 import { storage } from "../../../firebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import axios from "axios";
-import { Alert, LoadingAlert } from "../../Alert/Alert";
+import { Alert, LoadingAlert } from "../../alert/Alert";
 import "../../../index.css"
 
 const NewTourForm = ({ handleSave }) => {
@@ -332,7 +332,7 @@ const NewTourForm = ({ handleSave }) => {
   const uploadAndSave = async (e) => {
     e.preventDefault();
     try {
-      LoadingAlert(3000, "Đang tạo tour");
+      LoadingAlert(3000, "Đang tạo tour",);
       const listImage = await uploadMultipleFiles(images);
       await saveTour(listImage);
     } catch (error) {

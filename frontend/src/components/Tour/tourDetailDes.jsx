@@ -2,24 +2,22 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-
 function TourDetailDes() {
-
-  //fetch des
+  // Fetch tour detail based on id
   const { tourId } = useParams();
-  const [des, setDes] = useState([]);
+  const [dataTour, setDataTour] = useState(null);
 
-  // get token from localStorage
+  // Get token from localStorage
   const token = localStorage.getItem("accessToken");
 
-  // get data tour
-  const getDes = async () => {
+  // Get data tour
+  const getDataTour = async () => {
     try {
       if (!token) {
         return;
       }
 
-      // Thêm token vào tiêu đề "Authorization"
+      // Add token to "Authorization" header
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -30,49 +28,90 @@ function TourDetailDes() {
         `http://localhost:8080/api/v1/tour/${tourId}`,
         config
       );
-      setDes(response.data);
+      setDataTour(response.data);
+      console.log("Tour details: ", response.data);
     } catch (error) {
-      console.log("Error")
+      console.log("Error fetching tour data:", error);
     }
   };
 
   useEffect(() => {
-    getDes();
-  },);
+    getDataTour();
+  }, [tourId]); // Adding tourId as a dependency ensures the effect runs when tourId changes
+
+  if (!dataTour) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <div className="w-full flex-col ">
-      {/* description */}
-      <div className="py-3">
-        <p>Tour bắt đầu từ {des.startDate} đến {des.endDate}</p> 
-        <p>{des.description}</p>
+    <div className="w-full flex-col">
+      {/* Tour Description */}
+      <div className="p-3 text-md">
+        <p>Tour bắt đầu từ {dataTour.startDate} đến {dataTour.endDate}</p> 
+        <p>{dataTour.description}</p>
       </div>
 
-      <div className="py-3">
-        <div className="font-semibold text-xl">Lịch trình</div>
-        <div className="w-1/5">
-          <div className="grid-rows-4 gap-2">
-          {des && des.schedules && des.schedules.map((schedule, index) => (
-            <div key={index} className="transition-aorder bg-gray-300 text-gray-600 inline-flex h-8 items-center text-sm px-2 m-1 rounded-full">
-              {schedule.date} - {schedule.activity}
+      <div className="py-3 w-1/3">
+          <div className="font-semibold text-xl">Lịch trình</div>
+          <div className="w-full">
+            <div className="p-2">
+              {dataTour.schedules && dataTour.schedules.map((schedule, index) => (
+                <div key={index} className="">
+                  {schedule.date} - {schedule.activities.map((activity, idx) => (
+                    <span key={idx}>{activity.context}</span>
+                  ))}
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
+        </div>
+
+      <div className="flex w-full justify-between">
+        <div className="w-1/3 py-3">
+          <div className="font-semibold text-xl">Danh mục</div>
+          <div className="w-full">
+            <div className="grid grid-cols-3 gap-5">
+              {dataTour.categories && dataTour.categories.map((category, index) => (
+                <div
+                  key={index}
+                  className="transition-aorder bg-gray-300 text-gray-600 inline-flex h-8 items-center justify-center text-sm px-2 m-1 rounded-full"
+                >
+                  {category.categoryName}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="py-3 pr-10 w-1/3">
+          <div className="font-semibold text-xl">Tiện ích</div>
+          <div className="w-full">
+            <div className="grid grid-cols-2 gap-5">
+              {dataTour.utilities && dataTour.utilities.map((utility, index) => (
+                <div
+                  key={index}
+                  className="transition-aorder bg-gray-300 text-gray-600 inline-flex h-8 items-center justify-center text-sm px-2 m-1 rounded-full"
+                >
+                  {utility.utilityName}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
-
-      <div className="">
-        <div className="font-semibold text-xl">Tiện ích</div>
-        <div className="w-1/5">
-          <div className="grid-rows-2 gap-2">
-            {/* {des?.utilities.map((item, index) => (
+      
+      <div className="py-3">
+        <div className="font-semibold text-xl">Yêu cầu</div>
+        <div className="w-full">
+          <div className="grid grid-cols-5 gap-5">
+            {dataTour.rules && dataTour.rules.map((rule, index) => (
               <div
                 key={index}
-                className="transition-aorder bg-gray-300 text-gray-600 inline-flex h-8 items-center text-sm px-2 m-1 rounded-full"
+                className="transition-aorder bg-gray-300 text-gray-600 inline-flex h-8 items-center justify-center text-sm px-2 m-1 rounded-full"
               >
-                {item}
+                {rule.ruleName}
               </div>
-            ))} */}
+            ))}
           </div>
         </div>
       </div>
@@ -80,4 +119,4 @@ function TourDetailDes() {
   );
 }
 
-export default TourDetailDes
+export default TourDetailDes;
