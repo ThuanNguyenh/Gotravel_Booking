@@ -17,6 +17,9 @@ export default function RequestBooking() {
         <Tab key="denied" title="Denied">
           <DeniedBooking/>
         </Tab>
+        <Tab key="IN_PROGRESS" title="IN PROGRESS">
+          <DeniedBooking/>
+        </Tab>
         <Tab key="complete" title="Completed">
           <CompletedBooking/>
         </Tab>

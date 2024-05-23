@@ -59,10 +59,10 @@ function Request() {
         },
       };
 
-      const response = await axios.post(
+      const response = await axios.put(
         `http://localhost:8080/api/v1/booking/update/${bookingId}&CONFIRMED`,
       );
-      setDataTour(response.data);
+      // setDataTour(response.data);
       console.log("booking comfirmed:", response.data);
     } catch (error) {
       console.log("Error")
@@ -80,7 +80,7 @@ function Request() {
         },
       };
 
-      const response = await axios.post(
+      const response = await axios.put(
         `http://localhost:8080/api/v1/booking/update/${bookingId}&CANCEL`,
       );
       setDataTour(response.data);
