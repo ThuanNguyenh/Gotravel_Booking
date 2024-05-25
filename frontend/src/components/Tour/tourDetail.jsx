@@ -1,12 +1,10 @@
 /* eslint-disable no-unused-vars */
-
 import { Button, Image, Tabs, Tab, Card, CardBody, CardFooter } from "@nextui-org/react";
 import { LocationIcon } from "../../assets/LocationIcon";
 import { HeartIcon } from "../../assets/heart";
 import { ShareIcon } from "../../assets/Share";
 import TourDetailDes from "./tourDetailDes";
 import TourDetailReview from "./tourDetailReview";
-
 import { Link, useParams } from "react-router-dom";
 import { useState, useEffect } from 'react';
 import axios from "axios";
@@ -20,13 +18,7 @@ function TourDetail() {
   const { tourId } = useParams();
   const [dataTour, setDataTour] = useState([]);
   const [recommend, setRecommend] = useState([]);
-
   const [nextTourId, setNextTourId] = useState(null);
-  // Function to handle the selection of a tour
-  const handleSelectTour = (tourId) => {
-    setNextTourId(tourId);
-  };
-
 
   // get data tour
   const getDataTour = async () => {
@@ -63,6 +55,13 @@ function TourDetail() {
       getRecommend(dataTour.tourName);
     }
   }, [dataTour]);
+
+// Function to handle the selection of a tour
+  const handleSelectTour = (tourId) => {
+    setNextTourId(tourId);
+    getDataTour(tourId);
+  };
+
 
   return(
       <div className="flex flex-col gap-10">
@@ -141,7 +140,7 @@ function TourDetail() {
                                 <div className="flip-card-front">
                                 <CardBody className="p-0">
                                     <div className="relative group">
-                                    <Link to={`/tourDetail/${recommendTour.tourId}`}  onClick={() => handleSelectTour(recommendTour.tourId)}>
+                                    <Link to={`/tourDetail/${recommendTour.tourId}`} onClick={() => handleSelectTour(recommendTour.tourId)}>
                                         <Image
                                         isZoomed
                                         shadow="sm"

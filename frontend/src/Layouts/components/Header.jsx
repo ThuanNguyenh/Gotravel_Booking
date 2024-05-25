@@ -51,7 +51,7 @@ function Header() {
       <NavbarContent className="sm:hidden pr-3" justify="center">
         <NavbarBrand>
           <img
-            src={isScrolled ? "./Logo.png" : "./Logo1.png"}
+            src={isScrolled ? "/Logo.png" : "/Logo1.png"}
             className="me-2 w-6"
           />
           <p
@@ -67,7 +67,7 @@ function Header() {
       <NavbarContent className="hidden sm:flex gap-8" justify="start">
         <NavbarBrand>
           <img
-            src={isScrolled ? "./Logo.png" : "./Logo1.png"}
+            src={isScrolled ? "/Logo.png" : "/Logo1.png"}
             className="me-2 w-8"
           />
           <p
