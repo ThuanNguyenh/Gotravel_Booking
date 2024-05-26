@@ -34,6 +34,9 @@ const Login = () => {
       await emailAndPassword(dataLogin);
 
       Alert(2000, "Đăng nhập", "Thành công", "success", "OK");
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 2000);
     } catch (error) {
       setMessage(error.response.data);
     }
@@ -43,6 +46,10 @@ const Login = () => {
   const handleSignInGg = async () => {
     try {
       await googleSignIn();
+      Alert(2000, "Đăng nhập", "Thành công", "success", "OK");
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 2000);
     } catch (error) {
       Alert(2000, "Đăng nhập", "Thất bại", "error", "OK");
     }
@@ -52,6 +59,10 @@ const Login = () => {
   const handleFb = async () => {
     try {
       await fbSignIn();
+      Alert(2000, "Đăng nhập", "Thành công", "success", "OK");
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 2000);
     } catch (error) {
       Alert(2000, "Đăng nhập", "Thất bại", "error", "OK");
     }
@@ -60,7 +71,7 @@ const Login = () => {
   return (
     <div>
       <div className="w-full flex justify-center pb-2">
-        <Image width={40} src="./Logo.png" />
+        <Image width={40} src="/logo.png" />
       </div>
       <Tabs
         selectedKey={selected}

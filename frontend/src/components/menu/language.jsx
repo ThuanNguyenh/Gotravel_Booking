@@ -20,9 +20,9 @@ export default function Language() {
   };
 
   const labelsMap = {
-    vi: { label: "VI", icon: "./vietnam.png" },
-    en: { label: "EN", icon: "./america.png" },
-    ja: { label: "JP", icon: "./japan.png" },
+    vi: { label: "VI", icon: "/vietnam.png" },
+    en: { label: "EN", icon: "/america.png" },
+    ja: { label: "JP", icon: "/japan.png" },
   };
 
   // Convert the Set to an Array and get the first value.

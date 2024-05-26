@@ -5,27 +5,47 @@ import { SettingIcon } from "../../assets/SettingIcon";
 import BookingHistory from "./BookHis";
 
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 function Profile() {    
 
-    
-    
-    const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState([]);
 
-    useEffect(() => {
-      const fetchData = async () => {
-        try {
-          const response = await fetch("https://dummyjson.com/user/1");
-          const data = await response.json();
-          setUsers(data);
-        } catch (error) {
-          console.error("Error fetching product data:", error);
-        }
+  // get userId from localStorage
+  const userString = localStorage.getItem("userInfo");
+  const user = JSON.parse(userString);
+  const userId = user?.userId;
+
+  // Get token from localStorage
+  const token = localStorage.getItem("accessToken");
+
+  // Get tour rating data
+  const getProfile = async () => {
+    try {
+      if (!token) {
+        return;
+      }
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       };
-  
-      fetchData();
-    }, []);
 
+      const response = await axios.get(
+        `http://localhost:8080/api/v1/user/${userId}`,
+        config
+      );
+      setUsers(response.data);
+      console.log("profile: ", response.data);
+    } catch (error) {
+      console.log("Error profile");
+    }
+  };
+
+  useEffect(() => {
+    getProfile();
+  }, []);
 
     return(
         <div className="py-5 px-[10%]">
@@ -33,15 +53,15 @@ function Profile() {
                 <div className="w-full relative">
                     <Card
                         shadow="none" 
-                        className='flex items-center h-80'
+                        className='flex items-center h-64'
                     >
-                        <Image className="w-full bg-cover" src="https://via.placeholder.com/1280x262" />
+                        <Image className="w-full" src="https://upload.wikimedia.org/wikipedia/commons/f/fa/VancouverSkyline.jpg" />
 
-                        <div className="absolute bottom-0 z-10 text-center">
+                        <div className="absolute bottom-3 z-10 text-center">
                             <Badge isOneChar color="primary" placement="bottom-right" content={<Pen/>}>
-                                <Avatar isBordered className="h-28 w-28" color="primary" src={users.image}/>
+                                <Avatar isBordered className="h-28 w-28" color="primary" src={users.avatar}/>
                             </Badge>
-                            <h1 className="pt-2 text-lg font-semibold">{users.firstName}</h1>
+                            <h1 className="pt-2 text-lg font-semibold">{users.userName}</h1>
                             <p>{users.university}</p>
                         </div>
 
@@ -50,13 +70,13 @@ function Profile() {
             </div>
             <div className="gap-5">
                     <Tabs>
-                        <Tab title="Profile">
+                        <Tab title="Thông Tin Cá Nhân">
                             <div className="flex flex-col gap-10">
                                 <Card>       
                                     <div>
                                         <div className="flex justify-between pt-4 px-7 ">
-                                            <h1 className="text-2xl font-semibold">Profile</h1>
-                                            <Button variant="light" className="text-blue-400"><SettingIcon/>Edit Profile</Button>
+                                            <h1 className="text-2xl font-semibold">Thông Tin Cá Nhân</h1>
+                                            <Button variant="light" className="text-blue-400"><SettingIcon/>Chỉnh sữa thông tin cá nhân</Button>
                                         </div>
                                         <Table layout="fixed" hideHeader>
                                         <TableHeader>
@@ -65,16 +85,20 @@ function Profile() {
                                         </TableHeader>
                                         <TableBody>
                                             <TableRow key="1">
-                                            <TableCell>Name</TableCell>
-                                            <TableCell>{users.firstName} {users.lastName}</TableCell>
+                                            <TableCell>Tên</TableCell>
+                                            <TableCell>{users.userName}</TableCell>
                                             </TableRow>
                                             <TableRow key="2">
                                             <TableCell>Email</TableCell>
                                             <TableCell>{users.email}</TableCell>
                                             </TableRow>
                                             <TableRow key="3">
-                                            <TableCell>Phone number</TableCell>
+                                            <TableCell>Số Điện Thoại</TableCell>
                                             <TableCell>{users.phone}</TableCell>
+                                            </TableRow>
+                                            <TableRow key="4">
+                                            <TableCell>Quyền</TableCell>
+                                            <TableCell>{users.roles}</TableCell>
                                             </TableRow>
                                         </TableBody>
                                         </Table>
@@ -84,8 +108,8 @@ function Profile() {
                                 <Card>
                                     <div className="pt-5">
                                         <div className="flex justify-between  px-7 ">
-                                            <h1 className="text-2xl font-semibold">Login Information</h1>
-                                            <Button variant="light" className="text-blue-400"><SettingIcon/>Edit Password</Button>
+                                            <h1 className="text-2xl font-semibold">Thông Tin Đăng Nhập</h1>
+                                            <Button variant="light" className="text-blue-400"><SettingIcon/>Sửa Mật Khẩu</Button>
                                         </div>
                                         <Table layout="fixed" hideHeader>
                                         <TableHeader>
@@ -93,13 +117,13 @@ function Profile() {
                                             <TableColumn>A</TableColumn>
                                         </TableHeader>
                                         <TableBody>
-                                            <TableRow key="4">
-                                            <TableCell>User</TableCell>
+                                            <TableRow key="5">
+                                            <TableCell>Người dùng</TableCell>
                                             <TableCell>{users.email}</TableCell>
                                             </TableRow>
-                                            <TableRow key="5">
-                                            <TableCell>Password</TableCell>
-                                            <TableCell>{users.password}</TableCell>
+                                            <TableRow key="6">
+                                            <TableCell>Mật Khẩu</TableCell>
+                                            <TableCell>*******</TableCell>
                                             </TableRow>
                                         </TableBody>
                                         </Table>
@@ -108,7 +132,7 @@ function Profile() {
                             </div>
                         </Tab>
 
-                        <Tab title="Booking History">
+                        <Tab title="Lịch Sử Đặt Tour">
                             <BookingHistory/>
                         </Tab>
                     </Tabs>

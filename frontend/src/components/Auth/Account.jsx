@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useUserAuth } from "../../contexts/userAuthContext";
 import { NotificationIcon } from "../../assets/NotificationIcon";
 
@@ -20,7 +20,7 @@ import {
   PopoverContent,
 } from "@nextui-org/react";
 import Login from "./Login";
-import { Link } from "react-router-dom";
+import { Link, redirect } from "react-router-dom";
 import getDataFromLocalStorage from "../../contexts/getDataFromLocalStorage";
 import { Alert } from "../Alert/Alert";
 
@@ -29,6 +29,24 @@ const Account = () => {
   const [backdrop] = React.useState("blur");
 
   const userInfo = getDataFromLocalStorage("userInfo");
+
+  const [roles, setRole] = useState();
+
+  // sử dụng useRef để giữ giá trị trước đó, để hạn chế re-render
+  const prevRolesRef = useRef();
+
+  const handleRoles = () => {
+    const currentRoles = userInfo?.roles;
+    // chỉ cập nhật trạng thái nếu roles thay đổi
+    if (prevRolesRef.current !== currentRoles) {
+      setRole(currentRoles);
+      prevRolesRef.current = currentRoles;
+    }
+  };
+
+  useEffect(() => {
+    handleRoles();
+  }, []);
 
   const { logOut } = useUserAuth();
 
@@ -42,6 +60,8 @@ const Account = () => {
   const handleLogout = async () => {
     try {
       await logOut();
+      Alert(2000, "Đăng xuất", "Thành công", "success", "OK");
+      redirect("/");
     } catch (error) {
       Alert(2000, "Đăng xuất", "Thất bại", "error", "OK");
     }
@@ -126,7 +146,17 @@ const Account = () => {
                   </p>
                 </DropdownItem>
 
-                <DropdownItem color="warning">Upgrade to Host</DropdownItem>
+                {roles?.includes("ROLE_USER") && (
+                  <DropdownItem as={Link} to={`/`}>
+                    Đăng ký tour của bạn
+                  </DropdownItem>
+                )}
+
+                {roles?.includes("ROLE_HOST") && (
+                  <DropdownItem as={Link} to={`/host`}>
+                    Tour của tôi
+                  </DropdownItem>
+                )}
 
                 <DropdownItem as={Link} to={`/profile`} key="settings">
                   My Settings

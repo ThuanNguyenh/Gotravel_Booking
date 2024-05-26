@@ -17,10 +17,16 @@ import UpdateTourForm from './manageTour/updateTour';
 
 const Host = ({ children }) => {
   const [selectedContent, setSelectedContent] = useState('DashBoard');
-
+  const [tourId, setTourId] = useState();
+  
   const handleLinkClick = (content) => {
     setSelectedContent(content);
+
   };
+
+  const selectedTourId = (tourId) => {
+    setTourId(tourId); // Set the selectedTourId when navigating to the UpdateTour page
+  }
 
   return (
     <div className="flex">
@@ -28,10 +34,10 @@ const Host = ({ children }) => {
         <div className="flex flex-col h-full justify-center items-center">
           <div className="flex-1 overflow-y-auto w-full max-w-[260px]  text-center py-2">
             <Listbox shouldHighlightOnFocus className='text-xl font-bold'>
-              <ListboxItem startContent={<MenuIcon />} onClick={() => handleLinkClick('DashBoard')}>Dashboard</ListboxItem>
-              <ListboxItem startContent={<HotelIcon />} onClick={() => handleLinkClick('ManageTour')}>Your Tour</ListboxItem>
-              <ListboxItem startContent={<ChartIcon />} onClick={() => handleLinkClick('ManageRevenue')}>Revenue</ListboxItem>
-              <ListboxItem startContent={<RequestIcon />} onClick={() => handleLinkClick('RequestBooking')}>Booking</ListboxItem>
+              <ListboxItem startContent={<MenuIcon />} onClick={() => handleLinkClick('DashBoard')}>Thống Kê</ListboxItem>
+              <ListboxItem startContent={<HotelIcon />} onClick={() => handleLinkClick('ManageTour')}>Tour Của Bạn</ListboxItem>
+              {/* <ListboxItem startContent={<ChartIcon />} onClick={() => handleLinkClick('ManageRevenue')}>Revenue</ListboxItem> */}
+              <ListboxItem startContent={<RequestIcon />} onClick={() => handleLinkClick('RequestBooking')}>Tour Đã Đặt</ListboxItem>
             </Listbox>
           </div>
         </div>
@@ -39,11 +45,11 @@ const Host = ({ children }) => {
       <div className="w-full pl-28">
         <div className="px-8">
           {selectedContent === 'DashBoard' && <DashBoard />}
-          {selectedContent === 'ManageTour' && <ManageTour handleLinkClick={handleLinkClick} />}
+          {selectedContent === 'ManageTour' && <ManageTour selectedTourId={selectedTourId} handleLinkClick={handleLinkClick} />}
           {selectedContent === 'ManageRevenue' && <ManageRevenue />}
           {selectedContent === 'RequestBooking' && <RequestBooking />}
-          {selectedContent === 'NewTour' && <NewTourForm />}
-          {selectedContent === 'UpdateTour' && <UpdateTourForm />}
+          {selectedContent === 'NewTour' && <NewTourForm handleSave={handleLinkClick}/>}
+          {selectedContent === 'UpdateTour' && <UpdateTourForm handleSave={handleLinkClick} tourId={tourId}/>}
         </div>
       </div>
     </div>
@@ -51,3 +57,4 @@ const Host = ({ children }) => {
 };
 
 export default Host;
+

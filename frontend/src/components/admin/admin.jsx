@@ -46,10 +46,10 @@ const Admin = ({ children }) => {
 
               <Listbox  shouldHighlightOnFocus className='text-xl font-bold'>
 
-                <ListboxItem startContent={<MenuIcon/>} onClick={() => handleLinkClick('DashBoard')}>Dashboard</ListboxItem>
-                <ListboxItem startContent={<HotelIcon/>} onClick={() => handleLinkClick('ManageUser')}>Manage User</ListboxItem>
-                <ListboxItem startContent={<ChartIcon/>} onClick={() => handleLinkClick('ManageRevenue')}>Revenue</ListboxItem>
-                <ListboxItem startContent={<NotificationIcon/>} onClick={() => handleLinkClick('Request')}>Request</ListboxItem>
+                <ListboxItem startContent={<MenuIcon/>} onClick={() => handleLinkClick('DashBoard')}>Thống Kê</ListboxItem>
+                <ListboxItem startContent={<HotelIcon/>} onClick={() => handleLinkClick('ManageUser')}>Quản Lý Người Dùng </ListboxItem>
+                 {/* <ListboxItem startContent={<ChartIcon/>} onClick={() => handleLinkClick('ManageRevenue')}>Revenue</ListboxItem> */}
+                <ListboxItem startContent={<NotificationIcon/>} onClick={() => handleLinkClick('Request')}>Yêu Cầu Cấp Quyền</ListboxItem>
 
 
 

@@ -1,10 +1,14 @@
 import { useEffect } from "react";
+import React from "react";
+
+import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, User, Chip, Tooltip, } from "@nextui-org/react";
 
 import LayoutModule from '@highcharts/dashboards/modules/layout';
 import * as Dashboards from "@highcharts/dashboards";
 import DataGrid from '@highcharts/dashboards/datagrid';
 
 import Highcharts from 'highcharts';
+
 
 
 import './dashBoard.css'
@@ -17,8 +21,16 @@ Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
 
 LayoutModule(Dashboards);
 
+const statusColorMap = {
+  active: "success",
+  paused: "danger",
+  vacation: "warning",
+};
 
 function DashBoard() {
+
+ 
+
   useEffect(() => {
     Dashboards.board(
       "financeDB",
@@ -67,17 +79,17 @@ function DashBoard() {
                   ],
                 },
                 {
-                  cells: [
-                    {
-                      id: "dashboard-row-3-cell-1",
-                    },
-                    {
-                      id: "dashboard-row-3-cell-2",
-                    },
-                    {
-                      id: "dashboard-row-3-cell-3",
-                    },
-                  ],
+                  // cells: [
+                  //   {
+                  //     id: "dashboard-row-3-cell-1",
+                  //   },
+                  //   {
+                  //     id: "dashboard-row-3-cell-2",
+                  //   },
+                  //   {
+                  //     id: "dashboard-row-3-cell-3",
+                  //   },
+                  // ],
                 },
               ],
             },
@@ -87,10 +99,10 @@ function DashBoard() {
           {
             type: "KPI",
             renderTo: "dashboard-row-1-cell-1",
-            title: "Total balance",
+            title: "Tổng doanh thu tháng 5 ",
             value: 1430,
             valueFormat: "$ {value}",
-            subtitle: "43%",
+            subtitle: "tăng 43%",
             linkedValueTo: {
               enabled: false,
             },
@@ -113,10 +125,10 @@ function DashBoard() {
           {
             type: "KPI",
             renderTo: "dashboard-row-1-cell-2",
-            title: "Savings",
-            value: 6500,
-            valueFormat: "$ {value}",
-            subtitle: "22%",
+            title: "Lượt hoàn thành",
+            value: 500,
+            valueFormat: "",
+            subtitle: "Giảm 22%",
             linkedValueTo: {
               enabled: false,
             },
@@ -145,14 +157,14 @@ function DashBoard() {
                 children: [
                   {
                     tagName: "h4",
-                    textContent: "Check how you can save more!",
+                    textContent: "Tổng số dư ở ví : 500$",
                     attributes: {
                       class: "main-title align-middle",
                     },
                   },
                   {
                     tagName: "button",
-                    textContent: "Go to the saving account",
+                    textContent: "Rút tiền về ngân hàng",
                     attributes: {
                       id: "saving-button",
                     },
@@ -164,7 +176,7 @@ function DashBoard() {
           {
             type: "Highcharts",
             renderTo: "dashboard-row-2-cell-1",
-            title: "Earnings",
+            title: "Thống kế doanh thu hàng tháng",
             chartOptions: {
               chart: {
                 marginTop: 50,
@@ -200,18 +212,18 @@ function DashBoard() {
               },
               xAxis: {
                 categories: [
-                  "Jan",
-                  "Feb",
-                  "Mar",
-                  "Apr",
-                  "May",
-                  "Jun",
-                  "Jul",
-                  "Aug",
-                  "Sep",
-                  "Oct",
-                  "Nov",
-                  "Dec",
+                  "Tháng 1",
+                  "Tháng 1",
+                  "Tháng 1",
+                  "Tháng 1",
+                  "Tháng 1",
+                  "Tháng 1",
+                  "Tháng 1",
+                  "Tháng 1",
+                  "Tháng 1",
+                  "Tháng 1",
+                  "Tháng 1",
+                  "Tháng 1",
                 ],
               },
               yAxis: [
@@ -232,85 +244,221 @@ function DashBoard() {
                     enabled: false,
                   },
                   name: "Earnings",
-                  data: [10, 20, 30, 40, 12, 11, 10, 23, 4, 34, 50, 20],
+                  data: [500, 20000, 30, 40, 12, 11, 10, 23, 4, 34, 50, 20],
                 },
               ],
             },
           },
-          {
-            type: "KPI",
-            renderTo: "dashboard-row-3-cell-1",
-            title: "Spendings",
-            value: 350,
-            valueFormat: "$ {value}",
-            linkedValueTo: {
-              enabled: false,
-            },
-            chartOptions: {
-              series: [
-                {
-                  type: "column",
-                  enableMouseTracking: false,
-                  dataLabels: {
-                    enabled: false,
-                  },
-                  name: "Spendings",
-                  data: [45, 30, 50, 80, 10, 45, 30, 59, 39, 15, 62],
-                },
-              ],
-            },
-          },
-          {
-            type: "KPI",
-            renderTo: "dashboard-row-3-cell-2",
-            title: "Your wallet condition",
-            value: "",
-            subtitle: "You saved 1450$ this month",
-            linkedValueTo: {
-              enabled: false,
-            },
-            chartOptions: {
-              title: {
-                verticalAlign: "middle",
-                floating: true,
-                text: "58%",
-              },
-              series: [
-                {
-                  type: "pie",
-                  enableMouseTracking: false,
-                  data: [58, 42],
-                  size: "100%",
-                  innerSize: "75%",
-                  dataLabels: {
-                    enabled: false,
-                  },
-                },
-              ],
-            },
-          },
-          {
-            renderTo: "dashboard-row-3-cell-3",
-            connector: {
-              id: "transactions",
-            },
-            title: "Transactions",
-            type: "DataGrid",
-            dataGridOptions: {
-              cellHeight: 33,
-              editable: false,
-            },
-          },
+          // {
+          //   type: "KPI",
+          //   renderTo: "dashboard-row-3-cell-1",
+          //   title: "Spendings",
+          //   value: 350,
+          //   valueFormat: "$ {value}",
+          //   linkedValueTo: {
+          //     enabled: false,
+          //   },
+          //   chartOptions: {
+          //     series: [
+          //       {
+          //         type: "column",
+          //         enableMouseTracking: false,
+          //         dataLabels: {
+          //           enabled: false,
+          //         },
+          //         name: "Spendings",
+          //         data: [45, 30, 50, 80, 10, 45, 30, 59, 39, 15, 62],
+          //       },
+          //     ],
+          //   },
+          // },
+          // {
+          //   type: "KPI",
+          //   renderTo: "dashboard-row-3-cell-2",
+          //   title: "Your wallet condition",
+          //   value: "",
+          //   subtitle: "You saved 1450$ this month",
+          //   linkedValueTo: {
+          //     enabled: false,
+          //   },
+          //   chartOptions: {
+          //     title: {
+          //       verticalAlign: "middle",
+          //       floating: true,
+          //       text: "58%",
+          //     },
+          //     series: [
+          //       {
+          //         type: "pie",
+          //         enableMouseTracking: false,
+          //         data: [58, 42],
+          //         size: "100%",
+          //         innerSize: "75%",
+          //         dataLabels: {
+          //           enabled: false,
+          //         },
+          //       },
+          //     ],
+          //   },
+          // },
+          // {
+          //   renderTo: "dashboard-row-3-cell-3",
+          //   connector: {
+          //     id: "transactions",
+          //   },
+          //   title: "Transactions",
+          //   type: "DataGrid",
+          //   dataGridOptions: {
+          //     cellHeight: 33,
+          //     editable: false,
+          //   },
+          // },
         ],
+        style: { display: "none" },
       },
       true
     );
   }, []);
 
+  const renderCell = React.useCallback((user, columnKey) => {
+    const cellValue = user[columnKey];
+
+    switch (columnKey) {
+      case "name":
+        return (
+          <User
+            avatarProps={{radius: "lg", src: user.avatar}}
+            description={user.email}
+            name={cellValue}
+          >
+            {user.email}
+          </User>
+        );
+      case "role":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-sm capitalize">{cellValue}</p>
+            <p className="text-bold text-sm capitalize text-default-400">{user.team}</p>
+          </div>
+        );
+      case "status":
+        return (
+          <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
+            {cellValue}
+          </Chip>
+        );
+      case "actions":
+        return (
+          <div className="relative flex items-center gap-2">
+            <Tooltip content="Details">
+              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                {/* <EyeIcon /> */}
+              </span>
+            </Tooltip>
+            <Tooltip content="Edit user">
+              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                {/* <EditIcon /> */}
+              </span>
+            </Tooltip>
+            <Tooltip color="danger" content="Delete user">
+              <span className="text-lg text-danger cursor-pointer active:opacity-50">
+                {/* <DeleteIcon /> */}
+              </span>
+            </Tooltip>
+          </div>
+        );
+      default:
+        return cellValue;
+    }
+  }, []);
+
+  const columns = [
+    {name: "Tên", uid: "name"},
+    {name: "Tour Hoàn Thành", uid: "role"},
+    {name: "Tour Đã Huỷ", uid: "status"},
+    {name: "Tổng Số Tiền", uid: "tien"},
+  ];
+  
+  const users = [
+    {
+      id: 1,
+      name: "Tony Reichert",
+      role: "CEO",
+      team: "Management",
+      status: "active",
+      age: "29",
+      avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
+      email: "tony.reichert@example.com",
+      tien:'99999999'
+
+    },
+    {
+      id: 2,
+      name: "Zoey Lang",
+      role: "Technical Lead",
+      // team: "Development",
+      status: "pausedsdfds",
+      age: "25",
+      avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
+      email: "zoey.lang@example.com",
+    },
+    {
+      id: 3,
+      name: "Jane Fisher",
+      role: "Senior Developer",
+      team: "Development",
+      status: "hiiii",
+      age: "22",
+      avatar: "https://i.pravatar.cc/150?u=a04258114e29026702d",
+      email: "jane.fisher@example.com",
+    },
+    {
+      id: 4,
+      name: "William Howard",
+      role: "Community Manager",
+      team: "Marketing",
+      status: "vacation",
+      age: "28",
+      avatar: "https://i.pravatar.cc/150?u=a048581f4e29026701d",
+      email: "william.howard@example.com",
+    },
+    {
+      id: 5,
+      name: "Kristen Copper",
+      role: "Sales Manager",
+      team: "Sales",
+      status: "active",
+      age: "24",
+      avatar: "https://i.pravatar.cc/150?u=a092581d4ef9026700d",
+      email: "kristen.cooper@example.com",
+    },
+  ];
+
+
   return(
-    <div className="w-full">
-        <div id="financeDB" className="highcharts-light"></div>;
+    <div  className="w-full">
+        <div id="financeDB" className="highcharts-light"></div>
+        <div style={{padding:'0 14px'}}>
+
+        <Table aria-label="Example table with custom cells ">
+      <TableHeader columns={columns}>
+        {(column) => (
+          <TableColumn key={column.uid} align={column.uid === "actions" ? "center" : "start"}>
+            {column.name}
+          </TableColumn>
+        )}
+      </TableHeader>
+      <TableBody items={users}>
+        {(item) => (
+          <TableRow key={item.id}>
+            {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+          </TableRow>
+        )}
+      </TableBody>
+    </Table>
+        </div>
     </div>
+    
   )
 }
 
