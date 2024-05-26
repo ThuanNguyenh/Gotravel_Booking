@@ -86,7 +86,7 @@ function AdminDashBoard() {
           {
             type: "KPI",
             renderTo: "dashboard-row-1-cell-1",
-            title: "Total balance",
+            title: "Tổng doanh thu tháng 5",
             value: 1430,
             valueFormat: "$ {value}",
             subtitle: "43%",

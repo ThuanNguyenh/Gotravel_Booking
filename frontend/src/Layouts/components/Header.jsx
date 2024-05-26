@@ -37,8 +37,8 @@ function Header() {
 
   const ListsId = [
     { id: 1, page: "Trang chủ", linkPage: "/" },
-    { id: 2, page: "Top tour", percentage: 35 },
-    { id: 3, page: "Our tour", percentage: 75 },
+    { id: 2, page: "Tour Hàng Đầu", percentage: 35 },
+    { id: 3, page: " Tour", percentage: 75 },
     { id: 4, page: "Liên hệ", percentage: 100 },
   ];
 

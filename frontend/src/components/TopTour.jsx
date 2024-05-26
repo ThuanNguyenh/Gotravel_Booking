@@ -63,7 +63,7 @@ function TopTour() {
 
   return (
     <div>
-      <h1 className="py-10 text-3xl font-extrabold">Top Tour</h1>
+      <h1 className="py-10 text-3xl font-extrabold">Tour Hàng Đầu</h1>
       <div className="gap-4 grid grid-cols-1 sm:grid-cols-4">
         {dataTour.slice(0,4).map((tour, index) => (
           <Card key={tour.tourId} className="border-small border-blue-400">
