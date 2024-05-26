@@ -276,16 +276,21 @@ function UpdateTourForm({ tourId, handleSave }) {
   } = dataTour;
 
   useEffect(() => {
+    const newUrls2 = images.map((image) => image.url);
+    setUrls([...newUrls2]);
+  }, [images]);
+
+  useEffect(() => {
     setSelectCate(...categories.map((item) => item.categoryId));
-  }, [categories])
+  }, [categories]);
 
   useEffect(() => {
     setSelectRule(...rules.map((item) => item.ruleId));
-  }, [rules])
+  }, [rules]);
 
   useEffect(() => {
     setSelectAmen(...utilities.map((item) => item.utilityId));
-  }, [utilities])
+  }, [utilities]);
 
   // input change
   const change = (e) => {
@@ -295,8 +300,6 @@ function UpdateTourForm({ tourId, handleSave }) {
       [name]: value,
     }));
   };
-
-
 
   // message
   const [message, setMessage] = useState("vui lòng điền đầy đủ thông tin");
@@ -325,6 +328,8 @@ function UpdateTourForm({ tourId, handleSave }) {
     }
   };
 
+  console.log("data: ", dataTour);
+
   useEffect(() => {
     getTourDetail();
   }, []);
@@ -345,10 +350,10 @@ function UpdateTourForm({ tourId, handleSave }) {
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
       };
-      const response = await axios.post(
+      const response = await axios.put(
         `http://localhost:8080/api/v1/tour/update/${tourId}`,
         dataRequest,
         config,

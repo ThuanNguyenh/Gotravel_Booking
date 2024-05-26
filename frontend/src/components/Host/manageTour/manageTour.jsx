@@ -197,13 +197,13 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
                 disallowEmptySelection
                 selectionMode="single"
               >
-                {dataTour.map((dataTour) => (
+                {dataTour?.map((dataTour) => (
                   <DropdownItem
                     key={dataTour.tourId}
                     className="capitalize"
                     onClick={() => toggleStatusFilter(dataTour.province)}
                   >
-                    {capitalize(dataTour.province)}
+                    {capitalize(dataTour?.province)}
                   </DropdownItem>
                 ))}
               </DropdownMenu>
@@ -214,7 +214,7 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
               color="primary"
               endContent={<PlusIcon />}
             >
-              Add New
+              Thêm mới
             </Button>
           </div>
         </div>
@@ -222,20 +222,39 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
         <div>
           <Table layout="fixed" aria-label="Example static collection table">
             <TableHeader>
-              <TableColumn>NAME</TableColumn>
-              <TableColumn>STATUS</TableColumn>
-              <TableColumn>ACTION</TableColumn>
+              <TableColumn>TÊN</TableColumn>
+              <TableColumn>VỊ TRÍ</TableColumn>
+              <TableColumn>GIÁ</TableColumn>
+              <TableColumn>LƯỢNG KHÁCH</TableColumn>
+              <TableColumn>TRẠNG THÁI</TableColumn>
+              <TableColumn>HÀNH ĐỘNG</TableColumn>
             </TableHeader>
             <TableBody>
               {/* Map over the currentTours to render each row dynamically */}
-              {currentTours.map((tour) => (
+              {currentTours?.map((tour) => (
                 <TableRow key={tour.tourId}>
                   <TableCell>{tour.tourName}</TableCell>
                   <TableCell>
-                    <Chip className="capitalize" size="sm" variant="flat">
+                    {/* <Chip className="capitalize" size="sm" variant="flat"> */}
                       {tour.province}
+                    {/* </Chip> */}
+                  </TableCell>
+                  <TableCell>
+                      {tour.price} $
+                  </TableCell>
+
+                  <TableCell>
+                    {/* <Chip className="capitalize" size="sm" variant="flat"> */}
+                      {tour.numGuest}
+                    {/* </Chip> */}
+                  </TableCell>
+
+                  <TableCell>
+                    <Chip className="capitalize" size="sm" variant="flat">
+                      {tour.status} trống
                     </Chip>
                   </TableCell>
+                  
                   <TableCell>
                     <div className="relative flex items-center gap-4">
                       {/* Add Voucher */}

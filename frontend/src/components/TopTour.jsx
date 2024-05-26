@@ -26,17 +26,34 @@ function TopTour() {
     });
   };
 
-  // get token from localStorage
-  const token = localStorage.getItem("accessToken");
+  // Function to calculate the average rating
+  const calculateAverageRating = (ratings) => {
+    if (!ratings || ratings.length === 0) {
+      return "No ratings"; // Return a message if there are no ratings
+    }
 
-  // get all tour
+    const totalRating = ratings.reduce((acc, curr) => acc + curr, 0);
+    const averageRating = totalRating / ratings.length;
+    return averageRating.toFixed(1); // Return the average rating rounded to 1 decimal place
+  };
+
+
+  // get all tours
   const getDataTour = async () => {
     try {
+
       const response = await axios.get(`http://localhost:8080/api/v1/tour`);
-      setDataTour(response.data);
-      console.log("danh sach tour: ", response.data);
+      const toursWithAverageRating = response.data.map((tour) => ({
+        ...tour,
+        averageRating: calculateAverageRating(tour.ratings),
+      }));
+
+      // Sort tours by average rating in descending order
+      toursWithAverageRating.sort((a, b) => b.averageRating - a.averageRating);
+
+      setDataTour(toursWithAverageRating);
     } catch (error) {
-      console.log("Error");
+      console.log("Error fetching tours");
     }
   };
 
@@ -48,7 +65,7 @@ function TopTour() {
     <div>
       <h1 className="py-10 text-3xl font-extrabold">Top Tour</h1>
       <div className="gap-4 grid grid-cols-1 sm:grid-cols-4">
-        {dataTour.map((tour, index) => (
+        {dataTour.slice(0,4).map((tour, index) => (
           <Card key={tour.tourId} className="border-small border-blue-400">
             <div className="flip-card">
               <div className="flip-card-inner">
@@ -97,9 +114,7 @@ function TopTour() {
                           <CardFooter className="justify-between">
                             <div className="flex flex-col font-semibold text-lg">
                               <h1 className="">
-                                {tour.tourName.length > 10
-                                  ? tour.tourName.substring(0, 20) + "..."
-                                  : tour.tourName}
+                                {tour.tourName.length > 10 ? tour.tourName.substring(0, 20) + "..." : tour.tourName}
                               </h1>
                               <p className="text-medium font-light">
                                 {tour.province}
@@ -109,7 +124,7 @@ function TopTour() {
                         </div>
                         <div className="relative flex gap-1 items-center">
                           <StarIcon />
-                          {parseFloat(tour.price).toFixed(1)}
+                          {tour.averageRating}
                         </div>
                       </div>
                     </div>

@@ -29,6 +29,8 @@ import { ChevronDownIcon } from "../../assets/ChevronDownIcon ";
 import { PlusIcon } from "../../assets/PlusIcon";
 import { useState } from "react";
 import { useEffect } from "react";
+import axios from "axios";
+import { Alert, DeleteAlert } from "../Alert/Alert";
 
 function ManageUser() {
   const updateUser = useDisclosure();
@@ -37,21 +39,9 @@ function ManageUser() {
   const [upname, setupName] = useState("");
   const [uprole, setuprole] = useState("");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("https://dummyjson.com/products");
-        const data = await response.json();
+  // const [data, setData] = useState();
 
-        console.log(data.products);
-        setDataUser(data|| []);
-      } catch (error) {
-        console.error("Error fetching product data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
+  // console.log(data);
 
   const roleColorMap = {
     User: "success",
@@ -59,8 +49,9 @@ function ManageUser() {
   };
 
   const roleOptions = [
-    { name: "Host", uid: "host" },
-    { name: "User", uid: "user" },
+    { name: "ROLE_HOST", uid: "host" },
+    { name: "ROLE_USER", uid: "user" },
+    { name: "ROLE_ADMIN", uid: "admin" },
   ];
 
   const [dataUser, setDataUser] = useState([
@@ -78,6 +69,15 @@ function ManageUser() {
     },
   ]);
 
+  const getData = async () => {
+    const result = await axios.get(`http://localhost:8080/api/v1/user`);
+    setDataUser(result.data);
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+
   const users = dataUser.map((user) => {
     return {
       id: user.userId,
@@ -88,7 +88,7 @@ function ManageUser() {
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const usersPerPage = 5;
+  const usersPerPage = 7;
 
   // Handle page change
   const handlePageChange = (pageNumber) => {
@@ -138,34 +138,55 @@ function ManageUser() {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
+  // async function deleteUser(userId) {
+  //   const url = `http://localhost:8080/api/v1/user/delete/${userId}`;
+
+  //   try {
+  //     const response = await fetch(url, {
+  //       method: "DELETE",
+  //     });
+
+  //     // if (!response.ok) {
+  //     //     throw new Error(Error: ${response.status} - ${response.statusText});
+  //     // }
+
+  //     const result = await response.json();
+  //     console.log("User deleted successfully:", result);
+
+  //     const fetchData = async () => {
+  //       try {
+  //         const response = await fetch("https://dummyjson.com/products");
+  //         const data = await response.json();
+  //         // setDataUser(data|| []);
+  //       } catch (error) {
+  //         console.error("Error fetching product data:", error);
+  //       }
+  //     };
+
+  //     fetchData();
+  //   } catch (error) {
+  //     console.error("Error deleting user:", error);
+  //   }
+  // }
+
+  //delete tour
   async function deleteUser(userId) {
-    const url = `http://localhost:8080/api/v1/user/delete/${userId}`;
-
     try {
-      const response = await fetch(url, {
-        method: "DELETE",
-      });
-
-      // if (!response.ok) {
-      //     throw new Error(Error: ${response.status} - ${response.statusText});
-      // }
-
-      const result = await response.json();
-      console.log("User deleted successfully:", result);
-
-      const fetchData = async () => {
-        try {
-          const response = await fetch("https://dummyjson.com/products");
-          const data = await response.json();
-          // setDataUser(data|| []);
-        } catch (error) {
-          console.error("Error fetching product data:", error);
+      await DeleteAlert(async () => {
+        const response = await axios.delete(
+          // `http://localhost:8080/api/v1/tour/delete/${tourId}`
+        );
+        if (response.status === 200) {
+          Alert(1000, "Xóa tour", "Thành công", "success");
+          // Update the frontend state to remove the deleted tour
+          setDataUser(dataUser.filter((user) => user.userId !== userId));
+        } else {
+          alert("Thất bại: không tìm thấy tour!");
         }
-      };
-
-      fetchData();
+      });
     } catch (error) {
-      console.error("Error deleting user:", error);
+      console.error("Error deleting tour:", error);
+      alert("Thất bại: lỗi hệ thống!");
     }
   }
 
@@ -180,10 +201,6 @@ function ManageUser() {
         },
         body: JSON.stringify({ userName: upname, roles: uprole }),
       });
-
-      // if (!response.ok) {
-      //     throw new Error(Error: ${response.status} - ${response.statusText});
-      // }
 
       const fetchData = async () => {
         try {
@@ -246,26 +263,32 @@ function ManageUser() {
               </DropdownMenu>
             </Dropdown>
 
-            <Button color="primary" endContent={<PlusIcon />}>
+            {/* <Button color="primary" endContent={<PlusIcon />}>
               Add New
-            </Button>
+            </Button> */}
           </div>
         </div>
 
         <div>
           <Table layout="fixed" aria-label="Example static collection table">
             <TableHeader>
-              <TableColumn>NAME</TableColumn>
-              <TableColumn>ROLE</TableColumn>
-              <TableColumn>ACTION</TableColumn>
+              <TableColumn>TÊN</TableColumn>
+              <TableColumn>ĐIỆN THOẠI</TableColumn>
+              <TableColumn>EMAIL</TableColumn>
+              <TableColumn>ĐỊA CHỈ</TableColumn>
+              <TableColumn>VAI TRÒ</TableColumn>
+              <TableColumn>HÀNH ĐỘNG</TableColumn>
             </TableHeader>
             <TableBody>
               {/* Map over the data to render each row dynamically */}
-              {filteredUsers.map((user) => {
+              {filteredUsers?.map((user) => {
                 if (isUserVisible(user)) {
                   return (
                     <TableRow key={user.id}>
                       <TableCell>{user.name}</TableCell>
+                      <TableCell>0329161255</TableCell>
+                      <TableCell>thuan@gmail.com</TableCell>
+                      <TableCell>Đà Nẵng</TableCell>
                       <TableCell>
                         <Chip
                           className="capitalize"

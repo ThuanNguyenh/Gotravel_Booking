@@ -7,6 +7,7 @@ import ListTour from "../components/ListTour";
 import TourDetail from "../components/Tour/tourDetail";
 import Search from "../components/search";
 import Admin from "../components/admin/admin";
+import PaymentSuccess from "../components/Payment/PaymentSuccess"
 
 // không cần đăng nhập
 const publicRoutes = [
@@ -22,7 +23,8 @@ const publicRoutes = [
 
 // bắt buộc đăng nhập
 const privateRoutes = [
-    { path: "/host", component: Host, layout: HeaderOnly }
+    { path: "/host", component: Host, layout: HeaderOnly },
+    { path: "/payment/paypal/success", component: PaymentSuccess, layout: null}
 ];
 
 export { publicRoutes, privateRoutes };

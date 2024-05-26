@@ -12,6 +12,8 @@ import { EffectCoverflow, Pagination, Autoplay } from "swiper/modules";
 function AboutUsSlide() {
   return (
     <>
+      <h1 className="py-10 text-3xl font-extrabold">About Us</h1>
+
       <div
         style={{
           width: "100%",

@@ -1,10 +1,13 @@
+/* eslint-disable react/prop-types */
 import React, { useState } from 'react';
 
-function CommentStar() {
+function CommentStar({ onChange }) {
     const [rating, setRating] = useState(3); // Initial rating state
 
     const handleRatingChange = (value) => {
       setRating(value);
+      // Call the onChange function passed from the parent with the new rating value
+      onChange(value);
     };
   
     return (
@@ -30,4 +33,3 @@ function CommentStar() {
 }
 
 export default CommentStar;
-

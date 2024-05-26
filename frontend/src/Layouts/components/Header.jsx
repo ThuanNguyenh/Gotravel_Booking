@@ -37,8 +37,8 @@ function Header() {
 
   const ListsId = [
     { id: 1, page: "Trang chủ", linkPage: "/" },
-    { id: 2, page: "Dành cho bạn", percentage: 35 },
-    { id: 3, page: "Top tour", percentage: 52 },
+    { id: 2, page: "Top tour", percentage: 35 },
+    { id: 3, page: "Our tour", percentage: 75 },
     { id: 4, page: "Liên hệ", percentage: 100 },
   ];
 
@@ -51,7 +51,7 @@ function Header() {
       <NavbarContent className="sm:hidden pr-3" justify="center">
         <NavbarBrand>
           <img
-            src={isScrolled ? "./Logo.png" : "./Logo1.png"}
+            src={isScrolled ? "/Logo.png" : "/Logo1.png"}
             className="me-2 w-6"
           />
           <p
@@ -67,7 +67,7 @@ function Header() {
       <NavbarContent className="hidden sm:flex gap-8" justify="start">
         <NavbarBrand>
           <img
-            src={isScrolled ? "./Logo.png" : "./Logo1.png"}
+            src={isScrolled ? "/Logo.png" : "/Logo1.png"}
             className="me-2 w-8"
           />
           <p
