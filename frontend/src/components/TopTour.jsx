@@ -72,7 +72,10 @@ function TopTour() {
                 <div className="flip-card-front">
                   <CardBody className="p-0">
                     <div className="relative group">
-                      <Link to={`/tourDetail/${tour.tourId}`} onClick={() => handleSelectTour(tour.tourId)}>
+                      <Link
+                        to={`/tourDetail/${tour.tourId}`}
+                        onClick={() => handleSelectTour(tour.tourId)}
+                      >
                         <Image
                           isZoomed
                           shadow="sm"
@@ -94,7 +97,11 @@ function TopTour() {
                             onPress={() => toggleLike(index)}
                           >
                             <HeartIcon
-                              className={likedTours[index] ? "[&>path]:stroke-transparent" : ""}
+                              className={
+                                likedTours[index]
+                                  ? "[&>path]:stroke-transparent"
+                                  : ""
+                              }
                               fill={likedTours[index] ? "red" : "none"}
                             />
                           </Button>
@@ -109,7 +116,9 @@ function TopTour() {
                               <h1 className="">
                                 {tour.tourName.length > 10 ? tour.tourName.substring(0, 20) + "..." : tour.tourName}
                               </h1>
-                              <p className="text-medium font-light">{tour.province}</p>
+                              <p className="text-medium font-light">
+                                {tour.province}
+                              </p>
                             </div>
                           </CardFooter>
                         </div>

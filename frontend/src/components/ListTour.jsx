@@ -1,4 +1,5 @@
 import RecommendTour from "./RecommendTour";
+import AboutUsSlide from "./AboutUsSlide"
 import TopTour from "./TopTour";
 
 // eslint-disable-next-line react/prop-types
@@ -12,6 +13,10 @@ export default function ListTour() {
       <div>
         <RecommendTour />
       </div>
+      <div>
+        <AboutUsSlide />
+      </div>
+     
     </div>
   );
 }

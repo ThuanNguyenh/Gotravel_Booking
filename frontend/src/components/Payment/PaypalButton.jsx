@@ -1,5 +1,6 @@
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import axios from "axios";
+import { Alert } from "../Alert/Alert";
 
 const PaypalButton = () => {
   const createOrder = async () => {
@@ -9,7 +10,7 @@ const PaypalButton = () => {
         null,
         {
           params: {
-            sum: 1.0,
+            sum: 100.0,
           },
         }
       );
@@ -33,8 +34,13 @@ const PaypalButton = () => {
 
   const onApprove = async (data, actions) => {
     return actions.order.capture().then((details) => {
-      alert("Giao dịch hoàn tất bởi " + details.payer.name.given_name);
+      // alert("Giao dịch hoàn tất bởi " + details.payer.name.given_name);
+      
+
       console.log(details);
+
+      Alert(2000, "Thanh toán", "Thanh toán thành công", "success");
+
     });
   };
 
@@ -42,7 +48,7 @@ const PaypalButton = () => {
     <PayPalScriptProvider
       options={{
         "client-id":
-          "AR_M6MZv2RFItf6c-dzYvEOlMGz2tJVAAYMTakE32SPivNtsb9VhrS21urJ9JAnZtmJyl1UDIHpfIJeS",
+          "AVtXUURfTwFbScsjHD1paoY4V2IRz9pmwr9zsslMifzLrskGSgS_6QeyUSYyQbBKSyb7IPJOCCkK2bjR",
       }}
     >
       <PayPalButtons

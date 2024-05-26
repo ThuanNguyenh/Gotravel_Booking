@@ -1,4 +1,4 @@
-import {Tabs, Tab} from "@nextui-org/react";
+import { Tabs, Tab } from "@nextui-org/react";
 import Request from "./request";
 import DeniedBooking from "./denied";
 import ConfirmedBooking from "./comfirmed";
@@ -8,22 +8,21 @@ export default function RequestBooking() {
   return (
     <div className="flex w-full flex-col h-56">
       <Tabs aria-label="Options">
-        <Tab key="request" title="Request">
-          <Request/>
+        <Tab key="request" title="Yêu cầu">
+          <Request />
         </Tab>
-        <Tab key="comfirmed" title="Comfirmed">
-          <ConfirmedBooking/>
+        <Tab key="comfirmed" title="đã xác nhận">
+          <ConfirmedBooking />
         </Tab>
-        <Tab key="denied" title="Denied">
-          <DeniedBooking/>
+
+        <Tab key="IN_PROGRESS" title="Đang diễn ra">
+          <DeniedBooking />
         </Tab>
-        <Tab key="complete" title="Completed">
-          <CompletedBooking/>
+
+        <Tab key="complete" title="Đã hoàn thành">
+          <CompletedBooking />
         </Tab>
       </Tabs>
-    </div>  
+    </div>
   );
 }
-
-
-

@@ -18,7 +18,6 @@ function DeniedBooking() {
         `http://localhost:8080/api/v1/booking/${userId}&REJECTED`,
         
       );
-      setDataTour(response.data);
       console.log("all booking:", response.data);
     } catch (error) {
       console.log("Error")

@@ -34,9 +34,9 @@ const Login = () => {
       await emailAndPassword(dataLogin);
 
       Alert(2000, "Đăng nhập", "Thành công", "success", "OK");
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 2000);
     } catch (error) {
       setMessage(error.response.data);
     }
@@ -47,9 +47,9 @@ const Login = () => {
     try {
       await googleSignIn();
       Alert(2000, "Đăng nhập", "Thành công", "success", "OK");
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 2000);
     } catch (error) {
       Alert(2000, "Đăng nhập", "Thất bại", "error", "OK");
     }
@@ -60,9 +60,9 @@ const Login = () => {
     try {
       await fbSignIn();
       Alert(2000, "Đăng nhập", "Thành công", "success", "OK");
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 2000);
     } catch (error) {
       Alert(2000, "Đăng nhập", "Thất bại", "error", "OK");
     }
