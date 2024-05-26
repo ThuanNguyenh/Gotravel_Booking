@@ -169,7 +169,7 @@ function TourDetail() {
                         </Card>
                     ))
                 ) : (
-                    <p>No recommendations available</p>
+                    <p className="text-lg font-semibold">Không có đề xuất nào khả dụng !!</p>
                 )}
             </div>
             </div>

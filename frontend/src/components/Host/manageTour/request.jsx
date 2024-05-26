@@ -102,7 +102,7 @@ function Request() {
             <Card
               key={tour.bookingId}
               isBlurred
-              className="border-none my-4 bg-background/60 dark:bg-default-100/50"
+              className="my-4"
             >
               <CardBody>
                 <div className="grid grid-cols-6 md:grid-cols-12 md:gap-4 items-center justify-center">
