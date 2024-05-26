@@ -12,7 +12,6 @@ import { EffectCoverflow, Pagination, Autoplay } from "swiper/modules";
 function AboutUsSlide() {
   return (
     <>
-      <h1 className="py-10 text-3xl font-extrabold">About Us</h1>
 
       <div
         style={{
@@ -100,8 +99,8 @@ function AboutUsSlide() {
           style={{ paddingLeft: "30px", paddingTop: "20px" }}
           className="about-us"
         >
-          <h1 style={{ textAlign: "center", fontSize: "20px", color: "white" }}>
-            About Us
+          <h1 style={{ textAlign: "center", fontSize: "20px", color: "white" , marginBottom:'10px'}}>
+            Về Chúng Tôi
           </h1>
           <p style={{ color: "white" }}>
             Du lịch là một hoạt động tuyệt vời mang lại nhiều lợi ích. Nó không

@@ -34,10 +34,10 @@ const Host = ({ children }) => {
         <div className="flex flex-col h-full justify-center items-center">
           <div className="flex-1 overflow-y-auto w-full max-w-[260px]  text-center py-2">
             <Listbox shouldHighlightOnFocus className='text-xl font-bold'>
-              <ListboxItem startContent={<MenuIcon />} onClick={() => handleLinkClick('DashBoard')}>Dashboard</ListboxItem>
-              <ListboxItem startContent={<HotelIcon />} onClick={() => handleLinkClick('ManageTour')}>Your Tour</ListboxItem>
-              <ListboxItem startContent={<ChartIcon />} onClick={() => handleLinkClick('ManageRevenue')}>Revenue</ListboxItem>
-              <ListboxItem startContent={<RequestIcon />} onClick={() => handleLinkClick('RequestBooking')}>Booking</ListboxItem>
+              <ListboxItem startContent={<MenuIcon />} onClick={() => handleLinkClick('DashBoard')}>Thống Kê</ListboxItem>
+              <ListboxItem startContent={<HotelIcon />} onClick={() => handleLinkClick('ManageTour')}>Tour Của Bạn</ListboxItem>
+              {/* <ListboxItem startContent={<ChartIcon />} onClick={() => handleLinkClick('ManageRevenue')}>Revenue</ListboxItem> */}
+              <ListboxItem startContent={<RequestIcon />} onClick={() => handleLinkClick('RequestBooking')}>Tour Đã Đặt</ListboxItem>
             </Listbox>
           </div>
         </div>
