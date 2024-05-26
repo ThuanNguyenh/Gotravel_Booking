@@ -3,29 +3,17 @@ import { Button, Card, CardBody, Image, Slider } from "@nextui-org/react";
 import { LocationIcon } from "../assets/LocationIcon";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 function Search() {
   // State to store tour data
   const [dataTour, setDataTour] = useState([]);
   const [filteredDataTour, setFilteredDataTour] = useState([]);
-  // Get token from localStorage
-  const token = localStorage.getItem("accessToken");
 
   // Get all tours
   const getDataTour = async () => {
     try {
-      if (!token) {
-        return;
-      }
-
-      // Add token to the "Authorization" header
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-
-      const response = await axios.get(`http://localhost:8080/api/v1/tour`, config);
+      const response = await axios.get(`http://localhost:8080/api/v1/tour`);
       setDataTour(response.data);
       filterDataTour(response.data);  // Initial filtering
       console.log("Tour list: ", response.data);
@@ -53,7 +41,7 @@ function Search() {
       const matchesLocation = location ? tour.province.includes(location) : true;
       const matchesStartDate = startDate ? new Date(tour.startDate) >= new Date(startDate) : true;
       const matchesEndDate = endDate ? new Date(tour.endDate) <= new Date(endDate) : true;
-      const matchesTourType = tourType ? tour.type === tourType : true;
+      const matchesTourType = tourType ? tour.province_type === tourType : true;
 
       return matchesLocation && matchesStartDate && matchesEndDate && matchesTourType;
     });
@@ -144,7 +132,7 @@ function Search() {
           <div></div>
         </div>
         {filteredTours.map((tour) => (
-          <Card key={tour.tourId} isBlurred className="border-none bg-background/60 dark:bg-default-100/50" shadow="sm">
+          <Card key={tour.tourId} isPressable as={Link} to={`/tourDetail/${tour.tourId}`} isBlurred className="border-none bg-background/60 dark:bg-default-100/50" shadow="sm">
             <CardBody>
               <div className="grid grid-cols-6 md:grid-cols-12 md:gap-4 items-center justify-center">
                 <div className="col-span-3 md:col-span-3">

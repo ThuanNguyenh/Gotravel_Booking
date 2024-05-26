@@ -59,21 +59,21 @@ export default function Language() {
             key="vi"
             description={descriptionsMap["vi"]}
             startContent={
-              <img alt="vietnam" className="h-6 w-9 " src="./vietnam1.png" />
+              <img alt="vietnam" className="h-6 w-9 " src="/vietnam1.png" />
             }
           ></DropdownItem>
           <DropdownItem
             key="en"
             description={descriptionsMap["en"]}
             startContent={
-              <img alt="english" className="w-9 h-6" src="./america1.png" />
+              <img alt="english" className="w-9 h-6" src="/america1.png" />
             }
           ></DropdownItem>
           <DropdownItem
             key="ja"
             description={descriptionsMap["ja"]}
             startContent={
-              <img alt="japan" className="w-9 h-6" src="./japan1.png" />
+              <img alt="japan" className="w-9 h-6" src="/japan1.png" />
             }
           ></DropdownItem>
         </DropdownMenu>

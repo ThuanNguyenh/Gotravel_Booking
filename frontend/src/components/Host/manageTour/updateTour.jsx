@@ -275,10 +275,14 @@ function UpdateTourForm({ tourId, handleSave }) {
     // schedules
   } = dataTour;
 
+  // Update the useEffect to correctly set the URLs
   useEffect(() => {
-    const newUrls2 = images.map((image) => image.url);
-    setUrls([...newUrls2]);
-  }, [images]);
+    // Correctly update URLs state with images from API response
+    if (images && images.length > 0) {
+      const newUrls2 = images.map((image) => image.url || ''); // Replace undefined with an empty string
+      setUrls(newUrls2);
+    }
+  }, [images]);  
 
   useEffect(() => {
     setSelectCate(...categories.map((item) => item.categoryId));

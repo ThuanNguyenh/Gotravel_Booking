@@ -7,9 +7,9 @@ import React, { useEffect, useState } from "react";
 import { SearchIcon } from "../../assets/SearchIcon";
 import * as ProvinceService from "../../services/ProvinceService";
 
-
 const TourSearch = () => {
   const [provinces, setProvinces] = useState([]);
+  const [tourTypes, setTourTypes] = useState([]);
   const [location, setLocation] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -19,7 +19,18 @@ const TourSearch = () => {
     const fetchProvinces = async () => {
       const result = await ProvinceService.resProvince();
       if (result.status === 200) {
-        setProvinces(result?.data.results);
+        const provinceData = result?.data.results;
+
+        // Get unique provinces
+        const uniqueProvinces = [...new Set(provinceData.map(province => province.province_name))]
+          .map(name => ({ name })); // Wrap each name in an object
+        
+        // Get unique tour types
+        const uniqueTourTypes = [...new Set(provinceData.map(province => province.province_type))]
+          .map(type => ({ type })); // Wrap each type in an object
+
+        setProvinces(uniqueProvinces);
+        setTourTypes(uniqueTourTypes);
       }
     };
 
@@ -27,16 +38,8 @@ const TourSearch = () => {
   }, []);
 
   const handleSearch = () => {
-    // Redirect to search page with query parameters
-    const queryParams = {
-      location,
-      startDate,
-      endDate,
-      tourType,
-    };
-    // Convert queryParams to query string
+    const queryParams = { location, startDate, endDate, tourType };
     const queryString = new URLSearchParams(queryParams).toString();
-    // Redirect to search page with query string
     window.location.href = `/search?${queryString}`;
   };
 
@@ -53,11 +56,11 @@ const TourSearch = () => {
               startContent={React.cloneElement(<LocationIcon />, { stroke: "#0194F3" })}
               size="sm"
               variant="bordered"
-              onChange={(value) => setLocation(value)}
+              onSelect={(item) => setLocation(item)} // Use onSelect to capture selected value
             >
               {(province) => (
-                <AutocompleteItem key={province.province_id}>
-                  {province.province_name}
+                <AutocompleteItem key={province.name} value={province.name}>
+                  {province.name}
                 </AutocompleteItem>
               )}
             </Autocomplete>
@@ -95,17 +98,17 @@ const TourSearch = () => {
           <div className="flex flex-col gap-3">
             <h2 className="font-semibold text-neutral-800">Loại hình</h2>
             <Autocomplete
-              defaultItems={provinces}
+              defaultItems={tourTypes}
               placeholder="Loại hình mong muốn"
               className="type max-w-xs"
-              startContent={<PerRoomIcon/>}
+              startContent={<PerRoomIcon />}
               size="sm"
               variant="bordered"
-              onChange={(value) => setTourType(value)}
+              onSelect={(item) => setTourType(item)} // Use onSelect to capture selected value
             >
-              {(province) => (
-                <AutocompleteItem key={province.province_id}>
-                  {province.province_type}
+              {(type) => (
+                <AutocompleteItem key={type.type} value={type.type}>
+                  {type.type}
                 </AutocompleteItem>
               )}
             </Autocomplete>
@@ -120,7 +123,7 @@ const TourSearch = () => {
             size="lg"
             radius="md"
           >
-            <SearchIcon/>
+            <SearchIcon />
           </Button>
         </div>
       </div>
