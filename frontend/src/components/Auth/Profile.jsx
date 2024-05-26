@@ -70,13 +70,13 @@ function Profile() {
             </div>
             <div className="gap-5">
                     <Tabs>
-                        <Tab title="Profile">
+                        <Tab title="Thông Tin Cá Nhân">
                             <div className="flex flex-col gap-10">
                                 <Card>       
                                     <div>
                                         <div className="flex justify-between pt-4 px-7 ">
-                                            <h1 className="text-2xl font-semibold">Profile</h1>
-                                            <Button variant="light" className="text-blue-400"><SettingIcon/>Edit Profile</Button>
+                                            <h1 className="text-2xl font-semibold">Thông Tin Cá Nhân</h1>
+                                            <Button variant="light" className="text-blue-400"><SettingIcon/>Chỉnh sữa thông tin cá nhân</Button>
                                         </div>
                                         <Table layout="fixed" hideHeader>
                                         <TableHeader>
@@ -85,7 +85,7 @@ function Profile() {
                                         </TableHeader>
                                         <TableBody>
                                             <TableRow key="1">
-                                            <TableCell>Name</TableCell>
+                                            <TableCell>Tên</TableCell>
                                             <TableCell>{users.userName}</TableCell>
                                             </TableRow>
                                             <TableRow key="2">
@@ -93,11 +93,11 @@ function Profile() {
                                             <TableCell>{users.email}</TableCell>
                                             </TableRow>
                                             <TableRow key="3">
-                                            <TableCell>Phone number</TableCell>
+                                            <TableCell>Số Điện Thoại</TableCell>
                                             <TableCell>{users.phone}</TableCell>
                                             </TableRow>
                                             <TableRow key="4">
-                                            <TableCell>Role</TableCell>
+                                            <TableCell>Quyền</TableCell>
                                             <TableCell>{users.roles}</TableCell>
                                             </TableRow>
                                         </TableBody>
@@ -108,8 +108,8 @@ function Profile() {
                                 <Card>
                                     <div className="pt-5">
                                         <div className="flex justify-between  px-7 ">
-                                            <h1 className="text-2xl font-semibold">Login Information</h1>
-                                            <Button variant="light" className="text-blue-400"><SettingIcon/>Edit Password</Button>
+                                            <h1 className="text-2xl font-semibold">Thông Tin Đăng Nhập</h1>
+                                            <Button variant="light" className="text-blue-400"><SettingIcon/>Sửa Mật Khẩu</Button>
                                         </div>
                                         <Table layout="fixed" hideHeader>
                                         <TableHeader>
@@ -118,11 +118,11 @@ function Profile() {
                                         </TableHeader>
                                         <TableBody>
                                             <TableRow key="5">
-                                            <TableCell>User</TableCell>
+                                            <TableCell>Người dùng</TableCell>
                                             <TableCell>{users.email}</TableCell>
                                             </TableRow>
                                             <TableRow key="6">
-                                            <TableCell>Password</TableCell>
+                                            <TableCell>Mật Khẩu</TableCell>
                                             <TableCell>*******</TableCell>
                                             </TableRow>
                                         </TableBody>
@@ -132,7 +132,7 @@ function Profile() {
                             </div>
                         </Tab>
 
-                        <Tab title="Booking History">
+                        <Tab title="Lịch Sử Đặt Tour">
                             <BookingHistory/>
                         </Tab>
                     </Tabs>
