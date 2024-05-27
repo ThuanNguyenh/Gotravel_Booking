@@ -118,16 +118,17 @@ function UpdateTourForm({ tourId, handleSave }) {
       newImage["id"] = Math.random();
       setImageList((prevState) => [...prevState, newImage]);
 
-      setUrls((prev) => [...prev, URL.createObjectURL(newImage)]);
+      const currentUrl = URL.createObjectURL(newImage);
+      setUrls((prev) => [...prev, currentUrl]);
     }
   };
 
   // Images upload
-  const uploadMultipleFiles = async (images) => {
+  const uploadMultipleFiles = async (imageList) => {
     const storageRef = ref(storage); // Thay 'storage' bằng đường dẫn đến thư mục bạn muốn lưu trữ ảnh
 
     try {
-      const uploadPromises = images.map(async (file) => {
+      const uploadPromises = imageList.map(async (file) => {
         const imageRef = ref(storageRef, `images/${file.name}`);
         await uploadBytes(imageRef, file);
         const downloadUrl = await getDownloadURL(imageRef);
@@ -135,6 +136,7 @@ function UpdateTourForm({ tourId, handleSave }) {
       });
 
       const downloadUrls = await Promise.all(uploadPromises);
+      setImageList((url) => [...url, downloadUrls]);
       return downloadUrls;
     } catch (error) {
       console.error("Error: ", error);
@@ -275,6 +277,12 @@ function UpdateTourForm({ tourId, handleSave }) {
     // schedules
   } = dataTour;
 
+  // get images form data
+  useEffect(() => {
+    const newUrls2 = images.map((image) => image.url);
+    setUrls([...newUrls2]);
+  }, [images]);
+
   useEffect(() => {
     setSelectCate(...categories.map((item) => item.categoryId));
   }, [categories]);
@@ -333,11 +341,11 @@ function UpdateTourForm({ tourId, handleSave }) {
   }, []);
 
   // save tour
-  const saveTour = async (listImage) => {
+  const saveTour = async (urls) => {
     const dataRequest = {
       ...dataTour,
-      thumbnail: listImage[0],
-      images: [...listImage.map((url) => ({ url }))],
+      thumbnail: urls[0],
+      images: [...urls.map((url) => ({ url }))],
     };
 
     try {
@@ -373,8 +381,8 @@ function UpdateTourForm({ tourId, handleSave }) {
     e.preventDefault();
     try {
       LoadingAlert(3000, "Đang cập nhật");
-      const listImage = await uploadMultipleFiles(images);
-      await saveTour(listImage);
+      await uploadMultipleFiles(imageList);
+      await saveTour(urls);
       Alert(2000, "Update tour", "Thành công", "success", "OK");
     } catch (error) {
       Alert(2000, "Update tour", "Thất bại", "error", "OK");
