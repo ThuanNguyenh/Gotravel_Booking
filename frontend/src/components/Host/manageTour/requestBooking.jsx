@@ -11,7 +11,7 @@ export default function RequestBooking() {
         <Tab key="request" title="Yêu cầu">
           <Request />
         </Tab>
-        <Tab key="comfirmed" title="Đã xác nhận">
+        <Tab key="comfirmed" title="Sắp diễn ra">
           <ConfirmedBooking />
         </Tab>
 

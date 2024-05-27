@@ -36,10 +36,7 @@ import { Alert, DeleteAlert } from "../../Alert/Alert";
 import axios from "axios";
 import "./manageTour.css";
 
-
-
 const ManageTour = ({ handleLinkClick, selectedTourId }) => {
-
   const voucherModal = useDisclosure();
 
   // state data
@@ -86,20 +83,22 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
         },
       };
 
-      await DeleteAlert(async() => {
-        const response = await axios.delete(`http://localhost:8080/api/v1/tour/delete/${tourId}`, config);
+      await DeleteAlert(async () => {
+        const response = await axios.delete(
+          `http://localhost:8080/api/v1/tour/delete/${tourId}`,
+          config
+        );
         if (response.status === 200) {
           Alert(1000, "Xóa tour", "Thành công", "success");
           // Update the frontend state to remove the deleted tour
           setDataTour(dataTour.filter((tour) => tour.tourId !== tourId));
         } else {
-          alert('Thất bại: không tìm thấy tour!');
+          alert("Thất bại: không tìm thấy tour!");
         }
-      })
-
+      });
     } catch (error) {
-      console.error('Error deleting tour:', error);
-      alert('Thất bại: lỗi hệ thống!');
+      console.error("Error deleting tour:", error);
+      alert("Thất bại: lỗi hệ thống!");
     }
   };
 
@@ -224,8 +223,10 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
             <TableHeader>
               <TableColumn>TÊN</TableColumn>
               <TableColumn>VỊ TRÍ</TableColumn>
-              <TableColumn>GIÁ</TableColumn>
+              <TableColumn>GIÁ NGƯỜI LỚN</TableColumn>
+              <TableColumn>GIÁ TRẺ EM</TableColumn>
               <TableColumn>LƯỢNG KHÁCH</TableColumn>
+              <TableColumn>THỜI GIAN TOUR</TableColumn>
               <TableColumn>TRẠNG THÁI</TableColumn>
               <TableColumn>HÀNH ĐỘNG</TableColumn>
             </TableHeader>
@@ -236,25 +237,27 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
                   <TableCell>{tour.tourName}</TableCell>
                   <TableCell>
                     {/* <Chip className="capitalize" size="sm" variant="flat"> */}
-                      {tour.province}
+                    {tour.province}
                     {/* </Chip> */}
                   </TableCell>
-                  <TableCell>
-                      {tour.price} $
-                  </TableCell>
+                  <TableCell>$ {tour.priceAdult}</TableCell>
+
+                  <TableCell>$ {tour.priceChildren}</TableCell>
 
                   <TableCell>
                     {/* <Chip className="capitalize" size="sm" variant="flat"> */}
-                      {tour.numGuest}
+                    {tour.numGuest}
                     {/* </Chip> */}
                   </TableCell>
+
+                  <TableCell>{tour.tourTime} ngày</TableCell>
 
                   <TableCell>
                     <Chip className="capitalize" size="sm" variant="flat">
                       {tour.status} trống
                     </Chip>
                   </TableCell>
-                  
+
                   <TableCell>
                     <div className="relative flex items-center gap-4">
                       {/* Add Voucher */}
