@@ -1,11 +1,15 @@
+/* eslint-disable react/prop-types */
 import { Navigate } from "react-router-dom";
-import { useUserAuth } from "./userAuthContext";
+import getDataFromLocalStorage from "./getDataFromLocalStorage"; // Adjust the path as needed
 
-// eslint-disable-next-line react/prop-types
-const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated } = useUserAuth();
+const ProtectedRoute = ({ children, requiredRole }) => {
+  const userInfo = getDataFromLocalStorage("userInfo");
 
-  return isAuthenticated ? children : <Navigate to="/login" />;
+  if (!userInfo || !userInfo?.roles.includes(requiredRole)) {
+    return <Navigate to="/" />;
+  }
+
+  return children;
 };
 
 export default ProtectedRoute;
