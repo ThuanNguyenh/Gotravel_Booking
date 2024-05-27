@@ -23,6 +23,13 @@ const publicRoutes = [
 
   { path: "/admin", component: Admin, layout: HeaderOnly },
 
+  {
+    path: "/host",
+    component: Host,
+    layout: HeaderOnly,
+    requiredRole: "ROLE_HOST",
+  }
+
 ];
 
 // Private routes
@@ -33,12 +40,12 @@ const privateRoutes = [
     layout: HeaderOnly,
     requiredRole: "ROLE_ADMIN",
   },
-  {
-    path: "/host",
-    component: Host,
-    layout: HeaderOnly,
-    requiredRole: "ROLE_HOST",
-  },
+  // {
+  //   path: "/host",
+  //   component: Host,
+  //   layout: HeaderOnly,
+  //   requiredRole: "ROLE_HOST",
+  // },
   {
     path: "/payment/paypal/success",
     component: PaymentSuccess,
