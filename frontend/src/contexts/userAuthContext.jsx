@@ -11,6 +11,9 @@ export function UserAuthContextProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isEmailPasswordLoggedIn, setEmailPasswordLoggedIn] = useState(false);
 
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [redirected, setRedirected] = useState(false);
+
   // đăng nhập với email và password với server spring
   async function emailAndPassword(dataLogin) {
     const response = await axios.post(
@@ -20,6 +23,8 @@ export function UserAuthContextProvider({ children }) {
     localStorage.setItem("accessToken", response.data.data.token);
     localStorage.setItem("userInfo", JSON.stringify(response.data.data.user));
     setEmailPasswordLoggedIn(true);
+    setIsAuthenticated(true);
+    setRedirected(false);
   }
 
   const token = localStorage.getItem("accessToken");
@@ -76,6 +81,8 @@ export function UserAuthContextProvider({ children }) {
           logOutServer();
         }
         setEmailPasswordLoggedIn(false);
+        setIsAuthenticated(false);
+        setRedirected(true);
         return;
       })
       .catch((error) => {
@@ -124,6 +131,8 @@ export function UserAuthContextProvider({ children }) {
         googleSignIn,
         fbSignIn,
         emailAndPassword,
+        isAuthenticated,
+        redirected
       }}
     >
       {children}
@@ -131,6 +140,10 @@ export function UserAuthContextProvider({ children }) {
   );
 }
 
-export function useUserAuth() {
+export const useUserAuth = () => {
   return useContext(userAuthContext);
-}
+};
+
+
+
+
