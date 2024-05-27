@@ -58,7 +58,7 @@ function Category({ Cates, value }) {
         onPress={onOpen}
       >
         {value && value.length > 0
-          ? `Đã chọn ${value.length} Loại hình`
+          ? `Đã chọn ${value.length}`
           : "Loại hình"}
       </Button>
       <Modal
@@ -100,7 +100,7 @@ function Category({ Cates, value }) {
                   onClick={onClose}
                   className=" py-2 px-3 font-medium rounded-lg"
                 >
-                  Save
+                  Lưu
                 </Button>
               </div>
             </div>

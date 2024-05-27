@@ -42,7 +42,7 @@ const Host = ({ children }) => {
           </div>
         </div>
       </div>
-      <div className="w-full pl-28">
+      <div className="w-full pl-28" style={{height:'100vh'}}>
         <div className="px-8">
           {selectedContent === 'DashBoard' && <DashBoard />}
           {selectedContent === 'ManageTour' && <ManageTour selectedTourId={selectedTourId} handleLinkClick={handleLinkClick} />}

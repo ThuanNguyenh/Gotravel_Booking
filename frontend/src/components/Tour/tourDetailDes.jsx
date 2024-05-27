@@ -41,13 +41,18 @@ function TourDetailDes() {
           <div className="font-semibold text-xl">Lịch trình</div>
           <div className="w-full">
             <div className="p-2">
-              {dataTour.schedules && dataTour.schedules.map((schedule, index) => (
-                <div key={index} className="">
-                  {schedule.date} - {schedule.activities.map((activity, idx) => (
-                    <span key={idx}>{activity.context}</span>
+              {dataTour.schedules &&
+                dataTour.schedules
+                  // Sort schedules based on date
+                  .sort((a, b) => new Date(a.date) - new Date(b.date))
+                  .map((schedule, index) => (
+                    <div key={index} className="">
+                      {schedule.date} -{" "}
+                      {schedule.activities.map((activity, idx) => (
+                        <span key={idx}>{activity.context}, </span>
+                      ))}
+                    </div>
                   ))}
-                </div>
-              ))}
             </div>
           </div>
         </div>

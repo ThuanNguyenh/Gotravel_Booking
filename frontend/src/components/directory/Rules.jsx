@@ -59,8 +59,8 @@ function Rules({ Rules, value }) {
         onPress={onOpen}
       >
         {value && value.length > 0
-          ? `Đã chọn ${value.length} luật`
-          : "Luật"}
+          ? `Đã chọn ${value.length}`
+          : "Quy định"}
       </Button>
       <Modal
         hideCloseButton
@@ -72,7 +72,7 @@ function Rules({ Rules, value }) {
           {(onClose) => (
             <div className="p-5">
               <div className="mb-3 items-center flex justify-center">
-                <span className="font-bold text-lg">Luật</span>
+                <span className="font-bold text-lg">Quy định</span>
               </div>
 
               <div className="border-y py-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-4 ">
@@ -101,7 +101,7 @@ function Rules({ Rules, value }) {
                   onClick={onClose}
                   className=" py-2 px-3 font-medium rounded-lg"
                 >
-                  Save
+                  Lưu
                 </Button>
               </div>
             </div>

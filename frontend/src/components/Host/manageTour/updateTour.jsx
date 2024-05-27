@@ -13,7 +13,7 @@ import { XMarkIcon } from "@heroicons/react/24/solid";
 import { storage } from "../../../firebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import axios from "axios";
-import { Alert } from "../../Alert/Alert";
+import { Alert, LoadingAlert } from "../../Alert/Alert";
 import "../../../index.css";
 
 function UpdateTourForm({ tourId, handleSave }) {
@@ -118,16 +118,17 @@ function UpdateTourForm({ tourId, handleSave }) {
       newImage["id"] = Math.random();
       setImageList((prevState) => [...prevState, newImage]);
 
-      setUrls((prev) => [...prev, URL.createObjectURL(newImage)]);
+      const currentUrl = URL.createObjectURL(newImage);
+      setUrls((prev) => [...prev, currentUrl]);
     }
   };
 
   // Images upload
-  const uploadMultipleFiles = async (images) => {
+  const uploadMultipleFiles = async (imageList) => {
     const storageRef = ref(storage); // Thay 'storage' bằng đường dẫn đến thư mục bạn muốn lưu trữ ảnh
 
     try {
-      const uploadPromises = images.map(async (file) => {
+      const uploadPromises = imageList.map(async (file) => {
         const imageRef = ref(storageRef, `images/${file.name}`);
         await uploadBytes(imageRef, file);
         const downloadUrl = await getDownloadURL(imageRef);
@@ -135,6 +136,7 @@ function UpdateTourForm({ tourId, handleSave }) {
       });
 
       const downloadUrls = await Promise.all(uploadPromises);
+      setImageList((url) => [...url, downloadUrls]);
       return downloadUrls;
     } catch (error) {
       console.error("Error: ", error);
@@ -214,11 +216,11 @@ function UpdateTourForm({ tourId, handleSave }) {
     district: "",
     ward: "",
     detailAddress: "",
-    price: "",
+    priceAdult: "",
+    priceChildren: "",
+    tourTime: "",
     numGuest: "",
     discount: "",
-    startDate: "",
-    endDate: "",
     owner: {
       userId: "",
     },
@@ -262,11 +264,11 @@ function UpdateTourForm({ tourId, handleSave }) {
     // district,
     // ward,
     detailAddress,
-    price,
+    priceAdult,
+    priceChildren,
     numGuest,
     discount,
-    startDate,
-    endDate,
+    tourTime,
     // owner,
     images,
     categories,
@@ -275,6 +277,7 @@ function UpdateTourForm({ tourId, handleSave }) {
     // schedules
   } = dataTour;
 
+  // get images form data
   useEffect(() => {
     const newUrls2 = images.map((image) => image.url);
     setUrls([...newUrls2]);
@@ -301,9 +304,6 @@ function UpdateTourForm({ tourId, handleSave }) {
     }));
   };
 
-  // message
-  const [message, setMessage] = useState("vui lòng điền đầy đủ thông tin");
-
   //get detail tour
   const getTourDetail = async () => {
     try {
@@ -324,7 +324,13 @@ function UpdateTourForm({ tourId, handleSave }) {
       );
       setDataTour(response.data);
     } catch (error) {
-      setMessage(error.response.data.message);
+      let messageError = "Lỗi";
+
+      if (error?.response) {
+        messageError = error.response.data?.message;
+
+        Alert(2000, "Chỉnh sửa tour", messageError, "error");
+      }
     }
   };
 
@@ -335,11 +341,11 @@ function UpdateTourForm({ tourId, handleSave }) {
   }, []);
 
   // save tour
-  const saveTour = async (listImage) => {
+  const saveTour = async (urls) => {
     const dataRequest = {
       ...dataTour,
-      thumbnail: listImage[0],
-      images: [...listImage.map((url) => ({ url }))],
+      thumbnail: urls[0],
+      images: [...urls.map((url) => ({ url }))],
     };
 
     try {
@@ -366,8 +372,6 @@ function UpdateTourForm({ tourId, handleSave }) {
       console.log("ket qua da luu: ", response);
     } catch (error) {
       console.log("loi roi: ", error);
-      setMessage(error?.response.data);
-      alert(message);
     }
     handleSave("ManageTour");
   };
@@ -376,8 +380,9 @@ function UpdateTourForm({ tourId, handleSave }) {
   const uploadAndSave = async (e) => {
     e.preventDefault();
     try {
-      const listImage = await uploadMultipleFiles(images);
-      await saveTour(listImage);
+      LoadingAlert(3000, "Đang cập nhật");
+      await uploadMultipleFiles(imageList);
+      await saveTour(urls);
       Alert(2000, "Update tour", "Thành công", "success", "OK");
     } catch (error) {
       Alert(2000, "Update tour", "Thất bại", "error", "OK");
@@ -385,8 +390,10 @@ function UpdateTourForm({ tourId, handleSave }) {
   };
 
   return (
-    <div className="mx-auto p-8">
-      <h1 className="text-2xl font-semibold text-center">Chỉnh sửa Tour</h1>
+    <div className="mx-auto p-6">
+      <h1 className="text-2xl font-semibold text-center mb-6">
+        Chỉnh sửa Tour
+      </h1>
       <form>
         {/* Tour Name */}
         <div className="mb-4">
@@ -398,7 +405,7 @@ function UpdateTourForm({ tourId, handleSave }) {
             type="text"
             id="tourName"
             name="tourName" // Update name attribute to match the field name
-            className=" mt-1 block w-1/2 "
+            className=" mt-1 block w-full "
           />
         </div>
         {/* Description */}
@@ -470,13 +477,14 @@ function UpdateTourForm({ tourId, handleSave }) {
           <Rules Rules={handleRuleChange} value={selectRule} />
         </div>
 
-        <div className="flex gap-2">
+        <div className="grid grid-cols-5 gap-4">
           {/* Number of Guests */}
           <div className="mb-4">
             <Input
-              label="Số lượng khách"
+              min={0}
+              label="Số lượng khách / người"
+              value={dataTour?.numGuest}
               onChange={change}
-              value={numGuest}
               required
               type="number"
               id="numGuest"
@@ -490,55 +498,57 @@ function UpdateTourForm({ tourId, handleSave }) {
             <Input
               label="Giảm giá %"
               onChange={change}
-              value={discount}
+              value={dataTour?.discount}
               type="number"
               id="discount"
+              max={100}
+              min={0}
               name="discount" // Update name attribute to match the field name
               className=" mt-1 block w-full "
             />
           </div>
-          {/* Price */}
+          {/* price adult */}
+
           <div className="mb-4">
             <Input
-              label="Giá tour"
+              min={0}
+              label="Giá vé người lớn / $"
               onChange={change}
-              value={price}
+              value={dataTour?.priceAdult}
               required
               type="number"
-              id="price"
-              name="price" // Update name attribute to match the field name
+              id="priceAdult"
+              name="priceAdult" // Update name attribute to match the field name
               className=" mt-1 block w-full "
             />
           </div>
-        </div>
 
-        {/* DATE */}
-        <div className="flex gap-2">
-          {/* Start Date */}
+          {/* Price children*/}
           <div className="mb-4">
             <Input
-              label="Ngày đi"
+              min={0}
+              label="Giá vé trẻ em / $"
               onChange={change}
-              value={startDate}
+              value={dataTour?.priceChildren}
               required
-              placeholder="date"
-              type="date"
-              id="startDate"
-              name="startDate" // Update name attribute to match the field name
+              type="number"
+              id="priceChildren"
+              name="priceChildren" // Update name attribute to match the field name
               className=" mt-1 block w-full "
             />
           </div>
-          {/* End Date */}
+
+          {/* tour time */}
           <div className="mb-4">
             <Input
-              label="Ngày về"
-              placeholder="date"
+              min={0}
+              label="Thơi gian tour / ngày"
               onChange={change}
-              value={endDate}
+              value={dataTour?.tourTime}
               required
-              type="date"
-              id="endDate"
-              name="endDate" // Update name attribute to match the field name
+              type="number"
+              id="tourTime"
+              name="tourTime" // Update name attribute to match the field name
               className=" mt-1 block w-full "
             />
           </div>
@@ -682,7 +692,7 @@ function UpdateTourForm({ tourId, handleSave }) {
             onClick={uploadAndSave}
             className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-white"
           >
-            Update Tour
+            Lưu Thay Đổi
           </Button>
         </div>
       </form>
