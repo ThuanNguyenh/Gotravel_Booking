@@ -58,7 +58,7 @@ const Admin = ({ children }) => {
           </div>
         </div>
       </div>
-      <div className="w-full pl-28">
+      <div className="w-full pl-28 " style={{height:'100vh'}}>
         <div className="p-8">
           {contentComponent}
         </div>
