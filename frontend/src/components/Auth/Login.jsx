@@ -6,6 +6,7 @@ import { useUserAuth } from "../../contexts/userAuthContext";
 import { useState } from "react";
 import Register from "./Register";
 import { Alert } from "../Alert/Alert";
+import getDataFromLocalStorage from "../../contexts/getDataFromLocalStorage";
 
 const Login = () => {
   const { googleSignIn, fbSignIn, emailAndPassword } = useUserAuth();
@@ -68,10 +69,13 @@ const Login = () => {
     }
   };
 
+  const userInfo = getDataFromLocalStorage("userInfo");
+  console.log(userInfo)
+
   return (
     <div>
       <div className="w-full flex justify-center pb-2">
-        <Image width={40} src="/logo.png" />
+        <Image width={40} src="/Logo.png" />
       </div>
       <Tabs
         selectedKey={selected}
