@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useUserAuth } from "../../contexts/userAuthContext";
 import { NotificationIcon } from "../../assets/NotificationIcon";
-
 import {
   Button,
   Modal,
@@ -20,7 +19,7 @@ import {
   PopoverContent,
 } from "@nextui-org/react";
 import Login from "./Login";
-import { Link, redirect } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import getDataFromLocalStorage from "../../contexts/getDataFromLocalStorage";
 import { Alert } from "../Alert/Alert";
 
@@ -34,6 +33,7 @@ const Account = () => {
 
   // sử dụng useRef để giữ giá trị trước đó, để hạn chế re-render
   const prevRolesRef = useRef();
+  const loginButtonRef = useRef(null); // Ref for the login button
 
   const handleRoles = () => {
     const currentRoles = userInfo?.roles;
@@ -57,11 +57,13 @@ const Account = () => {
     }
   }, [userInfo, onClose]);
 
+  const navigate = useNavigate();
+
   const handleLogout = async () => {
     try {
       await logOut();
       Alert(2000, "Đăng xuất", "Thành công", "success", "OK");
-      redirect("/");
+      navigate("/");
     } catch (error) {
       Alert(2000, "Đăng xuất", "Thất bại", "error", "OK");
     }
@@ -83,6 +85,13 @@ const Account = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  useEffect(() => {
+    // Automatically open the login modal if the user is redirected to the home page
+    if (!userInfo && loginButtonRef.current) {
+      loginButtonRef.current.click();
+    }
+  }, [userInfo]);
 
   return (
     <>
@@ -177,9 +186,9 @@ const Account = () => {
         <NavbarContent justify="end">
           <NavbarItem>
             <Button
+              ref={loginButtonRef} // Assign ref to the login button
               onPress={onOpen}
               radius="full"
-              // variant="bordered"
               className="bg-gradient-to-tr from-cyan-300 to-blue-400 text-white text-md shadow-lg transform transition-transform hover:scale-110 delay-150 duration-300"
             >
               Đăng nhập
@@ -200,7 +209,6 @@ const Account = () => {
           <Login />
         </ModalContent>
       </Modal>
-
       {/* modal */}
     </>
   );
