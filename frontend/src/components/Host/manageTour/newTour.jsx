@@ -219,11 +219,11 @@ const NewTourForm = ({ handleSave }) => {
     district: "",
     ward: "",
     detailAddress: "",
-    price: "",
+    priceAdult: "",
+    priceChildren: "",
+    tourTime: "",
     numGuest: "",
     discount: "",
-    startDate: "",
-    endDate: "",
     owner: {
       userId: "",
     },
@@ -293,9 +293,6 @@ const NewTourForm = ({ handleSave }) => {
     });
   };
 
-  // message
-  const [message, setMessage] = useState("vui lòng điền đầy đủ thông tin");
-
   // save tour
   const saveTour = async (listImage) => {
     const dataRequest = {
@@ -317,10 +314,14 @@ const NewTourForm = ({ handleSave }) => {
       console.log("ket qua da luu: ", response);
       Alert(1000, "Tạo tour", "Thành công", "success", "OK");
     } catch (error) {
-      console.log("loi roi: ", error);
-      setMessage(error?.response.data);
-      alert(message);
-      Alert(2000, "Tạo tour", "Thất bại", "error", "OK");
+      // message
+      let messageError = "vui lòng điền đầy đủ thông tin";
+
+      if (error?.response) {
+        // eslint-disable-next-line no-unused-vars
+        messageError = error.response?.data || messageError;
+      }
+      Alert(2000, "Tạo tour", messageError, "error", "OK");
       return;
     }
     handleSave("ManageTour");
@@ -330,7 +331,7 @@ const NewTourForm = ({ handleSave }) => {
   const uploadAndSave = async (e) => {
     e.preventDefault();
     try {
-      LoadingAlert(3000, "Đang tạo tour",);
+      LoadingAlert(3000, "Đang tạo tour");
       const listImage = await uploadMultipleFiles(images);
       await saveTour(listImage);
     } catch (error) {
@@ -352,7 +353,7 @@ const NewTourForm = ({ handleSave }) => {
             type="text"
             id="tourName"
             name="tourName" // Update name attribute to match the field name
-            className=" mt-1 block w-1/2 "
+            className=" mt-1 block w-full "
           />
         </div>
         {/* Description */}
@@ -422,11 +423,12 @@ const NewTourForm = ({ handleSave }) => {
           <Rules Rules={handleRuleChange} value={selectRule} />
         </div>
 
-        <div className="flex gap-2">
+        <div className="grid grid-cols-5 gap-4">
           {/* Number of Guests */}
           <div className="mb-4">
             <Input
-              label="Số lượng khách"
+              min={0}
+              label="Số lượng khách / người"
               onChange={change}
               required
               type="number"
@@ -443,49 +445,51 @@ const NewTourForm = ({ handleSave }) => {
               onChange={change}
               type="number"
               id="discount"
+              max={100}
+              min={0}
               name="discount" // Update name attribute to match the field name
               className=" mt-1 block w-full "
             />
           </div>
-          {/* Price */}
+          {/* price adult */}
+
           <div className="mb-4">
             <Input
-              label="Giá tour"
+              min={0}
+              label="Giá vé người lớn / $"
               onChange={change}
               required
               type="number"
-              id="price"
-              name="price" // Update name attribute to match the field name
+              id="priceAdult"
+              name="priceAdult" // Update name attribute to match the field name
               className=" mt-1 block w-full "
             />
           </div>
-        </div>
 
-        {/* DATE */}
-        <div className="flex gap-2">
-          {/* Start Date */}
+          {/* Price children*/}
           <div className="mb-4">
             <Input
-              label="Ngày đi"
+              min={0}
+              label="Giá vé trẻ em / $"
               onChange={change}
               required
-              placeholder="date"
-              type="date"
-              id="startDate"
-              name="startDate" // Update name attribute to match the field name
+              type="number"
+              id="priceChildren"
+              name="priceChildren" // Update name attribute to match the field name
               className=" mt-1 block w-full "
             />
           </div>
-          {/* End Date */}
+
+          {/* tour time */}
           <div className="mb-4">
             <Input
-              label="Ngày về"
-              placeholder="date"
+              min={0}
+              label="Thơi gian tour / ngày"
               onChange={change}
               required
-              type="date"
-              id="endDate"
-              name="endDate" // Update name attribute to match the field name
+              type="number"
+              id="tourTime"
+              name="tourTime" // Update name attribute to match the field name
               className=" mt-1 block w-full "
             />
           </div>
@@ -629,7 +633,7 @@ const NewTourForm = ({ handleSave }) => {
             onClick={uploadAndSave}
             className="w-full py-2 px-4 border border-transparent shadow-sm text-white"
           >
-            Create Tour
+            Tạo Tour
           </Button>
         </div>
       </form>

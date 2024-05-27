@@ -1,10 +1,10 @@
-import { Button, Card, CardBody, Image } from "@nextui-org/react";
+import { Button, Card, CardBody, Image, Input } from "@nextui-org/react";
 import { LocationIcon } from "../assets/LocationIcon";
 import { useEffect, useState } from "react";
-import PaypalButton from "./Payment/PaypalButton";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Alert } from "./Alert/Alert";
+import { ClockIcon } from "@heroicons/react/24/solid";
 
 function CheckOut() {
   const { tourId } = useParams();
@@ -40,8 +40,7 @@ function CheckOut() {
         `http://localhost:8080/api/v1/tour/${tourId}`,
         config
       );
-      setDataTour(response.data);
-      console.log("chi tiet tour: ", response.data);
+      setDataTour(response?.data);
     } catch (error) {
       console.log("Error");
     }
@@ -53,7 +52,7 @@ function CheckOut() {
 
   // Select number of customer
   const [adult, setAdult] = useState(1);
-  const pricePerAdult = dataTour.price;
+  const pricePerAdult = dataTour?.priceAdult;
 
   const incrementNumberA = () => {
     if (adult + children < dataTour.numGuest) {
@@ -68,7 +67,7 @@ function CheckOut() {
   };
 
   const [children, setChildren] = useState(0);
-  const pricePerChildren = dataTour.price / 2;
+  const pricePerChildren = dataTour?.priceChildren;
 
   const incrementNumberC = () => {
     if (adult + children < dataTour.numGuest) {
@@ -84,9 +83,15 @@ function CheckOut() {
 
   const price = adult * pricePerAdult + children * pricePerChildren;
 
-  const discount = 10;
+  const discount = dataTour?.discount / 100;
+  const discountOut = (discount * price).toFixed(2);
 
-  const totalPrice = price - discount;
+  const totalPrice = (price - discountOut).toFixed(2);
+
+  // lấy thông tin từ url
+  // const urlParams = new URLSearchParams(window.location.search);
+  // const checkIn = urlParams.get("startDate");
+  // const checkOut = urlParams.get("endDate");
 
   // thông tin booking
   const [dataBooking, setDataBooking] = useState({
@@ -101,9 +106,34 @@ function CheckOut() {
     currency: "",
     method: "",
     intent: "",
+    checkInDate: "",
+    checkOutDate: "",
   });
 
-  console.log("data booking: ", dataBooking);
+  const [checkIn, setCheckIn] = useState();
+  const [checkOut, setCheckOut] = useState();
+  const tourTime = dataTour?.tourTime;
+
+  // xử lý checkIn
+  const handleChangeDate = (e) => {
+    const selectCheckInDate = e.target.value;
+    setCheckIn(selectCheckInDate);
+  };
+
+  // hàm tính checkout
+  const calculateCheckOut = (checkIn, tourTime) => {
+    const checkInObj = new Date(checkIn);
+    checkInObj.setDate(checkInObj.getDate() + tourTime);
+    return checkInObj.toISOString().split("T")[0]; // Định dạng lại thành chuỗi yyyy-mm-dd
+  };
+
+  // tính checkout khi checkin thay đổi
+  useEffect(() => {
+    if (checkIn) {
+      const newCheckOut = calculateCheckOut(checkIn, tourTime);
+      setCheckOut(newCheckOut);
+    }
+  }, [checkIn, tourTime])
 
   useEffect(() => {
     setDataBooking((prevData) => ({
@@ -120,12 +150,14 @@ function CheckOut() {
       currency: currency,
       method: method,
       intent: intent,
+      checkInDate: checkIn,
+      checkOutDate: checkOut,
     }));
 
     const urlParams = new URLSearchParams({
       tourId: tourId,
-      startDate: dataTour.startDate,
-      endDate: dataTour.endDate,
+      checkInDate: checkIn,
+      checkOutDate: checkOut,
       numGuest: adult + children,
       total: totalPrice,
     });
@@ -134,7 +166,19 @@ function CheckOut() {
       pathname: `/checkout/${tourId}`,
       search: `?${urlParams.toString()}`,
     });
-  }, [adult, children, totalPrice, userId, tourId, currency, method, intent, dataTour.startDate, dataTour.endDate, navigate]);
+  }, [
+    adult,
+    children,
+    totalPrice,
+    userId,
+    tourId,
+    currency,
+    method,
+    intent,
+    navigate,
+    checkIn,
+    checkOut,
+  ]);
 
   // BOOKING
   const handleBooking = async () => {
@@ -157,13 +201,31 @@ function CheckOut() {
         Alert(2000, "Đặt phòng", "Không tìm thấy approvalUrl.", "error");
       }
     } catch (error) {
+
+      let errorMessage = "Đặt phòng không thành công, vui lòng thử lại.";
+
+      if (error?.response) {
+        // eslint-disable-next-line no-unused-vars
+        errorMessage = error.response.data?.message || errorMessage;
+      } 
+
       Alert(
         2000,
         "Đặt phòng",
-        "Đặt phòng không thành công. Vui lòng thử lại.",
+        errorMessage,
         "error"
       );
     }
+  };
+
+  // Hàm để lấy ngày hiện tại ở định dạng yyyy-mm-dd
+  const getCurrentDate = () => {
+    const today = new Date();
+    today.setDate(today.getDate() + 1); // Thêm 1 ngày để lấy ngày hôm sau
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   };
 
   return (
@@ -188,27 +250,26 @@ function CheckOut() {
                 </div>
 
                 <div className="flex flex-col col-span-6 md:col-span-6">
-                  <div className="flex flex-col justify-between gap-5">
-                    <div className="flex flex-col gap-0 mt-2">
+                  <div className="flex flex-col justify-between gap-3">
+                    <div className="flex flex-col gap-0">
                       <h3 className="font-semibold text-2xl text-foreground/90">
                         {dataTour.tourName}
                       </h3>
-                      <div className="flex flex-row pt-2">
+                      <div className="flex flex-row items-center gap-2 pt-2">
                         <LocationIcon />
-                        <p className="text-small text-foreground/80 text-[#73D8FC]">
-                          {dataTour.detailAddress}, {dataTour.ward}, {dataTour.district}, {dataTour.province}
+                        <p className="text-[1.2em] text-foreground/80 text-[#73D8FC]">
+                          {dataTour.detailAddress}, {dataTour.ward},{" "}
+                          {dataTour.district}, {dataTour.province}
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex flex-col w-fit p-4 justify-between text-medium font-lights text-slate-500">
-                      <div className="flex gap-4">
-                        <h1 className="">Ngày bắt đầu</h1>
-                        <h1 className="">{dataTour.startDate}</h1>
-                      </div>
-                      <div className="flex gap-4">
-                        <h1 className="">Ngày kết thúc</h1>
-                        <h1 className="">{dataTour.endDate}</h1>
+                    <div className="flex flex-col w-fit justify-between text-medium font-lights text-slate">
+                      <div className="flex gap-3">
+                        <ClockIcon className="w-5" color="#73D8FC" />
+                        <h1 className="text-[1..2em]">
+                          Thời gian tour | {dataTour?.tourTime} ngày
+                        </h1>
                       </div>
                     </div>
                   </div>
@@ -216,28 +277,56 @@ function CheckOut() {
               </div>
             </CardBody>
           </Card>
-          <div className="p-4 flex flex-col gap-4 text-[1.1em]">
-            <div className="font-semibold">Lượng khách tối đa {dataTour.numGuest}</div>
-            <div className="flex gap-4 ">
-              <div className="font-semibold">Người lớn</div>
+          <div className="p-4 flex flex-col gap-4 text-[1.2em]">
+            <div className="font-semibold">
+              Lượng khách tối đa {dataTour.numGuest}
+            </div>
+
+            <div className="font-semibold flex flex-row items-center gap-3">
+              <span>Ngày bắt đầu </span>
+              <span>
+                <Input
+                  onChange={handleChangeDate}
+                  type="date"
+                  color="primary"
+                  size="sm"
+                  min={getCurrentDate()} // Đặt giá trị tối thiểu cho ngày
+                />
+              </span>
+            </div>
+
+            <div className="flex gap-4 items-center justify-between">
+              <div className="font-semibold flex flex-col gap-1">
+                <span>Người lớn</span>
+                <span className="text-warning">$ {dataTour?.priceAdult}</span>
+              </div>
               <div className="flex items-center gap-2">
                 <Button size="sm" onClick={decrementNumberA} isIconOnly>
                   -
                 </Button>
-                <div className="font-semibold text-lg">{adult}</div>
+                <Button size="sm" className="font-semibold text-lg">
+                  {adult}
+                </Button>
                 <Button size="sm" onClick={incrementNumberA} isIconOnly>
                   +
                 </Button>
               </div>
             </div>
 
-            <div className="flex gap-11">
-              <div className="font-semibold">Trẻ em</div>
+            <div className="flex gap-11 justify-between">
+              <div className="font-semibold flex flex-col gap-1">
+                <span>Trẻ em</span>
+                <span className="text-warning">
+                  $ {dataTour?.priceChildren}
+                </span>
+              </div>
               <div className="flex items-center gap-2">
                 <Button size="sm" onClick={decrementNumberC} isIconOnly>
                   -
                 </Button>
-                <div className="font-semibold text-lg">{children}</div>
+                <Button size="sm" className="font-semibold text-lg">
+                  {children}
+                </Button>
                 <Button size="sm" onClick={incrementNumberC} isIconOnly>
                   +
                 </Button>
@@ -254,28 +343,27 @@ function CheckOut() {
             <div className="text-black text-xl font-bold">Thanh toán</div>
 
             <div className="py-2.5 border-b border-gray-300 w-full flex justify-between">
-              <div className="text-sm font-medium text-gray-600">Giá cơ sở</div>
-              <div className="font-semibold">${dataTour.price}</div>
-            </div>
-
-            <div className="py-2.5 border-b border-gray-300 w-full flex justify-between">
-              <div className="text-sm font-medium text-blue-500">Giảm giá</div>
-              <div className="font-semibold">${dataTour.discount}</div>
+              <div className="text-[1.2em] font-medium text-blue-500">
+                Khuyến mãi
+              </div>
+              <div className="font-semibold">$ {discountOut}</div>
             </div>
 
             <div className="py-2.5 w-full flex justify-between">
-              <div className="text-md font-semibold text-gray-600">Tổng tiền</div>
-              <div className="font-semibold">${totalPrice}</div>
+              <div className="text-[1.2em] font-semibold text-gray-600">
+                Tổng tiền
+              </div>
+              <div className="font-semibold">$ {totalPrice}</div>
             </div>
           </div>
         </div>
         <div className="pt-5">
-          <Button onClick={handleBooking} className="w-full text-lg text-white bg-[#73D8FC]">
+          <Button
+            onClick={handleBooking}
+            className="w-full text-lg text-white bg-[#73D8FC]"
+          >
             Đặt phòng
           </Button>
-        </div>
-        <div className="pt-5">
-          <PaypalButton />
         </div>
       </div>
     </div>
