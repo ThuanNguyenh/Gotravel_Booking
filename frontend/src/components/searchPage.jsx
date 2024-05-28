@@ -135,14 +135,15 @@ function Search() {
           <div className="font-semibold text-xl">Bộ lọc</div>
           <div className="flex flex-col">
             <h2 className="text-lg font-semibold mb-2">Địa điểm</h2>
-            {dataTour.map((tour) => (
-              <label key={tour.tourId} className="block mb-1">
-                <input type="checkbox" value={tour.province} onChange={handleLocationChange} />
-                <span className="ml-2">{tour.province}</span>
+            {/* Use Set to store unique locations */}
+            {Array.from(new Set(dataTour.map(tour => tour.province))).map((location) => (
+              <label key={location} className="block mb-1">
+                <input type="checkbox" value={location} onChange={handleLocationChange} />
+                <span className="ml-2">{location}</span>
               </label>
             ))}
           </div>
-
+          
           <div className="flex flex-col">
             <h2 className="text-lg font-semibold mb-2">Loại hình</h2>
             {uniqueCategories.map((category) => (
