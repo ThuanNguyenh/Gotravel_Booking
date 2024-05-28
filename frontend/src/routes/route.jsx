@@ -15,6 +15,11 @@ const publicRoutes = [
   { path: "/profile", component: Profile, layout: HeaderOnly },
   { path: "/checkout/:tourId", component: CheckOut, layout: HeaderOnly },
   { path: "/search", component: Search },
+  {
+    path: "/payment/paypal/success",
+    component: PaymentSuccess,
+    layout: null,
+  },
 ];
 
 // Private routes
@@ -30,11 +35,6 @@ const privateRoutes = [
     component: Host,
     layout: HeaderOnly,
     requiredRole: "ROLE_HOST",
-  },
-  {
-    path: "/payment/paypal/success",
-    component: PaymentSuccess,
-    layout: null,
   },
 ];
 

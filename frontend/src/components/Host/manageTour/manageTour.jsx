@@ -46,6 +46,11 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
   // get token from localStorage
   const token = localStorage.getItem("accessToken");
 
+  // get userId from localStorage
+  const userString = localStorage.getItem("userInfo");
+  const user = JSON.parse(userString);
+  const userId = user?.userId;
+
   // get all tour
   const getDataTour = async () => {
     try {
@@ -61,7 +66,7 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
       };
 
       const response = await axios.get(
-        `http://localhost:8080/api/v1/tour`,
+        `http://localhost:8080/api/v1/tour/my-tour/${userId}`,
         config
       );
       setDataTour(response.data);
@@ -218,119 +223,129 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
           </div>
         </div>
 
-        <div>
-          <Table layout="fixed" aria-label="Example static collection table">
-            <TableHeader>
-              <TableColumn>TÊN</TableColumn>
-              <TableColumn>VỊ TRÍ</TableColumn>
-              <TableColumn>GIÁ NGƯỜI LỚN</TableColumn>
-              <TableColumn>GIÁ TRẺ EM</TableColumn>
-              <TableColumn>LƯỢNG KHÁCH</TableColumn>
-              <TableColumn>THỜI GIAN TOUR</TableColumn>
-              <TableColumn>TRẠNG THÁI</TableColumn>
-              <TableColumn>HÀNH ĐỘNG</TableColumn>
-            </TableHeader>
-            <TableBody>
-              {/* Map over the currentTours to render each row dynamically */}
-              {currentTours?.map((tour) => (
-                <TableRow key={tour.tourId}>
-                  <TableCell>{tour.tourName}</TableCell>
-                  <TableCell>
-                    {/* <Chip className="capitalize" size="sm" variant="flat"> */}
-                    {tour.province}
-                    {/* </Chip> */}
-                  </TableCell>
-                  <TableCell>$ {tour.priceAdult}</TableCell>
+        {dataTour?.length > 0 ? (
+          <>
+            <div>
+              <Table
+                layout="fixed"
+                aria-label="Example static collection table"
+              >
+                <TableHeader>
+                  <TableColumn>TÊN</TableColumn>
+                  <TableColumn>VỊ TRÍ</TableColumn>
+                  <TableColumn>GIÁ NGƯỜI LỚN</TableColumn>
+                  <TableColumn>GIÁ TRẺ EM</TableColumn>
+                  <TableColumn>LƯỢNG KHÁCH</TableColumn>
+                  <TableColumn>THỜI GIAN TOUR</TableColumn>
+                  <TableColumn>TRẠNG THÁI</TableColumn>
+                  <TableColumn>HÀNH ĐỘNG</TableColumn>
+                </TableHeader>
+                <TableBody>
+                  {/* Map over the currentTours to render each row dynamically */}
+                  {currentTours?.map((tour) => (
+                    <TableRow key={tour.tourId}>
+                      <TableCell>{tour.tourName}</TableCell>
+                      <TableCell>
+                        {/* <Chip className="capitalize" size="sm" variant="flat"> */}
+                        {tour.province}
+                        {/* </Chip> */}
+                      </TableCell>
+                      <TableCell>$ {tour.priceAdult}</TableCell>
 
-                  <TableCell>$ {tour.priceChildren}</TableCell>
+                      <TableCell>$ {tour.priceChildren}</TableCell>
 
-                  <TableCell>
-                    {/* <Chip className="capitalize" size="sm" variant="flat"> */}
-                    {tour.numGuest}
-                    {/* </Chip> */}
-                  </TableCell>
+                      <TableCell>
+                        {/* <Chip className="capitalize" size="sm" variant="flat"> */}
+                        {tour.numGuest}
+                        {/* </Chip> */}
+                      </TableCell>
 
-                  <TableCell>{tour.tourTime} ngày</TableCell>
+                      <TableCell>{tour.tourTime} ngày</TableCell>
 
-                  <TableCell>
-                    <Chip className="capitalize" size="sm" variant="flat">
-                      {tour.status} trống
-                    </Chip>
-                  </TableCell>
+                      <TableCell>
+                        <Chip className="capitalize" size="sm" variant="flat">
+                          {tour.status} trống
+                        </Chip>
+                      </TableCell>
 
-                  <TableCell>
-                    <div className="relative flex items-center gap-4">
-                      {/* Add Voucher */}
-                      <Tooltip content="Voucher">
-                        <span
-                          onClick={voucherModal.onOpen}
-                          className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                        >
-                          <Percent />
-                        </span>
-                      </Tooltip>
-                      <Modal
-                        backdrop="transparent"
-                        hideCloseButton
-                        isOpen={voucherModal.isOpen}
-                        onOpenChange={voucherModal.onOpenChange}
-                      >
-                        <ModalContent>
-                          {(onClose) => (
-                            <>
-                              <ModalHeader>Add Voucher</ModalHeader>
-                              <ModalBody>
-                                <div className="input-container">
-                                  <input
-                                    value={tour.discount}
-                                    placeholder="Add % Sale here"
-                                    type="text"
-                                  />
-                                  <button className="button">Add</button>
-                                </div>
-                              </ModalBody>
-                            </>
-                          )}
-                        </ModalContent>
-                      </Modal>
+                      <TableCell>
+                        <div className="relative flex items-center gap-4">
+                          {/* Add Voucher */}
+                          <Tooltip content="Voucher">
+                            <span
+                              onClick={voucherModal.onOpen}
+                              className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                            >
+                              <Percent />
+                            </span>
+                          </Tooltip>
+                          <Modal
+                            backdrop="transparent"
+                            hideCloseButton
+                            isOpen={voucherModal.isOpen}
+                            onOpenChange={voucherModal.onOpenChange}
+                          >
+                            <ModalContent>
+                              {(onClose) => (
+                                <>
+                                  <ModalHeader>Add Voucher</ModalHeader>
+                                  <ModalBody>
+                                    <div className="input-container">
+                                      <input
+                                        value={tour.discount}
+                                        placeholder="Add % Sale here"
+                                        type="text"
+                                      />
+                                      <button className="button">Add</button>
+                                    </div>
+                                  </ModalBody>
+                                </>
+                              )}
+                            </ModalContent>
+                          </Modal>
 
-                      {/* Update */}
-                      <Tooltip content="Edit">
-                        <span
-                          onClick={() => handleUpdate(tour.tourId)}
-                          className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                        >
-                          <Pen />
-                        </span>
-                      </Tooltip>
+                          {/* Update */}
+                          <Tooltip content="Edit">
+                            <span
+                              onClick={() => handleUpdate(tour.tourId)}
+                              className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                            >
+                              <Pen />
+                            </span>
+                          </Tooltip>
 
-                      {/* Delete */}
-                      <Tooltip color="danger" content="Delete">
-                        <span
-                          onClick={() => deleteTour(tour.tourId)}
-                          className="text-lg text-danger cursor-pointer active:opacity-50"
-                        >
-                          <DeleteIcon />
-                        </span>
-                      </Tooltip>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+                          {/* Delete */}
+                          <Tooltip color="danger" content="Delete">
+                            <span
+                              onClick={() => deleteTour(tour.tourId)}
+                              className="text-lg text-danger cursor-pointer active:opacity-50"
+                            >
+                              <DeleteIcon />
+                            </span>
+                          </Tooltip>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
 
-        <div className="flex w-full justify-center">
-          <Pagination
-            isCompact
-            showControls
-            showShadow
-            page={currentPage}
-            total={Math.ceil(filteredTours.length / toursPerPage)}
-            onChange={handlePageChange}
-          />
-        </div>
+            {/* phân trang */}
+            <div className="flex w-full justify-center">
+              <Pagination
+                isCompact
+                showControls
+                showShadow
+                page={currentPage}
+                total={Math.ceil(filteredTours.length / toursPerPage)}
+                onChange={handlePageChange}
+              />
+            </div>
+          </>
+        ) : (
+          "Chưa có tour"
+        )}
       </div>
     </div>
   );

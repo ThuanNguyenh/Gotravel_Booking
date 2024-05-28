@@ -51,11 +51,11 @@ function CheckOut() {
   }, []);
 
   // Select number of customer
-  const [adult, setAdult] = useState(1);
+  const [adult, setAdult] = useState(0);
   const pricePerAdult = dataTour?.priceAdult;
 
   const incrementNumberA = () => {
-    if (adult + children < dataTour.numGuest) {
+    if (adult + children < dataTour?.numGuest) {
       setAdult((prevNumber) => prevNumber + 1);
     }
   };
@@ -70,7 +70,7 @@ function CheckOut() {
   const pricePerChildren = dataTour?.priceChildren;
 
   const incrementNumberC = () => {
-    if (adult + children < dataTour.numGuest) {
+    if (adult + children < dataTour?.numGuest) {
       setChildren((prevNumber) => prevNumber + 1);
     }
   };
@@ -81,6 +81,7 @@ function CheckOut() {
     }
   };
 
+  const sumGuest = adult + children;
   const price = adult * pricePerAdult + children * pricePerChildren;
 
   const discount = dataTour?.discount / 100;
@@ -133,7 +134,7 @@ function CheckOut() {
       const newCheckOut = calculateCheckOut(checkIn, tourTime);
       setCheckOut(newCheckOut);
     }
-  }, [checkIn, tourTime])
+  }, [checkIn, tourTime]);
 
   useEffect(() => {
     setDataBooking((prevData) => ({
@@ -201,20 +202,14 @@ function CheckOut() {
         Alert(2000, "Đặt phòng", "Không tìm thấy approvalUrl.", "error");
       }
     } catch (error) {
-
       let errorMessage = "Đặt phòng không thành công, vui lòng thử lại.";
 
       if (error?.response) {
         // eslint-disable-next-line no-unused-vars
         errorMessage = error.response.data?.message || errorMessage;
-      } 
+      }
 
-      Alert(
-        2000,
-        "Đặt phòng",
-        errorMessage,
-        "error"
-      );
+      Alert(2000, "Đặt phòng", errorMessage, "error");
     }
   };
 
@@ -223,8 +218,8 @@ function CheckOut() {
     const today = new Date();
     today.setDate(today.getDate() + 1); // Thêm 1 ngày để lấy ngày hôm sau
     const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
-    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, "0"); // Tháng bắt đầu từ 0
+    const day = String(today.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
 
@@ -360,7 +355,10 @@ function CheckOut() {
         <div className="pt-5">
           <Button
             onClick={handleBooking}
-            className="w-full text-lg text-white bg-[#73D8FC]"
+            className={`${
+              sumGuest < 1 ? "bg-default" : "bg-[#73D8FC]"
+            } w-full text-lg text-white `}
+            disabled={sumGuest < 1 ? true : false}
           >
             Đặt phòng
           </Button>

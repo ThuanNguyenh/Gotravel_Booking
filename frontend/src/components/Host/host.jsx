@@ -13,7 +13,7 @@ import { ChartIcon } from "../../assets/chartIcon";
 import { RequestIcon } from "../../assets/requestIcon";
 import NewTourForm from "./manageTour/newTour";
 import UpdateTourForm from "./manageTour/updateTour";
-import { ClipboardIcon } from "@heroicons/react/24/solid";
+import ViewBookingTours from "./ViewBookingTours";
 
 const Host = ({ children }) => {
   const [selectedContent, setSelectedContent] = useState("DashBoard");
@@ -45,16 +45,15 @@ const Host = ({ children }) => {
               >
                 Tour Của Bạn
               </ListboxItem>
-              {/* <ListboxItem startContent={<ChartIcon />} onClick={() => handleLinkClick('ManageRevenue')}>Revenue</ListboxItem> */}
               <ListboxItem
                 startContent={<RequestIcon />}
                 onClick={() => handleLinkClick("RequestBooking")}
               >
-                Lịch sử đặt
+                Lịch sử Đặt
               </ListboxItem>
               <ListboxItem
-                startContent={<ClipboardIcon className="w-6" />}
-                onClick={() => handleLinkClick("RequestBooking")}
+                startContent={<ChartIcon />}
+                onClick={() => handleLinkClick("ViewBookingTours")}
               >
                 Xem chuyến đi
               </ListboxItem>
@@ -73,6 +72,7 @@ const Host = ({ children }) => {
           )}
           {selectedContent === "ManageRevenue" && <ManageRevenue />}
           {selectedContent === "RequestBooking" && <RequestBooking />}
+          {selectedContent === "ViewBookingTours" && <ViewBookingTours />}
           {selectedContent === "NewTour" && (
             <NewTourForm handleSave={handleLinkClick} />
           )}
