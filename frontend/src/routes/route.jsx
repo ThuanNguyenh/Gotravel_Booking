@@ -4,9 +4,11 @@ import CheckOut from "../components/CheckOut";
 import Host from "../components/Host/host";
 import ListTour from "../components/ListTour";
 import TourDetail from "../components/Tour/tourDetail";
-import Search from "../components/search";
+import Search from "../components/searchPage";
 import Admin from "../components/admin/admin";
+
 import PaymentSuccess from "../components/Payment/PaymentSuccess";
+import CheckTour from "../components/checktour";
 
 // Public routes
 const publicRoutes = [
@@ -20,6 +22,8 @@ const publicRoutes = [
     component: PaymentSuccess,
     layout: null,
   },
+
+  { path: "/check", component: CheckTour, layout: null },
 ];
 
 // Private routes
