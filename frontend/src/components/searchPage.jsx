@@ -9,13 +9,15 @@ function Search() {
   // State to store tour data
   const [dataTour, setDataTour] = useState([]);
   const [filteredDataTour, setFilteredDataTour] = useState([]);
+  const [uniqueCategories, setUniqueCategories] = useState([]);
 
   // Get all tours
   const getDataTour = async () => {
     try {
       const response = await axios.get(`http://localhost:8080/api/v1/tour`);
       setDataTour(response.data);
-      filterDataTour(response.data);  // Initial filtering
+      filterDataTour(response.data); // Initial filtering
+      extractUniqueCategories(response.data); // Extract unique categories
       console.log("Tour list: ", response.data);
     } catch (error) {
       console.log("Error");
@@ -41,7 +43,7 @@ function Search() {
       const matchesLocation = location ? tour.province.includes(location) : true;
       const matchesStartDate = startDate ? new Date(tour.startDate) >= new Date(startDate) : true;
       const matchesEndDate = endDate ? new Date(tour.endDate) <= new Date(endDate) : true;
-      const matchesTourType = tourType ? tour.province_type === tourType : true;
+      const matchesTourType = tourType ? tour.categories.some(category => category.categoryName === tourType) : true;
 
       return matchesLocation && matchesStartDate && matchesEndDate && matchesTourType;
     });
@@ -49,16 +51,34 @@ function Search() {
     setFilteredDataTour(filtered);
   };
 
+  // Extract unique categories from the tours
+  const extractUniqueCategories = (tours) => {
+    const categoriesSet = new Set();
+    tours.forEach(tour => {
+      tour.categories.forEach(category => {
+        categoriesSet.add(category.categoryName);
+      });
+    });
+    setUniqueCategories(Array.from(categoriesSet));
+  };
+
   useEffect(() => {
     getDataTour();
   }, []);
 
+  useEffect(() => {
+    if (dataTour.length > 0) {
+      filterDataTour(dataTour);
+    }
+  }, [window.location.search]);
+
   const [filters, setFilters] = useState({
     locations: [],
+    categories: [],
     priceRange: [0, 500],
   });
 
-  const handleNationChange = (e) => {
+  const handleLocationChange = (e) => {
     const location = e.target.value;
     let updatedLocations = [...filters.locations];
 
@@ -74,6 +94,22 @@ function Search() {
     }));
   };
 
+  const handleCategoryChange = (e) => {
+    const category = e.target.value;
+    let updatedCategories = [...filters.categories];
+
+    if (e.target.checked) {
+      updatedCategories.push(category);
+    } else {
+      updatedCategories = updatedCategories.filter((item) => item !== category);
+    }
+
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      categories: updatedCategories,
+    }));
+  };
+
   const handlePriceRangeChange = (values) => {
     setFilters((prevFilters) => ({
       ...prevFilters,
@@ -82,13 +118,13 @@ function Search() {
   };
 
   const filteredTours = filteredDataTour.filter((tour) => {
-    if (
-      (filters.locations.length === 0 || filters.locations.includes(tour.province)) &&
-      (tour.price >= filters.priceRange[0] && tour.price <= filters.priceRange[1])
-    ) {
-      return true;
-    }
-    return false;
+    const tourCategories = tour.categories.map(cat => cat.categoryName);
+
+    const matchesLocation = filters.locations.length === 0 || filters.locations.includes(tour.province);
+    const matchesCategories = filters.categories.length === 0 || filters.categories.some(category => tourCategories.includes(category));
+    const matchesPriceRange = tour.price >= filters.priceRange[0] && tour.price <= filters.priceRange[1];
+
+    return matchesLocation && matchesCategories && matchesPriceRange;
   });
 
   return (
@@ -101,8 +137,18 @@ function Search() {
             <h2 className="text-lg font-semibold mb-2">Địa điểm</h2>
             {dataTour.map((tour) => (
               <label key={tour.tourId} className="block mb-1">
-                <input type="checkbox" value={tour.province} onChange={handleNationChange} />
+                <input type="checkbox" value={tour.province} onChange={handleLocationChange} />
                 <span className="ml-2">{tour.province}</span>
+              </label>
+            ))}
+          </div>
+
+          <div className="flex flex-col">
+            <h2 className="text-lg font-semibold mb-2">Loại hình</h2>
+            {uniqueCategories.map((category) => (
+              <label key={category} className="block mb-1">
+                <input type="checkbox" value={category} onChange={handleCategoryChange} />
+                <span className="ml-2">{category}</span>
               </label>
             ))}
           </div>
