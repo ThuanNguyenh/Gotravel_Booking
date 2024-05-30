@@ -119,7 +119,7 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const toursPerPage = 5;
+  const toursPerPage = 9;
 
   // Handle page change
   const handlePageChange = (pageNumber) => {
@@ -147,7 +147,10 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
   const isTourVisible = (tour) => {
     const matchesSearchQuery = tour.tourName
       .toLowerCase()
+      .includes(searchQuery.toLowerCase()) || tour.province
+      .toLowerCase()
       .includes(searchQuery.toLowerCase());
+
     const matchesStatusFilter =
       selectedStatusFilters.length === 0 ||
       selectedStatusFilters.includes(tour.province);
@@ -178,7 +181,7 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
           <Input
             isClearable
             className="w-full sm:max-w-[44%]"
-            placeholder="Search by name..."
+            placeholder="Tìm kiếm theo tên tour hoặc địa điểm..."
             size="sm"
             startContent={<SearchIcon />}
             value={searchQuery}
@@ -231,13 +234,13 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
                 aria-label="Example static collection table"
               >
                 <TableHeader>
-                  <TableColumn>TÊN</TableColumn>
-                  <TableColumn>VỊ TRÍ</TableColumn>
+                  <TableColumn className="w-[300px]">TÊN</TableColumn>
+                  <TableColumn className="w-[150px]">VỊ TRÍ</TableColumn>
                   <TableColumn>GIÁ NGƯỜI LỚN</TableColumn>
                   <TableColumn>GIÁ TRẺ EM</TableColumn>
                   <TableColumn>LƯỢNG KHÁCH</TableColumn>
                   <TableColumn>THỜI GIAN TOUR</TableColumn>
-                  <TableColumn>TRẠNG THÁI</TableColumn>
+                  {/* <TableColumn>LOẠI HÌNH</TableColumn> */}
                   <TableColumn>HÀNH ĐỘNG</TableColumn>
                 </TableHeader>
                 <TableBody>
@@ -261,12 +264,12 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
                       </TableCell>
 
                       <TableCell>{tour.tourTime} ngày</TableCell>
-
+{/* 
                       <TableCell>
                         <Chip className="capitalize" size="sm" variant="flat">
-                          {tour.status} trống
+                          {tour.status}
                         </Chip>
-                      </TableCell>
+                      </TableCell> */}
 
                       <TableCell>
                         <div className="relative flex items-center gap-4">

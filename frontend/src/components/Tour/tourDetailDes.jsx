@@ -33,7 +33,7 @@ function TourDetailDes() {
     <div className="w-full flex-col">
       {/* Tour Description */}
       <div className="p-3 text-md">
-        <p>Tour bắt đầu từ {dataTour.startDate} đến {dataTour.endDate}</p> 
+        <p>Tour có thời gian {dataTour.tourTime} ngày</p> 
         <p>{dataTour.description}</p>
       </div>
 

@@ -31,7 +31,7 @@ const Host = ({ children }) => {
     <div className="flex">
       <div className="h-full w-56 fixed left-0 top-16 bottom-0 ">
         <div className="flex flex-col h-full justify-center items-center">
-          <div className="flex-1 overflow-y-auto w-full max-w-[260px]  text-center py-2">
+          <div className="pl-5 flex-1 overflow-y-auto w-full max-w-[260px]  text-center py-2">
             <Listbox shouldHighlightOnFocus className="text-xl font-bold">
               <ListboxItem
                 startContent={<MenuIcon />}
@@ -43,19 +43,19 @@ const Host = ({ children }) => {
                 startContent={<HotelIcon />}
                 onClick={() => handleLinkClick("ManageTour")}
               >
-                Tour Của Bạn
+                Danh sách tour
               </ListboxItem>
               <ListboxItem
                 startContent={<RequestIcon />}
                 onClick={() => handleLinkClick("RequestBooking")}
               >
-                Lịch sử Đặt
+                Trạng thái đặt
               </ListboxItem>
               <ListboxItem
                 startContent={<ChartIcon />}
                 onClick={() => handleLinkClick("ViewBookingTours")}
               >
-                Xem chuyến đi
+                Lịch sử chuyến đi
               </ListboxItem>
             </Listbox>
           </div>

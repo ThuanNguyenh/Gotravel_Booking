@@ -23,7 +23,7 @@ const publicRoutes = [
     layout: null,
   },
 
-  { path: "/check", component: CheckTour, layout: null },
+  { path: "/check", component: CheckTour, layout: HeaderOnly },
 ];
 
 // Private routes

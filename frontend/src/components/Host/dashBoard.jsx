@@ -1,465 +1,286 @@
-import { useEffect } from "react";
-import React from "react";
+import { useEffect, useState } from "react";
 
-import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, User, Chip, Tooltip, } from "@nextui-org/react";
+import { MdOutlineTour } from "react-icons/md";
+import { BsCurrencyDollar } from "react-icons/bs";
+import { MdAutorenew, MdUpcoming } from "react-icons/md";
 
-import LayoutModule from '@highcharts/dashboards/modules/layout';
-import * as Dashboards from "@highcharts/dashboards";
-import DataGrid from '@highcharts/dashboards/datagrid';
+import dayjs from "dayjs";
+import DatePicker from "react-datepicker";
+import { FaCalendarAlt } from "react-icons/fa";
+import { IoCheckmarkDoneSharp } from "react-icons/io5";
+import { FaArrowTrendUp, FaArrowTrendDown } from "react-icons/fa6";
 
-import Highcharts from 'highcharts';
+import "./dashBoard.css";
+import axios from "axios";
+import "../css/DatePicker.css";
+import { Chip, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
 
+export default function DashBoard() {
+  // get userId from localStorage
+  const userString = localStorage.getItem("userInfo");
+  const user = JSON.parse(userString);
+  const userId = user?.userId;
 
+  // const [dataBooking, setDataBooking] = useState([]);
+  const [completedBookings, setCompletedBookings] = useState([]);
 
-import './dashBoard.css'
+  // doanh thu
+  const [monthrevenue, setMonthRevenue] = useState(0);
+  const [selectedMonth, setSelectedMonth] = useState(dayjs().format("YYYY-MM")); // Default to current month
 
-Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
-Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
-Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
-Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
+  // count tour
+  const [countTour, setCountTour] = useState(0);
+  const [completedCount, setCompletedCount] = useState(0);
 
-
-LayoutModule(Dashboards);
-
-const statusColorMap = {
-  active: "success",
-  paused: "danger",
-  vacation: "warning",
-};
-
-function DashBoard() {
-
- 
-
+  // lấy tất cả booking
   useEffect(() => {
-    Dashboards.board(
-      "financeDB",
-      {
-        dataPool: {
-          connectors: [
-            {
-              id: "transactions",
-              type: "JSON",
-              options: {
-                firstRowAsNames: false,
-                columnNames: ["id", "Receiver", "Amount", "Balance"],
-                data: [
-                  ["rsf934fds", "John Doe", 100, 1000],
-                  ["f0efnakr", "Anna Smith", 200, 800],
-                  ["mfaiks12", "Robert Johnson", 300, 500],
-                  ["15fqmfk", "Susan Williams", 400, 100],
-                ],
-              },
-            },
-          ],
-        },
-        gui: {
-          layouts: [
-            {
-              rows: [
-                {
-                  id: "row-1",
-                  cells: [
-                    {
-                      id: "dashboard-row-1-cell-1",
-                    },
-                    {
-                      id: "dashboard-row-1-cell-2",
-                    },
-                    {
-                      id: "dashboard-row-1-cell-3",
-                    },
-                  ],
-                },
-                {
-                  cells: [
-                    {
-                      id: "dashboard-row-2-cell-1",
-                    },
-                  ],
-                },
-                {
-                  // cells: [
-                  //   {
-                  //     id: "dashboard-row-3-cell-1",
-                  //   },
-                  //   {
-                  //     id: "dashboard-row-3-cell-2",
-                  //   },
-                  //   {
-                  //     id: "dashboard-row-3-cell-3",
-                  //   },
-                  // ],
-                },
-              ],
-            },
-          ],
-        },
-        components: [
-          {
-            type: "KPI",
-            renderTo: "dashboard-row-1-cell-1",
-            title: "Tổng doanh thu tháng 5 ",
-            value: 1430,
-            valueFormat: "$ {value}",
-            subtitle: "tăng 43%",
-            linkedValueTo: {
-              enabled: false,
-            },
-            chartOptions: {
-              chart: {
-                styledMode: true,
-              },
-              series: [
-                {
-                  type: "spline",
-                  enableMouseTracking: false,
-                  dataLabels: {
-                    enabled: false,
-                  },
-                  data: [1870, 1210, 1500, 1900, 1430],
-                },
-              ],
-            },
-          },
-          {
-            type: "KPI",
-            renderTo: "dashboard-row-1-cell-2",
-            title: "Lượt hoàn thành",
-            value: 500,
-            valueFormat: "",
-            subtitle: "Giảm 22%",
-            linkedValueTo: {
-              enabled: false,
-            },
-            chartOptions: {
-              chart: {
-                styledMode: true,
-              },
-              series: [
-                {
-                  type: "spline",
-                  enableMouseTracking: false,
-                  dataLabels: {
-                    enabled: false,
-                  },
-                  data: [0, 1000, 1000, 4500, 5300, 6500],
-                },
-              ],
-            },
-          },
-          {
-            type: "HTML",
-            renderTo: "dashboard-row-1-cell-3",
-            elements: [
-              {
-                tagName: "div",
-                children: [
-                  {
-                    tagName: "h4",
-                    textContent: "Tổng số dư ở ví : 500$",
-                    attributes: {
-                      class: "main-title align-middle",
-                    },
-                  },
-                  {
-                    tagName: "button",
-                    textContent: "Rút tiền về ngân hàng",
-                    attributes: {
-                      id: "saving-button",
-                    },
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            type: "Highcharts",
-            renderTo: "dashboard-row-2-cell-1",
-            title: "Thống kế doanh thu hàng tháng",
-            chartOptions: {
-              chart: {
-                marginTop: 50,
-              },
-              defs: {
-                gradient0: {
-                  tagName: "linearGradient",
-                  id: "gradient-0",
-                  x1: 0,
-                  y1: 0,
-                  x2: 0,
-                  y2: 1,
-                  children: [
-                    {
-                      tagName: "stop",
-                      offset: 0,
-                    },
-                    {
-                      tagName: "stop",
-                      offset: 1,
-                    },
-                  ],
-                },
-              },
-              credits: {
-                enabled: false,
-              },
-              title: {
-                text: "",
-              },
-              legend: {
-                enabled: true,
-              },
-              xAxis: {
-                categories: [
-                  "Tháng 1",
-                  "Tháng 1",
-                  "Tháng 1",
-                  "Tháng 1",
-                  "Tháng 1",
-                  "Tháng 1",
-                  "Tháng 1",
-                  "Tháng 1",
-                  "Tháng 1",
-                  "Tháng 1",
-                  "Tháng 1",
-                  "Tháng 1",
-                ],
-              },
-              yAxis: [
-                {
-                  title: "",
-                  labels: {
-                    format: "{value} k",
-                  },
-                },
-              ],
-              series: [
-                {
-                  type: "areaspline",
-                  dataLabels: {
-                    enabled: false,
-                  },
-                  marker: {
-                    enabled: false,
-                  },
-                  name: "Earnings",
-                  data: [500, 20000, 30, 40, 12, 11, 10, 23, 4, 34, 50, 20],
-                },
-              ],
-            },
-          },
-          // {
-          //   type: "KPI",
-          //   renderTo: "dashboard-row-3-cell-1",
-          //   title: "Spendings",
-          //   value: 350,
-          //   valueFormat: "$ {value}",
-          //   linkedValueTo: {
-          //     enabled: false,
-          //   },
-          //   chartOptions: {
-          //     series: [
-          //       {
-          //         type: "column",
-          //         enableMouseTracking: false,
-          //         dataLabels: {
-          //           enabled: false,
-          //         },
-          //         name: "Spendings",
-          //         data: [45, 30, 50, 80, 10, 45, 30, 59, 39, 15, 62],
-          //       },
-          //     ],
-          //   },
-          // },
-          // {
-          //   type: "KPI",
-          //   renderTo: "dashboard-row-3-cell-2",
-          //   title: "Your wallet condition",
-          //   value: "",
-          //   subtitle: "You saved 1450$ this month",
-          //   linkedValueTo: {
-          //     enabled: false,
-          //   },
-          //   chartOptions: {
-          //     title: {
-          //       verticalAlign: "middle",
-          //       floating: true,
-          //       text: "58%",
-          //     },
-          //     series: [
-          //       {
-          //         type: "pie",
-          //         enableMouseTracking: false,
-          //         data: [58, 42],
-          //         size: "100%",
-          //         innerSize: "75%",
-          //         dataLabels: {
-          //           enabled: false,
-          //         },
-          //       },
-          //     ],
-          //   },
-          // },
-          // {
-          //   renderTo: "dashboard-row-3-cell-3",
-          //   connector: {
-          //     id: "transactions",
-          //   },
-          //   title: "Transactions",
-          //   type: "DataGrid",
-          //   dataGridOptions: {
-          //     cellHeight: 33,
-          //     editable: false,
-          //   },
-          // },
-        ],
-        style: { display: "none" },
-      },
-      true
-    );
-  }, []);
+    async function getDataBooking() {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/api/v1/booking/booking-tour-date/${userId}`
+        );
 
-  const renderCell = React.useCallback((user, columnKey) => {
-    const cellValue = user[columnKey];
+        const allBookings = response?.data;
 
-    switch (columnKey) {
-      case "name":
-        return (
-          <User
-            avatarProps={{radius: "lg", src: user.avatar}}
-            description={user.email}
-            name={cellValue}
-          >
-            {user.email}
-          </User>
+        // Lọc các booking có trạng thái confirmation là COMPLETED
+        const completedBookings = allBookings.filter(
+          (booking) => booking.confirmation === "COMPLETED"
         );
-      case "role":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-sm capitalize">{cellValue}</p>
-            <p className="text-bold text-sm capitalize text-default-400">{user.team}</p>
-          </div>
-        );
-      case "status":
-        return (
-          <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
-            {cellValue}
-          </Chip>
-        );
-      case "actions":
-        return (
-          <div className="relative flex items-center gap-2">
-            <Tooltip content="Details">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                {/* <EyeIcon /> */}
-              </span>
-            </Tooltip>
-            <Tooltip content="Edit user">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                {/* <EditIcon /> */}
-              </span>
-            </Tooltip>
-            <Tooltip color="danger" content="Delete user">
-              <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                {/* <DeleteIcon /> */}
-              </span>
-            </Tooltip>
-          </div>
-        );
-      default:
-        return cellValue;
+
+        setCompletedBookings(completedBookings);
+      } catch (error) {
+        console.error(error.response.data?.message);
+      }
     }
-  }, []);
 
-  const columns = [
-    {name: "Tên", uid: "name"},
-    {name: "Tour Hoàn Thành", uid: "role"},
-    {name: "Tour Đã Huỷ", uid: "status"},
-    {name: "Tổng Số Tiền", uid: "tien"},
-  ];
-  
-  const users = [
-    {
-      id: 1,
-      name: "Tony Reichert",
-      role: "CEO",
-      team: "Management",
-      status: "active",
-      age: "29",
-      avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-      email: "tony.reichert@example.com",
-      tien:'99999999'
+    getDataBooking();
+  }, [userId]);
 
-    },
-    {
-      id: 2,
-      name: "Zoey Lang",
-      role: "Technical Lead",
-      // team: "Development",
-      status: "pausedsdfds",
-      age: "25",
-      avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
-      email: "zoey.lang@example.com",
-    },
-    {
-      id: 3,
-      name: "Jane Fisher",
-      role: "Senior Developer",
-      team: "Development",
-      status: "hiiii",
-      age: "22",
-      avatar: "https://i.pravatar.cc/150?u=a04258114e29026702d",
-      email: "jane.fisher@example.com",
-    },
-    {
-      id: 4,
-      name: "William Howard",
-      role: "Community Manager",
-      team: "Marketing",
-      status: "vacation",
-      age: "28",
-      avatar: "https://i.pravatar.cc/150?u=a048581f4e29026701d",
-      email: "william.howard@example.com",
-    },
-    {
-      id: 5,
-      name: "Kristen Copper",
-      role: "Sales Manager",
-      team: "Sales",
-      status: "active",
-      age: "24",
-      avatar: "https://i.pravatar.cc/150?u=a092581d4ef9026700d",
-      email: "kristen.cooper@example.com",
-    },
-  ];
+  // SỐ LƯỢNG TOUR CỦA USER
+  useEffect(() => {
+    async function getCountTour() {
+      const resCount = await axios.get(
+        `http://localhost:8080/api/v1/tour/count/${userId}`
+      );
 
+      setCountTour(resCount.data);
+    }
 
-  return(
-    <div  className="w-full">
-        <div id="financeDB" className="highcharts-light"></div>
-        <div style={{padding:'0 14px'}}>
+    getCountTour();
+  }, [userId]);
 
-        <Table aria-label="Example table with custom cells ">
-      <TableHeader columns={columns}>
-        {(column) => (
-          <TableColumn key={column.uid} align={column.uid === "actions" ? "center" : "start"}>
-            {column.name}
-          </TableColumn>
-        )}
-      </TableHeader>
-      <TableBody items={users}>
-        {(item) => (
-          <TableRow key={item.id}>
-            {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+  const [countUpcoming, setCountUpcoming] = useState(0);
+  const [countInProgress, setCountInProgress] = useState(0);
+
+  // SỐ LƯƠNG TOUR SẮP DIỄN RA
+  useEffect(() => {
+    async function getCountTourUpcoming() {
+      const res = await axios.get(
+        `http://localhost:8080/api/v1/booking/count-tour-confirm/${userId}&CONFIRMED`
+      );
+      setCountUpcoming(res.data);
+    }
+    getCountTourUpcoming();
+  }, [userId]);
+
+  // SỐ LƯỢNG TOUR ĐANG DIỄN RA
+  useEffect(() => {
+    async function getCountTourInProgress() {
+      const res = await axios.get(
+        `http://localhost:8080/api/v1/booking/count-tour-confirm/${userId}&IN_PROGRESS`
+      );
+      setCountInProgress(res.data);
+    }
+    getCountTourInProgress();
+  }, [userId]);
+
+  // doanh thu - lượt hoàn thành
+  useEffect(() => {
+    // Hàm kiểm tra xem ngày có thuộc tháng cụ thể không
+    function isSameMonth(dateString, monthString) {
+      const date = dayjs(dateString);
+      const month = dayjs(monthString);
+      return date.isSame(month, "month");
+    }
+
+    // Lọc các booking theo tháng đã chọn
+    const monthlyCompletedBookings = completedBookings.filter((booking) =>
+      isSameMonth(booking.checkInDate, selectedMonth)
+    );
+
+    // Tính tổng doanh thu của tháng đã chọn
+    const monthTotal = monthlyCompletedBookings.reduce((sum, booking) => {
+      return sum + booking.totalPriceBooked;
+    }, 0);
+
+    setMonthRevenue(monthTotal);
+
+    // đếm số lượt hoàn thành của tháng đã chọn
+    setCompletedCount(monthlyCompletedBookings.length);
+  }, [completedBookings, selectedMonth]);
+
+  return (
+    <div className="text-[1.3em]">
+      <div className="grid grid-cols-3 gap-4 place-items-stretch h-36">
+        {/* doanh thu */}
+        <div className="shadow flex flex-col gap-3 border rounded-lg p-3 ">
+          <div className="flex justify-between items-start">
+            <span className="font-bold">Doanh thu tháng</span>
+            <div className="flex items-center">
+              <DatePicker
+                placeholderText="Chọn tháng"
+                onChange={(date) => setSelectedMonth(date)}
+                selected={selectedMonth}
+                className="date-picker border rounded-l-lg p-2 w-[100px] text-center h-[35px]"
+                showMonthYearPicker
+                dateFormat="MM/yyyy"
+              />
+
+              <div className="border h-[35px] p-2 rounded-r-lg bg-gray-100">
+                <FaCalendarAlt size="1em" color="grey" />
+              </div>
+            </div>
+          </div>
+          <div className="flex gap-3 items-center font-bold">
+            <BsCurrencyDollar color="#00FA9A" size="1.3em" />{" "}
+            <span className="text-2xl text-[#00FA9A]">
+              {monthrevenue.toFixed(2)}
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <span>
+              <FaArrowTrendUp color="green" />
+            </span>
+
+            <span>5 % so với tháng trước</span>
+
+            <span>
+              <FaArrowTrendDown color="red" />
+            </span>
+          </div>
         </div>
-    </div>
-    
-  )
-}
 
-export default DashBoard;
+        {/* lượt hoàn thành */}
+        <div className="shadow flex flex-col gap-3 border rounded-lg p-3 ">
+          <div className="flex justify-between items-end">
+            <span className="font-bold">Lượt hoàn thành</span>
+            {/* <div className="flex items-center">
+              <DatePicker
+                placeholderText="Chọn tháng"
+                onChange={(date) => setSelectedMonth(date)}
+                selected={selectedMonth}
+                className="date-picker border rounded-l-lg p-2 w-[100px] text-center h-[35px]"
+                showMonthYearPicker
+                dateFormat="MM/yyyy"
+              />
+
+              <div className="border h-[35px] p-2 rounded-r-lg bg-gray-100">
+                <FaCalendarAlt size="1em" color="grey" />
+              </div>
+            </div> */}
+          </div>
+          <div className="flex gap-3 items-center font-bold">
+            <IoCheckmarkDoneSharp color="#DAA520" size="1.3em" />{" "}
+            <span className="text-2xl text-[#DAA520]">{completedCount}</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <span>
+              <FaArrowTrendUp color="green" />
+            </span>
+
+            <span>5 % so với tháng trước</span>
+
+            <span>
+              <FaArrowTrendDown color="red" />
+            </span>
+          </div>
+        </div>
+
+        {/* Tổng số lượng tour */}
+        <div className="shadow flex flex-col gap-3 border rounded-lg p-3 ">
+          <div className="flex justify-between items-end">
+            <span className="font-bold">Số lượng tour</span>
+          </div>
+          <div className="flex gap-3 items-center font-bold">
+            <MdOutlineTour color="#4682B4" size="1.3em" />{" "}
+            <span className="text-2xl text-[#4682B4]">{countTour}</span>
+          </div>
+          <div className="flex justify-between items-center gap-3">
+            <div className="flex items-center gap-2">
+              <span>
+                <MdUpcoming color="#DAA520" />
+              </span>
+
+              <span>Sắp diễn ra {countUpcoming}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span>
+                <MdAutorenew color="green" />
+              </span>
+              <span>Đang diễn ra {countInProgress}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* thống kê doanh thu của tất cả tour theo tháng */}
+      <div className="mt-4 flex flex-col gap-4">
+        <div className="font-bold">Bảng chi tiết doanh thu tour theo tháng</div>
+        <div>
+          <Table layout="fixed" aria-label="Example static collection table">
+            <TableHeader>
+              <TableColumn style={{ width: "350px" }}>TÊN TOUR</TableColumn>
+              <TableColumn style={{ width: "150px" }}>VỊ TRÍ</TableColumn>
+
+              <TableColumn style={{ width: "110px" }}>LƯỢNG KHÁCH</TableColumn>
+              <TableColumn style={{ width: "100px" }}>KHÁCH ĐẶT</TableColumn>
+              <TableColumn style={{ width: "150px" }}>NGÀY BẮT ĐẦU</TableColumn>
+              <TableColumn style={{ width: "150px" }}>
+                NGÀY KẾT THÚC
+              </TableColumn>
+              <TableColumn style={{ width: "150px" }}>$ TỔNG THU</TableColumn>
+              <TableColumn style={{ width: "150px" }}>TRẠNG THÁI</TableColumn>
+            </TableHeader>
+            <TableBody>
+              {/* Map over the currentTours to render each row dynamically */}
+              {completedBookings?.map((tour) => (
+                <TableRow key={tour.tourId}>
+                  <TableCell>{tour.tourName}</TableCell>
+                  <TableCell>
+                    {/* <Chip className="capitalize" size="sm" variant="flat"> */}
+                    {tour.province}
+                    {/* </Chip> */}
+                  </TableCell>
+
+                  <TableCell>{tour.numGuest}</TableCell>
+
+                  <TableCell>{tour.numGuestBooked}</TableCell>
+
+                  <TableCell>
+                    {/* <Chip className="capitalize" size="sm" variant="flat"> */}
+                    {tour.checkInDate}
+                    {/* </Chip> */}
+                  </TableCell>
+                  <TableCell>{tour.checkOutDate}</TableCell>
+
+                  <TableCell>{tour.totalPriceBooked}</TableCell>
+
+                  <TableCell>
+                    <Chip
+                      className="capitalize"
+                      size="small"
+                      variant="dot"
+                      // color={getStatus(tour.confirmation).color}
+                    >
+                      {/* {getStatus(tour.confirmation).text} */}
+                    </Chip>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+    </div>
+  );
+}

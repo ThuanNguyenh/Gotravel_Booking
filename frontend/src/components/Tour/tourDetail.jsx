@@ -77,7 +77,7 @@ function TourDetail() {
               </div>
 
               <div className="flex flex-col gap-5 items-end justify-between">
-                  <h1 className="text-3xl font-bold">${dataTour.price}/ngày</h1>
+                  <h1 className="text-3xl font-bold">$ {dataTour.priceAdult}</h1>
                   <div className="flex flex-row gap-3">
                       <Button isIconOnly variant="bordered" className="border-[#01B7F2]" onPress={() => setLiked((v) => !v)}>
                           <HeartIcon className={

@@ -122,7 +122,7 @@ function Search() {
 
     const matchesLocation = filters.locations.length === 0 || filters.locations.includes(tour.province);
     const matchesCategories = filters.categories.length === 0 || filters.categories.some(category => tourCategories.includes(category));
-    const matchesPriceRange = tour.price >= filters.priceRange[0] && tour.price <= filters.priceRange[1];
+    const matchesPriceRange = tour.priceAdult >= filters.priceRange[0] && tour.priceAdult <= filters.priceRange[1];
 
     return matchesLocation && matchesCategories && matchesPriceRange;
   });
@@ -136,7 +136,7 @@ function Search() {
           <div className="flex flex-col">
             <h2 className="text-lg font-semibold mb-2">Địa điểm</h2>
             {/* Use Set to store unique locations */}
-            {Array.from(new Set(dataTour.map(tour => tour.province))).map((location) => (
+            {Array.from(new Set(dataTour?.map(tour => tour.province))).map((location) => (
               <label key={location} className="block mb-1">
                 <input type="checkbox" value={location} onChange={handleLocationChange} />
                 <span className="ml-2">{location}</span>
@@ -146,7 +146,7 @@ function Search() {
           
           <div className="flex flex-col">
             <h2 className="text-lg font-semibold mb-2">Loại hình</h2>
-            {uniqueCategories.map((category) => (
+            {uniqueCategories?.map((category) => (
               <label key={category} className="block mb-1">
                 <input type="checkbox" value={category} onChange={handleCategoryChange} />
                 <span className="ml-2">{category}</span>
@@ -178,7 +178,7 @@ function Search() {
           </div>
           <div></div>
         </div>
-        {filteredTours.map((tour) => (
+        {filteredTours?.map((tour) => (
           <Card key={tour.tourId} isPressable as={Link} to={`/tourDetail/${tour.tourId}`} isBlurred className="border-none bg-background/60 dark:bg-default-100/50" shadow="sm">
             <CardBody>
               <div className="grid grid-cols-6 md:grid-cols-12 md:gap-4 items-center justify-center">
@@ -216,7 +216,7 @@ function Search() {
                 </div>
 
                 <div className="flex flex-col col-span-4 md:col-span-4 items-end gap-5 text-right h-full  justify-between">
-                  <div className="font-semibold text-2xl text-foreground/90">${tour.price}/đêm</div>
+                  <div className="font-semibold text-2xl text-foreground/90">${tour.priceAdult}/đêm</div>
                   <div>
                     <Button className="bg-[#73D8FC] text-large text-white font-medium">Đặt chỗ ngay</Button>
                   </div>
