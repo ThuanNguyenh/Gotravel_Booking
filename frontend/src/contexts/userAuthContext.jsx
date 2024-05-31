@@ -16,15 +16,24 @@ export function UserAuthContextProvider({ children }) {
 
   // đăng nhập với email và password với server spring
   async function emailAndPassword(dataLogin) {
-    const response = await axios.post(
-      `http://localhost:8080/api/v1/auth/login`,
-      dataLogin
-    );
-    localStorage.setItem("accessToken", response.data.data.token);
-    localStorage.setItem("userInfo", JSON.stringify(response.data.data.user));
-    setEmailPasswordLoggedIn(true);
-    setIsAuthenticated(true);
-    setRedirected(false);
+    try {
+      const response = await axios.post(
+        `http://localhost:8080/api/v1/auth/login`,
+        dataLogin
+      );
+      localStorage.setItem("accessToken", response.data.data.token);
+      localStorage.setItem("userInfo", JSON.stringify(response.data.data.user));
+      setEmailPasswordLoggedIn(true);
+      setIsAuthenticated(true);
+      setRedirected(false);
+
+      // Trả về dữ liệu từ phản hồi của yêu cầu đăng nhập
+      return response.data.data.user;
+    } catch (error) {
+      // Xử lý lỗi nếu có
+      console.error("Lỗi khi đăng nhập:", error);
+      throw error; // Ném ra lỗi để xử lý ở phần gọi hàm
+    }
   }
 
   const token = localStorage.getItem("accessToken");
@@ -34,7 +43,8 @@ export function UserAuthContextProvider({ children }) {
     const googleAuthProvider = new GoogleAuthProvider();
     try {
       const result = await firebase.auth().signInWithPopup(googleAuthProvider);
-      return result;
+     
+      return result.user;
     } catch (error) {
       console.log(error);
       throw error;
@@ -132,7 +142,7 @@ export function UserAuthContextProvider({ children }) {
         fbSignIn,
         emailAndPassword,
         isAuthenticated,
-        redirected
+        redirected,
       }}
     >
       {children}
@@ -143,7 +153,3 @@ export function UserAuthContextProvider({ children }) {
 export const useUserAuth = () => {
   return useContext(userAuthContext);
 };
-
-
-
-

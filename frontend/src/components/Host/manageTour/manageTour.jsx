@@ -22,6 +22,7 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
+  Switch,
 } from "@nextui-org/react";
 
 import { Pen } from "../../../assets/Pen";
@@ -35,13 +36,55 @@ import { Alert, DeleteAlert } from "../../Alert/Alert";
 
 import axios from "axios";
 import "./manageTour.css";
+import Empty from "../../alert/Empty";
+import { useNavigate } from "react-router-dom";
+
+// status
+const listStatusFil = [
+  {
+    title: "Đang hoạt động",
+    status: "true",
+  },
+  {
+    title: "Không hoạt động",
+    status: "false",
+  },
+  {
+    title: "Tất cả",
+    status: "",
+  },
+];
 
 const ManageTour = ({ handleLinkClick, selectedTourId }) => {
   const voucherModal = useDisclosure();
 
+  const navigate = useNavigate();
+
+  const [tourStatus, setTourStatus] = useState({});
+
   // state data
   const [dataTour, setDataTour] = useState([]);
   const [message, setMessage] = useState(null);
+
+  const [status, setStatus] = useState("");
+  const [statusName, setStatusName] = useState("Tất cả");
+
+  console.log("data: ", tourStatus);
+
+  // Hàm để cập nhật trạng thái của tour dựa trên ID
+  const updateTourStatus = (tourId, value) => {
+    const status = value === "true";
+    setTourStatus((prevStatus) => ({
+      ...prevStatus,
+      [tourId]: status,
+    }));
+    handleUpdateStatus(tourId, status); // Gọi hàm cập nhật trạng thái
+  };
+
+  // Hàm để lấy trạng thái của tour dựa trên ID
+  const getTourStatus = (tourId) => {
+    return tourStatus[tourId] || false; // Mặc định là false nếu không có trạng thái
+  };
 
   // get token from localStorage
   const token = localStorage.getItem("accessToken");
@@ -52,28 +95,47 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
   const userId = user?.userId;
 
   // get all tour
-  const getDataTour = async () => {
-    try {
-      if (!token) {
-        return;
+
+  useEffect(() => {
+    async function getDataTour() {
+      try {
+        if (!token) {
+          return;
+        }
+
+        // Thêm token vào tiêu đề "Authorization"
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+
+        const params = {};
+
+        if (status) {
+          params.status = status;
+        }
+
+        // xây dựng URL với các tham số truy vấn
+        const queryString = new URLSearchParams(params).toString();
+        const URL = `http://localhost:8080/api/v1/tour/my-tour/${userId}/status?${queryString}`;
+
+        // Thay đổi URL của trình duyệt
+        navigate(`/host?${queryString}`, { replace: true });
+
+        const response = await axios.get(URL, config);
+        const toursData = response.data;
+
+        setDataTour(toursData);
+      } catch (error) {
+        setMessage(error.response.data.message);
       }
-
-      // Thêm token vào tiêu đề "Authorization"
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-
-      const response = await axios.get(
-        `http://localhost:8080/api/v1/tour/my-tour/${userId}`,
-        config
-      );
-      setDataTour(response.data);
-    } catch (error) {
-      setMessage(error.response.data.message);
     }
-  };
+
+    getDataTour();
+  }, [status, userId, token, navigate]);
+
+  console.log("trạng thái: ", dataTour);
 
   //delete tour
   const deleteTour = async (tourId) => {
@@ -107,9 +169,36 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
     }
   };
 
-  useEffect(() => {
-    getDataTour();
-  }, []);
+  // CẬP NHẬT TRẠNG THÁI TOUR
+  const handleUpdateStatus = async (tourId, status) => {
+    try {
+      if (!token) {
+        return;
+      }
+
+      // Thêm token vào tiêu đề "Authorization"
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const params = new URLSearchParams({ status });
+
+      const response = await axios.put(
+        `http://localhost:8080/api/v1/tour/${tourId}/update-status?${params}`,
+        null,
+        config
+      );
+      if (response.status === 200) {
+        Alert(1000, "Cập nhật trạng thái tour", "Thành công", "success");
+      } else {
+        alert("Thất bại: không cập nhật được trạng thái tour!");
+      }
+    } catch (error) {
+      console.error("loooo: ", error);
+    }
+  };
 
   //update button
   const handleUpdate = async (tourId) => {
@@ -134,27 +223,12 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
 
   // //filter status
   const [selectedStatusFilters, setSelectedStatusFilters] = useState([]);
-  const toggleStatusFilter = (province) => {
-    if (selectedStatusFilters.includes(province)) {
-      setSelectedStatusFilters(
-        selectedStatusFilters.filter((s) => s !== province)
-      );
-    } else {
-      setSelectedStatusFilters([...selectedStatusFilters, province]);
-    }
-  };
-
   const isTourVisible = (tour) => {
-    const matchesSearchQuery = tour.tourName
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase()) || tour.province
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
+    const matchesSearchQuery =
+      tour.tourName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      tour.province.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesStatusFilter =
-      selectedStatusFilters.length === 0 ||
-      selectedStatusFilters.includes(tour.province);
-    return matchesSearchQuery && matchesStatusFilter;
+    return matchesSearchQuery;
   };
 
   // Filter tours based on search query and status filters
@@ -176,9 +250,10 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
 
   return (
     <div>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 w-[110%]">
         <div className="flex justify-between gap-3 items-end">
           <Input
+            variant="faded"
             isClearable
             className="w-full sm:max-w-[44%]"
             placeholder="Tìm kiếm theo tên tour hoặc địa điểm..."
@@ -194,9 +269,7 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
                 >
-                  {selectedStatusFilters.length > 0
-                    ? selectedStatusFilters.join(", ")
-                    : "Status"}
+                  {statusName}
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
@@ -204,13 +277,15 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
                 disallowEmptySelection
                 selectionMode="single"
               >
-                {dataTour?.map((dataTour) => (
+                {listStatusFil?.map((status) => (
                   <DropdownItem
-                    key={dataTour.tourId}
+                    key={status.title}
                     className="capitalize"
-                    onClick={() => toggleStatusFilter(dataTour.province)}
+                    onClick={() => {
+                      setStatus(status.status), setStatusName(status.title);
+                    }}
                   >
-                    {capitalize(dataTour?.province)}
+                    {status.title}
                   </DropdownItem>
                 ))}
               </DropdownMenu>
@@ -234,14 +309,15 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
                 aria-label="Example static collection table"
               >
                 <TableHeader>
-                  <TableColumn className="w-[300px]">TÊN</TableColumn>
+                  <TableColumn className="w-[350px]">TÊN</TableColumn>
                   <TableColumn className="w-[150px]">VỊ TRÍ</TableColumn>
-                  <TableColumn>GIÁ NGƯỜI LỚN</TableColumn>
-                  <TableColumn>GIÁ TRẺ EM</TableColumn>
-                  <TableColumn>LƯỢNG KHÁCH</TableColumn>
-                  <TableColumn>THỜI GIAN TOUR</TableColumn>
-                  {/* <TableColumn>LOẠI HÌNH</TableColumn> */}
-                  <TableColumn>HÀNH ĐỘNG</TableColumn>
+                  <TableColumn>GIÁ LỚN</TableColumn>
+                  <TableColumn>GIÁ NHỎ</TableColumn>
+                  <TableColumn>KHÁCH</TableColumn>
+                  <TableColumn className="w-[90px]">THỜI GIAN</TableColumn>
+                  <TableColumn className="w-[160px]">NGÀY TẠO</TableColumn>
+                  <TableColumn className="w-[100px]">TRẠNG THÁI</TableColumn>
+                  <TableColumn className="w-[100px]">HÀNH ĐỘNG</TableColumn>
                 </TableHeader>
                 <TableBody>
                   {/* Map over the currentTours to render each row dynamically */}
@@ -264,17 +340,24 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
                       </TableCell>
 
                       <TableCell>{tour.tourTime} ngày</TableCell>
-{/* 
+
+                      <TableCell>{tour.createAt}</TableCell>
+
                       <TableCell>
-                        <Chip className="capitalize" size="sm" variant="flat">
-                          {tour.status}
-                        </Chip>
-                      </TableCell> */}
+                        {/* điều chỉnh trạng thái */}
+                        <Switch
+                          size="sm"
+                          isSelected={getTourStatus(tour.tourId)}
+                          onChange={(value) =>
+                            updateTourStatus(tour.tourId, value)
+                          }
+                        />
+                      </TableCell>
 
                       <TableCell>
                         <div className="relative flex items-center gap-4">
                           {/* Add Voucher */}
-                          <Tooltip content="Voucher">
+                          {/* <Tooltip content="Voucher">
                             <span
                               onClick={voucherModal.onOpen}
                               className="text-lg text-default-400 cursor-pointer active:opacity-50"
@@ -305,7 +388,7 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
                                 </>
                               )}
                             </ModalContent>
-                          </Modal>
+                          </Modal> */}
 
                           {/* Update */}
                           <Tooltip content="Edit">
@@ -347,7 +430,7 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
             </div>
           </>
         ) : (
-          "Chưa có tour"
+          <Empty />
         )}
       </div>
     </div>

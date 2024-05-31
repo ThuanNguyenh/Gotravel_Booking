@@ -13,7 +13,15 @@ import { FaArrowTrendUp, FaArrowTrendDown } from "react-icons/fa6";
 import "./dashBoard.css";
 import axios from "axios";
 import "../css/DatePicker.css";
-import { Chip, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
+import {
+  Chip,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from "@nextui-org/react";
 
 export default function DashBoard() {
   // get userId from localStorage
@@ -37,10 +45,10 @@ export default function DashBoard() {
     async function getDataBooking() {
       try {
         const response = await axios.get(
-          `http://localhost:8080/api/v1/booking/booking-tour-date/${userId}`
+          `http://localhost:8080/api/v1/booking/booking-tour-date/${userId}/filter`
         );
 
-        const allBookings = response?.data;
+        const allBookings = response.data?.content;
 
         // Lọc các booking có trạng thái confirmation là COMPLETED
         const completedBookings = allBookings.filter(
@@ -120,7 +128,7 @@ export default function DashBoard() {
   }, [completedBookings, selectedMonth]);
 
   return (
-    <div className="text-[1.3em]">
+    <div className="text-[1.3em] w-[110%]">
       <div className="grid grid-cols-3 gap-4 place-items-stretch h-36">
         {/* doanh thu */}
         <div className="shadow flex flex-col gap-3 border rounded-lg p-3 ">
@@ -164,20 +172,6 @@ export default function DashBoard() {
         <div className="shadow flex flex-col gap-3 border rounded-lg p-3 ">
           <div className="flex justify-between items-end">
             <span className="font-bold">Lượt hoàn thành</span>
-            {/* <div className="flex items-center">
-              <DatePicker
-                placeholderText="Chọn tháng"
-                onChange={(date) => setSelectedMonth(date)}
-                selected={selectedMonth}
-                className="date-picker border rounded-l-lg p-2 w-[100px] text-center h-[35px]"
-                showMonthYearPicker
-                dateFormat="MM/yyyy"
-              />
-
-              <div className="border h-[35px] p-2 rounded-r-lg bg-gray-100">
-                <FaCalendarAlt size="1em" color="grey" />
-              </div>
-            </div> */}
           </div>
           <div className="flex gap-3 items-center font-bold">
             <IoCheckmarkDoneSharp color="#DAA520" size="1.3em" />{" "}

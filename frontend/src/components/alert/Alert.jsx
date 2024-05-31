@@ -7,7 +7,7 @@ export const Alert = (timer, title, message, icon) => {
     title: title, //'Đăng nhập'
     text: message, //'Thành công'
     icon: icon, //'success' or 'error' or 'warning'
-    showConfirmButton: true,
+    showConfirmButton: false,
   });
 };
 

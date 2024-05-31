@@ -9,21 +9,17 @@ import Admin from "../components/admin/admin";
 
 import PaymentSuccess from "../components/Payment/PaymentSuccess";
 import CheckTour from "../components/checktour";
+import LoginOfCheck from "../components/Auth/LoginOfCheck";
 
 // Public routes
 const publicRoutes = [
   { path: "/", component: ListTour },
   { path: "/tourDetail/:tourId", component: TourDetail, layout: HeaderOnly },
-  { path: "/profile", component: Profile, layout: HeaderOnly },
-  { path: "/checkout/:tourId", component: CheckOut, layout: HeaderOnly },
+
   { path: "/search", component: Search },
-  {
-    path: "/payment/paypal/success",
-    component: PaymentSuccess,
-    layout: null,
-  },
 
   { path: "/check", component: CheckTour, layout: HeaderOnly },
+  { path: "/login", component: LoginOfCheck, layout: null },
 ];
 
 // Private routes
@@ -40,6 +36,14 @@ const privateRoutes = [
     layout: HeaderOnly,
     requiredRole: "ROLE_HOST",
   },
+  { path: "/profile", component: Profile, layout: HeaderOnly },
+  { path: "/checkout/:tourId", component: CheckOut, layout: HeaderOnly },
+  {
+    path: "/payment/paypal/success",
+    component: PaymentSuccess,
+    layout: null,
+  },
+ 
 ];
 
 export { publicRoutes, privateRoutes };

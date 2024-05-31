@@ -101,7 +101,7 @@ function Register() {
         />
 
         {/*Nhập lại mật khẩu */}
-        <input
+        {/* <input
           onChange={change}
           placeholder="Confirm password"
           id="password"
@@ -109,7 +109,7 @@ function Register() {
           type="password"
           className="input"
           required=""
-        />
+        /> */}
 
         {/* Button submit */}
         <input

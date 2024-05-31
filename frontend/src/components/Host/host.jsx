@@ -45,12 +45,12 @@ const Host = ({ children }) => {
               >
                 Danh sách tour
               </ListboxItem>
-              <ListboxItem
+              {/* <ListboxItem
                 startContent={<RequestIcon />}
                 onClick={() => handleLinkClick("RequestBooking")}
               >
                 Trạng thái đặt
-              </ListboxItem>
+              </ListboxItem> */}
               <ListboxItem
                 startContent={<ChartIcon />}
                 onClick={() => handleLinkClick("ViewBookingTours")}

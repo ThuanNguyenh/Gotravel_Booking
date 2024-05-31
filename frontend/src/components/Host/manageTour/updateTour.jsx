@@ -334,7 +334,6 @@ function UpdateTourForm({ tourId, handleSave }) {
     }
   };
 
-  console.log("data: ", dataTour);
 
   useEffect(() => {
     getTourDetail();
@@ -362,12 +361,7 @@ function UpdateTourForm({ tourId, handleSave }) {
       const response = await axios.put(
         `http://localhost:8080/api/v1/tour/update/${tourId}`,
         dataRequest,
-        config,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        config
       );
       console.log("ket qua da luu: ", response);
     } catch (error) {

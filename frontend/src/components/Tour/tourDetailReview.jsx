@@ -1,16 +1,67 @@
-import { Modal, Avatar, Button, Pagination, useDisclosure, ModalContent, Spinner, Textarea } from "@nextui-org/react";
+import {
+  Modal,
+  Avatar,
+  Button,
+  Pagination,
+  useDisclosure,
+  ModalContent,
+  Spinner,
+  Textarea,
+} from "@nextui-org/react";
 import { NextIcon } from "../../assets/NextIcon";
 import { FacebookIcon } from "../../assets/FacebookIcon";
 import { Twitter } from "../../assets/twitter";
 import { Instagram } from "../../assets/insta";
 import { GoogleIcon } from "../../assets/GoogleIcon";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import CommentStar from "./commentStar";
 import axios from "axios";
+import { Alert } from "../Alert/Alert";
+import { useUserAuth } from "../../contexts/userAuthContext";
 
 function TourDetailReview() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+  // thuận làm
+
+  const { isEmailPasswordLoggedIn } = useUserAuth();
+  console.log("oke: ", isEmailPasswordLoggedIn);
+
+  const navigate = useNavigate();
+  const [savedPath, setSavedPath] = useState(null);
+
+  const handleReviewClick = () => {
+    const userLoggedIn = localStorage.getItem("accessToken") !== null;
+    if (!userLoggedIn) {
+      localStorage.setItem("savedPath", window.location.pathname);
+      const savedPath = localStorage.getItem("savedPath");
+      console.log(savedPath);
+      navigate("/login");
+    } else {
+      // Call onLoginSuccess(true) to update login state
+      // onLoginSuccess(true);
+      onOpen();
+    }
+  };
+
+  // Xử lý khi đăng nhập thành công
+  useEffect(() => {
+    if (isEmailPasswordLoggedIn) {
+      const savedPath = localStorage.getItem("savedPath");
+      if (savedPath) {
+        // If a saved path exists, navigate to it
+        navigate(savedPath);
+        // Remove the saved path from localStorage
+        localStorage.removeItem("savedPath");
+      } else {
+        // If there's no saved path, open the modal or perform other actions
+        onOpen(true);
+      }
+    }
+  }, [isEmailPasswordLoggedIn, onOpen]);
+
+  // thuận làm
 
   // Comment star
   const [commentStar, setCommentStar] = useState(0); // Initialize with 0 or any default value
@@ -28,7 +79,6 @@ function TourDetailReview() {
 
   //switch Page
   const [currentPage, setCurrentPage] = useState(1);
-
 
   const startIndex = (currentPage - 1) * 5;
   const endIndex = startIndex + 5;
@@ -52,7 +102,6 @@ function TourDetailReview() {
   // Get tour rating data
   const getRating = async () => {
     try {
-
       const response = await axios.get(
         `http://localhost:8080/api/v1/feedback/allOfTour/${tourId}`
       );
@@ -71,7 +120,11 @@ function TourDetailReview() {
   const postRatingAndComment = async () => {
     try {
       if (!token) {
-        alert("You need to be logged in to post a review.");
+        Alert(2000, "Cho biết", "Bạn cần đăng nhập để bình luận.", "warning");
+        // setTimeout(() => {
+        //   navigate("/login");
+        // }, 2000);
+
         return;
       }
 
@@ -108,7 +161,7 @@ function TourDetailReview() {
     if (!allrating || allrating.length === 0) {
       return "No ratings"; // Return a message if there are no ratings
     }
-  
+
     const totalRating = allrating.reduce((acc, curr) => acc + curr.rating, 0);
     const averageRating = totalRating / allrating.length;
     return averageRating.toFixed(1); // Return the average rating rounded to 1 decimal place
@@ -127,7 +180,8 @@ function TourDetailReview() {
           <Button
             radius="sm"
             className="bg-[#01B7F2] text-white font-semibold"
-            onPress={onOpen}
+            // onPress={onOpen}
+            onClick={handleReviewClick}
           >
             Give your review
           </Button>
@@ -135,16 +189,16 @@ function TourDetailReview() {
       </div>
 
       <div className="flex flex-row gap-5 items-center">
-            <div className="flex text-5xl font-semibold pl-3">
-              {calculateAverageRating()}
-              <div className="rating2">
-                <label title="text" htmlFor="star1"></label>
-              </div>
-            </div>
-            <div className="flex flex-col pr-10">
-              <div className="font-semibold">Very Good</div>
-              <div>{totalRating()} Reviews</div> 
-            </div>
+        <div className="flex text-5xl font-semibold pl-3">
+          {calculateAverageRating()}
+          <div className="rating2">
+            <label title="text" htmlFor="star1"></label>
+          </div>
+        </div>
+        <div className="flex flex-col pr-10">
+          <div className="font-semibold">Very Good</div>
+          <div>{totalRating()} Reviews</div>
+        </div>
       </div>
 
       <div className="py-5">
@@ -214,7 +268,10 @@ function TourDetailReview() {
           <div className="flex flex-col h-full w-full gap-5 p-5 justify-between">
             <div className="flex flex-col items-start">
               <div className="text-xl font-semibold">Rate Amenities</div>
-              <CommentStar numberOfStars={commentStar} onChange={handleCommentStarChange} />
+              <CommentStar
+                numberOfStars={commentStar}
+                onChange={handleCommentStarChange}
+              />
             </div>
 
             <div className="flex flex-col">
@@ -240,7 +297,9 @@ function TourDetailReview() {
               </div>
             </div>
             <div className="flex flex-col justify-center items-center gap-5 bottom-5">
-              <div className="flex text-xl font-semibold text-[#01b6f2]">About Us</div>
+              <div className="flex text-xl font-semibold text-[#01b6f2]">
+                About Us
+              </div>
               <div className="flex flex-row gap-5 justify-center">
                 <FacebookIcon />
                 <Twitter />

@@ -26,6 +26,7 @@ import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { CiSquareRemove } from "react-icons/ci";
 import { MdOutlineNavigateNext, MdOutlineNavigateBefore } from "react-icons/md";
+import Empty from "../alert/Empty";
 
 // LỌC THEO TRẠNG THÁI CONFIRM
 const listConfirm = [
@@ -183,7 +184,7 @@ export default function ViewBookingTours() {
   }
 
   return (
-    <div className=" h-[100vh]">
+    <div className=" h-[100vh] w-[110%]">
       <div className="flex flex-col gap-4">
         <div className="flex justify-between gap-3 items-end">
           <Input
@@ -201,10 +202,10 @@ export default function ViewBookingTours() {
             {/* Lọc theo ngày bắt đầu */}
             <div className="flex items-center">
               <DatePicker
-                placeholderText="Từ ngày"
+                placeholderText="Ngày bắt đầu"
                 onChange={(date) => setCheckInDate(format(date, "yyyy-MM-dd"))}
                 selected={checkInDate}
-                className="date-picker border rounded-l-lg p-2 w-[100px] text-center"
+                className="date-picker border rounded-l-lg p-2 w-[110px] text-center"
               />
               <div
                 className="border p-2 rounded-r-lg bg-gray-100"
@@ -221,10 +222,10 @@ export default function ViewBookingTours() {
             {/* Lọc theo ngày kết thúc */}
             <div className="flex items-center">
               <DatePicker
-                placeholderText="Đến ngày"
+                placeholderText="Ngày kết thúc"
                 onChange={(date) => setCheckOutDate(format(date, "yyyy-MM-dd"))}
                 selected={checkOutDate}
-                className="date-picker border rounded-l-lg p-2 w-[100px] text-center"
+                className="date-picker border rounded-l-lg p-2 w-[110px] text-center"
               />
               <div
                 className="border p-2 rounded-r-lg bg-gray-100"
@@ -272,7 +273,6 @@ export default function ViewBookingTours() {
             </div>
           </div>
         </div>
-
         {dataTour?.length > 0 ? (
           <div>
             <Table layout="fixed" aria-label="Example static collection table">
@@ -290,7 +290,7 @@ export default function ViewBookingTours() {
                 <TableColumn style={{ width: "150px" }}>
                   NGÀY KẾT THÚC
                 </TableColumn>
-                <TableColumn style={{ width: "150px" }}>$ TỔNG THU</TableColumn>
+                <TableColumn style={{ width: "100px" }}>$ TỔNG THU</TableColumn>
                 <TableColumn style={{ width: "150px" }}>TRẠNG THÁI</TableColumn>
               </TableHeader>
               <TableBody>
@@ -331,44 +331,47 @@ export default function ViewBookingTours() {
                 ))}
               </TableBody>
             </Table>
+            {/* Thanh điều hướng phân trang */}
+            <div className="flex items-center justify-between mt-5">
+              <div className="text-lg flex gap-10">
+                <span className="font-semibold">
+                  Tổng:{" "}
+                  <span className="font-medium italic">{totalElements}</span>
+                </span>
+                <span className="font-semibold">
+                  Hiện tại:{" "}
+                  <span className="font-medium italic">{sizeOfPage}</span>
+                </span>
+              </div>
+              <div className="flex items-center gap-3 ">
+                <Button
+                  variant="faded"
+                  isIconOnly
+                  size="sm"
+                  onClick={() => handlePageChange("prev")}
+                >
+                  <MdOutlineNavigateBefore size="sm" color="grey" />
+                </Button>
+                <div className="text-lg">
+                  {currentPage} / {totalPages}
+                </div>
+
+                <Button
+                  size="sm"
+                  variant="faded"
+                  isIconOnly
+                  onClick={() => handlePageChange("next")}
+                >
+                  <MdOutlineNavigateNext size="sm" color="grey" />
+                </Button>
+              </div>
+            </div>
           </div>
         ) : (
-          <div className="text-center p-4">KHÔNG CÓ DỮ LIỆU</div>
+          <div>
+            <Empty />
+          </div>
         )}
-
-        {/* Thanh điều hướng phân trang */}
-        <div className="flex items-center justify-between">
-          <div className="text-lg flex gap-20">
-            <span className="font-semibold">
-              Tổng: <span className="font-medium italic">{totalElements}</span>
-            </span>
-            <span className="font-semibold">
-              Hiện tại: <span className="font-medium italic">{sizeOfPage}</span>
-            </span>
-          </div>
-          <div className="flex items-center gap-3 ">
-            <Button
-              variant="faded"
-              isIconOnly
-              size="sm"
-              onClick={() => handlePageChange("prev")}
-            >
-              <MdOutlineNavigateBefore size="sm" color="grey" />
-            </Button>
-            <div className="text-lg">
-              {currentPage} / {totalPages}
-            </div>
-
-            <Button
-              size="sm"
-              variant="faded"
-              isIconOnly
-              onClick={() => handlePageChange("next")}
-            >
-              <MdOutlineNavigateNext size="sm" color="grey" />
-            </Button>
-          </div>
-        </div>
       </div>
     </div>
   );

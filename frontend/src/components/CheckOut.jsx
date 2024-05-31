@@ -9,7 +9,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { format, isSameDay } from "date-fns";
 import { FaCalendarAlt } from "react-icons/fa";
-import styled from 'styled-components';
+import styled from "styled-components";
 
 const DatePickerWrapper = styled.div`
   display: flex;
@@ -64,9 +64,7 @@ function CheckOut() {
         config
       );
 
-      console.log(response);
-
-      // lọc các ngày đặt phòng cho tour cụ thể và số lượng khách đầy
+      // lọc các booking của tour có số lượng khách đầy
       const bookings = response.data?.filter(
         (booking) =>
           booking.tourId === tourId &&
@@ -83,7 +81,7 @@ function CheckOut() {
 
   useEffect(() => {
     getBookingDateTour();
-  }, [dataTour]);
+  }, [dataTour, token, userId, tourId]);
 
   // get data tour
   const getDataTour = async () => {
@@ -144,7 +142,7 @@ function CheckOut() {
   };
 
   const sumGuest = adult + children;
-  const price = (adult * pricePerAdult) + (children * pricePerChildren);
+  const price = adult * pricePerAdult + children * pricePerChildren;
 
   // Kiểm tra và tính toán giảm giá
   const discount = dataTour && dataTour.discount ? dataTour.discount / 100 : 0;
