@@ -6,7 +6,7 @@ export const TourIcon = (props) => (
     role="presentation"
     viewBox="0 0 576 512"
     width="24"
-    fill="none"
+    fill="black"
     {...props}
   >
     <path

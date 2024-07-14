@@ -43,7 +43,7 @@ export function UserAuthContextProvider({ children }) {
     const googleAuthProvider = new GoogleAuthProvider();
     try {
       const result = await firebase.auth().signInWithPopup(googleAuthProvider);
-     
+
       return result.user;
     } catch (error) {
       console.log(error);

@@ -1,9 +1,19 @@
 /* eslint-disable no-unused-vars */
-import { Button, Card, CardBody, Image, Slider } from "@nextui-org/react";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  Image,
+  Slider,
+} from "@nextui-org/react";
 import { LocationIcon } from "../assets/LocationIcon";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import ScrollToTopButton from "./alert/ScrollToTopButton";
+import "./css/Scroll.css";
+import { FaStar } from "react-icons/fa";
 
 function Search() {
   // State to store tour data
@@ -40,12 +50,22 @@ function Search() {
     const { location, startDate, endDate, tourType } = getQueryParams();
 
     const filtered = tours.filter((tour) => {
-      const matchesLocation = location ? tour.province.includes(location) : true;
-      const matchesStartDate = startDate ? new Date(tour.startDate) >= new Date(startDate) : true;
-      const matchesEndDate = endDate ? new Date(tour.endDate) <= new Date(endDate) : true;
-      const matchesTourType = tourType ? tour.categories.some(category => category.categoryName === tourType) : true;
+      const matchesLocation = location
+        ? tour.province.includes(location)
+        : true;
+      const matchesStartDate = startDate
+        ? new Date(tour.startDate) >= new Date(startDate)
+        : true;
+      const matchesEndDate = endDate
+        ? new Date(tour.endDate) <= new Date(endDate)
+        : true;
+      const matchesTourType = tourType
+        ? tour.categories.some((category) => category.categoryName === tourType)
+        : true;
 
-      return matchesLocation && matchesStartDate && matchesEndDate && matchesTourType;
+      return (
+        matchesLocation && matchesStartDate && matchesEndDate && matchesTourType
+      );
     });
 
     setFilteredDataTour(filtered);
@@ -54,8 +74,8 @@ function Search() {
   // Extract unique categories from the tours
   const extractUniqueCategories = (tours) => {
     const categoriesSet = new Set();
-    tours.forEach(tour => {
-      tour.categories.forEach(category => {
+    tours.forEach((tour) => {
+      tour.categories.forEach((category) => {
         categoriesSet.add(category.categoryName);
       });
     });
@@ -118,37 +138,68 @@ function Search() {
   };
 
   const filteredTours = filteredDataTour.filter((tour) => {
-    const tourCategories = tour.categories.map(cat => cat.categoryName);
+    const tourCategories = tour.categories.map((cat) => cat.categoryName);
 
-    const matchesLocation = filters.locations.length === 0 || filters.locations.includes(tour.province);
-    const matchesCategories = filters.categories.length === 0 || filters.categories.some(category => tourCategories.includes(category));
-    const matchesPriceRange = tour.priceAdult >= filters.priceRange[0] && tour.priceAdult <= filters.priceRange[1];
+    const matchesLocation =
+      filters.locations.length === 0 ||
+      filters.locations.includes(tour.province);
+    const matchesCategories =
+      filters.categories.length === 0 ||
+      filters.categories.some((category) => tourCategories.includes(category));
+    const matchesPriceRange =
+      tour.priceAdult >= filters.priceRange[0] &&
+      tour.priceAdult <= filters.priceRange[1];
 
     return matchesLocation && matchesCategories && matchesPriceRange;
   });
 
+  // Function to calculate the average rating
+  const calculateAverageRating = (ratings) => {
+    if (!ratings || ratings.length === 0) {
+      return "No ratings"; // Return a message if there are no ratings
+    }
+
+    const totalRating = ratings.reduce((acc, curr) => acc + curr, 0);
+    const averageRating = totalRating / ratings.length;
+    return averageRating.toFixed(1); // Return the average rating rounded to 1 decimal place
+  };
+
+  const formatPrice = (price) => {
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  };
+
   return (
-    <div className="grid grid-cols-6 md:grid-cols-12 md:gap-4">
+    <div className="grid grid-cols-6 md:grid-cols-12 md:gap-5 mt-10">
       {/* Filter table */}
-      <div className="flex flex-col col-span-3 md:col-span-3 pt-3">
-        <Card className="p-5 gap-3">
-          <div className="font-semibold text-xl">Bộ lọc</div>
+      <div className="flex flex-col col-span-6 md:col-span-3">
+        <Card className="p-4 gap-3 shadow-inner border-b rounded-lg max-h-[80vh] overflow-auto custom-scrollbar sticky top-[100px]">
+          <div className="font-semibold">Bộ lọc:</div>
           <div className="flex flex-col">
-            <h2 className="text-lg font-semibold mb-2">Địa điểm</h2>
+            <h2 className="font-semibold mb-2">Địa điểm</h2>
             {/* Use Set to store unique locations */}
-            {Array.from(new Set(dataTour?.map(tour => tour.province))).map((location) => (
-              <label key={location} className="block mb-1">
-                <input type="checkbox" value={location} onChange={handleLocationChange} />
-                <span className="ml-2">{location}</span>
-              </label>
-            ))}
+            {Array.from(new Set(dataTour?.map((tour) => tour.province))).map(
+              (location) => (
+                <label key={location} className="mb-1">
+                  <input
+                    type="checkbox"
+                    value={location}
+                    onChange={handleLocationChange}
+                  />
+                  <span className="ml-2">{location}</span>
+                </label>
+              )
+            )}
           </div>
-          
+
           <div className="flex flex-col">
-            <h2 className="text-lg font-semibold mb-2">Loại hình</h2>
+            <h2 className="font-semibold mb-2">Loại hình</h2>
             {uniqueCategories?.map((category) => (
               <label key={category} className="block mb-1">
-                <input type="checkbox" value={category} onChange={handleCategoryChange} />
+                <input
+                  type="checkbox"
+                  value={category}
+                  onChange={handleCategoryChange}
+                />
                 <span className="ml-2">{category}</span>
               </label>
             ))}
@@ -156,7 +207,7 @@ function Search() {
 
           <div className="flex flex-col">
             <Slider
-              className="text-lg font-semibold mb-2"
+              className="font-semibold mb-2"
               label="Khoảng giá"
               size="sm"
               hideThumb={true}
@@ -170,62 +221,62 @@ function Search() {
           </div>
         </Card>
       </div>
+
       {/* List Filtered */}
-      <div className="flex flex-col col-span-9 md:col-span-9 gap-3">
-        <div className="flex justify-between p-3 items-center">
-          <div className="font-thin text-lg">
-            Có <span className="font-semibold">{filteredTours.length}</span> tour phù hợp với bạn.
-          </div>
-          <div></div>
+      <div className="flex flex-col col-span-9 xl:pt-0 pt-5 gap-3">
+        <div className="flex justify-between items-center">
+          <div>Có {filteredTours.length} tour phù hợp với bạn</div>
         </div>
-        {filteredTours?.map((tour) => (
-          <Card key={tour.tourId} isPressable as={Link} to={`/tourDetail/${tour.tourId}`} isBlurred className="border-none bg-background/60 dark:bg-default-100/50" shadow="sm">
-            <CardBody>
-              <div className="grid grid-cols-6 md:grid-cols-12 md:gap-4 items-center justify-center">
-                <div className="col-span-3 md:col-span-3">
-                  <Image
-                    isBlurred
-                    width={300}
-                    height={500}
-                    shadow="md"
-                    src={tour.thumbnail}
-                  />
+        {filteredTours?.map((item, index) => (
+          <Card
+            shadow="none"
+            className="border flex flex-col md:flex-row"
+            key={index}
+            as={Link}
+            to={`/tourDetail/${item.tourId}`}
+          >
+            <CardBody className="overflow-visible p-0 md:w-1/3">
+              <Image
+                radius="none"
+                width="100%"
+                alt="thumbnail"
+                className="w-full object-cover h-[180px]"
+                src={item.thumbnail}
+              />
+            </CardBody>
+            <CardFooter className="flex flex-col gap-2 items-start md:w-2/3 px-5">
+              <b>
+                {item.tourName.length > 10
+                  ? item.tourName.substring(0, 60) + "..."
+                  : item.tourName}
+              </b>
+              <p className="font-medium text-default-500 text-[14px]">{item.province}</p>
+              <div className="flex items-center gap-2 font-medium text-[14px] text-default-500">
+                <FaStar
+                  style={{
+                    color: "#ffa726",
+                  }}
+                />
+                <span>{calculateAverageRating(item.ratings)}</span>
+              </div>
+              <div className="w-full md:flex-col md:gap-3 flex justify-between custom-card-footer">
+                <div className="text-default-500 line-through">
+                  {formatPrice(item.priceAdult)}
+                  <span className="underline underline-offset-2">đ</span>
                 </div>
-
-                <div className="flex flex-col col-span-5 md:col-span-5 h-full justify-between">
-                  
-                    <div className="flex flex-col gap-0">
-                      <h3 className="font-semibold text-2xl text-foreground/90">{tour.tourName}</h3>
-                      <div className="flex flex-row">
-                        <LocationIcon />
-                        <p className="text-small text-foreground/80 text-[#73D8FC]">{tour.province}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-row bg-slate-100 w-fit gap-5 p-3 justify-between text-medium font-lights text-slate-500">
-                      <div>
-                        <h1 className="">Ngày bắt đầu</h1>
-                        <h1 className="">{tour.startDate}</h1>
-                      </div>
-                      <div>
-                        <h1 className="">Ngày kết thúc</h1>
-                        <h1 className="">{tour.endDate}</h1>
-                      </div>
-                    </div>
-                  
-                </div>
-
-                <div className="flex flex-col col-span-4 md:col-span-4 items-end gap-5 text-right h-full  justify-between">
-                  <div className="font-semibold text-2xl text-foreground/90">${tour.priceAdult}/đêm</div>
-                  <div>
-                    <Button className="bg-[#73D8FC] text-large text-white font-medium">Đặt chỗ ngay</Button>
-                  </div>
+                <div className="text-cyan-500 font-bold">
+                  {formatPrice(
+                    item.priceAdult - (item.priceAdult * item.discount) / 100
+                  )}
+                  <span className="underline underline-offset-2">đ</span>
                 </div>
               </div>
-            </CardBody>
+            </CardFooter>
           </Card>
         ))}
       </div>
+
+      <ScrollToTopButton />
     </div>
   );
 }

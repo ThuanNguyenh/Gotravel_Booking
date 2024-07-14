@@ -35,26 +35,22 @@ const NewTourForm = ({ handleSave }) => {
   const [districtName, setDistrictName] = useState("");
   const [wardName, setWardName] = useState("");
 
-  // chuyen tu object sang mang
-  const ArrayProVince = Object.values(provinces);
-  const ArrayDistrict = Object.values(districts);
-  const ArrayWard = Object.values(wards);
 
   // get provinceName - districtName - wardName
   useEffect(() => {
-    const selectProvince = provinces.find((p) => p.province_id === province);
-    const selectDistrict = districts.find((d) => d.district_id === district);
-    const selectWard = wards.find((w) => w.ward_id === ward);
+    const selectProvince = provinces.find((p) => p.id === province);
+    const selectDistrict = districts.find((d) => d.id === district);
+    const selectWard = wards.find((w) => w.id === ward);
 
     if (selectProvince) {
-      setProvinceName(selectProvince.province_name);
+      setProvinceName(selectProvince.name);
     }
     if (selectDistrict) {
-      setDistrictName(selectDistrict.district_name);
+      setDistrictName(selectDistrict.name);
     }
 
     if (selectWard) {
-      setWardName(selectWard.ward_name);
+      setWardName(selectWard.name);
     }
   }, [province, provinces, districts, district, wards, ward]);
 
@@ -62,9 +58,8 @@ const NewTourForm = ({ handleSave }) => {
   useEffect(() => {
     const resultProvince = async () => {
       const result = await ProvinceService.resProvince();
-      if (result.status === 200) {
-        setProvinces(result?.data.results);
-      }
+
+      setProvinces(result?.map((item) => item));
     };
 
     resultProvince();
@@ -75,9 +70,7 @@ const NewTourForm = ({ handleSave }) => {
     const resultDistrict = async () => {
       const result = await ProvinceService.resDistrict(province);
 
-      if (result.status === 200) {
-        setDistricts(result.data?.results);
-      }
+      setDistricts(result?.map((item) => item));
     };
 
     province && resultDistrict(province);
@@ -88,9 +81,7 @@ const NewTourForm = ({ handleSave }) => {
     const resultWard = async () => {
       const result = await ProvinceService.resWard(district);
 
-      if (result.status === 200) {
-        setWards(result.data?.results);
-      }
+      setWards(result?.map((item) => item));
     };
 
     district && resultWard(district);
@@ -284,6 +275,7 @@ const NewTourForm = ({ handleSave }) => {
     schedules,
   ]);
 
+
   // input change
   const change = (e) => {
     const { name, value } = e.target;
@@ -373,7 +365,7 @@ const NewTourForm = ({ handleSave }) => {
           <SelectAddress
             value={province}
             setValue={setProvince}
-            AutocompleteItems={ArrayProVince}
+            AutocompleteItems={provinces}
             label="Tỉnh / Thành phố"
             type="province"
             name="province"
@@ -384,7 +376,7 @@ const NewTourForm = ({ handleSave }) => {
           <SelectAddress
             value={district}
             setValue={setDistrict}
-            AutocompleteItems={ArrayDistrict}
+            AutocompleteItems={districts}
             label="Quận / Huyện"
             type="district"
             name="district"
@@ -395,7 +387,7 @@ const NewTourForm = ({ handleSave }) => {
           <SelectAddress
             value={ward}
             setValue={setWard}
-            AutocompleteItems={ArrayWard}
+            AutocompleteItems={wards}
             type="ward"
             label="Xã / Thị trấn"
             name="ward"

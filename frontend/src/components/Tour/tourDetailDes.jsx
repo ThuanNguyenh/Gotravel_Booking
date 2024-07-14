@@ -7,7 +7,6 @@ function TourDetailDes() {
   const { tourId } = useParams();
   const [dataTour, setDataTour] = useState(null);
 
-
   // Get data tour
   const getDataTour = async () => {
     try {
@@ -30,79 +29,80 @@ function TourDetailDes() {
   }
 
   return (
-    <div className="w-full flex-col">
+    <div className="flex flex-col w-full gap-5">
       {/* Tour Description */}
-      <div className="p-3 text-md">
-        <p>Tour có thời gian {dataTour.tourTime} ngày</p> 
+      <div className="text-md">
+        <p>Tour có thời gian {dataTour.tourTime} ngày</p>
         <p>{dataTour.description}</p>
       </div>
 
-      <div className="py-3 w-1/3">
-          <div className="font-semibold text-xl">Lịch trình</div>
-          <div className="w-full">
-            <div className="p-2">
-              {dataTour.schedules &&
-                dataTour.schedules
-                  // Sort schedules based on date
-                  .sort((a, b) => new Date(a.date) - new Date(b.date))
-                  .map((schedule, index) => (
-                    <div key={index} className="">
-                      {schedule.date} -{" "}
-                      {schedule.activities.map((activity, idx) => (
-                        <span key={idx}>{activity.context}, </span>
-                      ))}
-                    </div>
-                  ))}
-            </div>
-          </div>
-        </div>
-
-      <div className="flex w-full justify-between">
-        <div className="w-1/3 py-3">
-          <div className="font-semibold text-xl">Danh mục</div>
-          <div className="w-full">
-            <div className="grid grid-cols-3 gap-5">
-              {dataTour.categories && dataTour.categories.map((category, index) => (
-                <div
-                  key={index}
-                  className="transition-aorder bg-gray-300 text-gray-600 inline-flex h-8 items-center justify-center text-sm px-2 m-1 rounded-full"
-                >
-                  {category.categoryName}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="py-3 pr-10 w-1/3">
-          <div className="font-semibold text-xl">Tiện ích</div>
-          <div className="w-full">
-            <div className="grid grid-cols-2 gap-5">
-              {dataTour.utilities && dataTour.utilities.map((utility, index) => (
-                <div
-                  key={index}
-                  className="transition-aorder bg-gray-300 text-gray-600 inline-flex h-8 items-center justify-center text-sm px-2 m-1 rounded-full"
-                >
-                  {utility.utilityName}
-                </div>
-              ))}
-            </div>
+      <div className="flex flex-col gap-4">
+        <div className="font-semibold text-xl">Lịch trình</div>
+        <div className="w-full">
+          <div className="flex flex-col gap-4">
+            {dataTour.schedules &&
+              dataTour.schedules
+                // Sắp xếp schedules dựa trên ngày
+                .sort((a, b) => new Date(a.date) - new Date(b.date))
+                .map((schedule, index) => (
+                  <div key={index} className="flex flex-col gap-2">
+                    <div className="">Ngày {schedule.date}</div>
+                    {schedule.activities.map((activity, item) => (
+                      <li key={item}>{activity.context}</li>
+                    ))}
+                  </div>
+                ))}
           </div>
         </div>
       </div>
-      
-      <div className="py-3">
+
+      <div>
+        <div className="font-semibold text-xl">Danh mục</div>
+        <div className="w-full">
+          <div>
+            {dataTour.categories &&
+              dataTour.categories.map((category, index) => (
+                <div
+                  key={index}
+                  className="py-1 text-gray-600 items-center px-2"
+                >
+                  <li>{category.categoryName}</li>
+                </div>
+              ))}
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div className="font-semibold text-xl">Tiện ích</div>
+        <div className="w-full">
+          <div>
+            {dataTour.utilities &&
+              dataTour.utilities.map((utility, index) => (
+                <div
+                  key={index}
+                  className="text-gray-600 items-center justify-center py-1 px-2"
+                >
+                  <li>{utility.utilityName}</li>
+                </div>
+              ))}
+          </div>
+        </div>
+      </div>
+
+      <div>
         <div className="font-semibold text-xl">Yêu cầu</div>
         <div className="w-full">
-          <div className="grid grid-cols-5 gap-5">
-            {dataTour.rules && dataTour.rules.map((rule, index) => (
-              <div
-                key={index}
-                className="transition-aorder bg-gray-300 text-gray-600 inline-flex h-8 items-center justify-center text-sm px-2 m-1 rounded-full"
-              >
-                {rule.ruleName}
-              </div>
-            ))}
+          <div className="grid gap-5">
+            {dataTour.rules &&
+              dataTour.rules.map((rule, index) => (
+                <div
+                  key={index}
+                  className="text-gray-600 items-center justify-center px-2 py-1"
+                >
+                  <li>{rule.ruleName}</li>
+                </div>
+              ))}
           </div>
         </div>
       </div>

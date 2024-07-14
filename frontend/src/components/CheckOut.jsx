@@ -1,5 +1,4 @@
 import { Button, Card, CardBody, Image } from "@nextui-org/react";
-import { LocationIcon } from "../assets/LocationIcon";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -10,6 +9,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { format, isSameDay } from "date-fns";
 import { FaCalendarAlt } from "react-icons/fa";
 import styled from "styled-components";
+import { TiLocation } from "react-icons/ti";
 
 const DatePickerWrapper = styled.div`
   display: flex;
@@ -284,18 +284,15 @@ function CheckOut() {
     <div className="grid grid-cols-6 md:grid-cols-12 md:gap-4 p-[3%]">
       {/* Detail Tour & Selection */}
       <div className="flex flex-col col-span-9 md:col-span-9">
-        <div className="bg-slate-100 rounded-lg">
-          <Card
-            isBlurred
-            className="border-none bg-background/60 dark:bg-default-100/50"
-            shadow="none"
-          >
+        <div className="border rounded-md">
+          <Card className="border-none shadow-none rounded-t-md rounded-b-none">
             <CardBody>
               <div className="grid grid-cols-6 md:grid-cols-12 md:gap-4 items-center justify-center">
-                <div className="relative col-span-3 md:col-span-3 items-start h-full mt-5">
+                <div className="relative col-span-6 md:col-span-3 items-start h-full mt-5">
                   <Image
                     style={{ height: "150px" }}
-                    shadow="md"
+                    shadow="sm"
+                    className="rounded-md border-none"
                     src={dataTour.thumbnail}
                     width="100%"
                   />
@@ -304,12 +301,14 @@ function CheckOut() {
                 <div className="flex flex-col col-span-6 md:col-span-6">
                   <div className="flex flex-col justify-between gap-3">
                     <div className="flex flex-col gap-0">
-                      <h3 className="font-semibold text-2xl text-foreground/90">
-                        {dataTour.tourName}
+                      <h3 className="font-semibold text-xl text-[#333333]">
+                        {dataTour?.tourName.length > 50
+                          ? dataTour?.tourName.subsString(0, 60) + "..."
+                          : dataTour?.tourName}
                       </h3>
                       <div className="flex flex-row items-center gap-2 pt-2">
-                        <LocationIcon />
-                        <p className="text-[1.2em] text-foreground/80 text-[#73D8FC]">
+                        <TiLocation size={24} color="#73D8FC" />
+                        <p className="text-[#333333]">
                           {dataTour.detailAddress}, {dataTour.ward},{" "}
                           {dataTour.district}, {dataTour.province}
                         </p>
@@ -319,7 +318,7 @@ function CheckOut() {
                     <div className="flex flex-col w-fit justify-between text-medium font-lights text-slate">
                       <div className="flex gap-3">
                         <ClockIcon className="w-5" color="#73D8FC" />
-                        <h1 className="text-[1..2em]">
+                        <h1 className="text-[#333333]">
                           Thời gian tour | {dataTour?.tourTime} ngày
                         </h1>
                       </div>
@@ -329,63 +328,87 @@ function CheckOut() {
               </div>
             </CardBody>
           </Card>
-          <div className="p-4 flex flex-col gap-4 text-[1.2em]">
-            <div className="font-semibold">
-              Lượng khách tối đa {dataTour.numGuest}
-            </div>
+          <div className="p-4 flex flex-col gap-4 text-md text-[#333333]">
+            <div>Lượng khách tối đa {dataTour?.numGuest}</div>
 
-            <div className="font-semibold flex flex-row items-center gap-3">
+            <div className="flex flex-col md:flex-row items-center gap-3">
               <span>Ngày bắt đầu </span>
 
-              <DatePickerWrapper className="border rounded-md bg-white px-4 py-2">
+              <DatePickerWrapper className="border rounded-md h-7 bg-white px-4 py-2">
                 <DatePicker
                   selected={checkIn}
                   onChange={(date) => setCheckIn(format(date, "yyyy-MM-dd"))}
                   minDate={getCurrentDate()}
                   filterDate={(date) => !isDateBooked(date)}
-                  placeholderText="chon ngay"
+                  placeholderText="chọn ngày"
                   dateFormat="yyyy-MM-dd"
-                  className="custom-datepicker font-medium"
+                  className="custom-datepicker text-sm"
                 />
                 <FaCalendarAlt color="gray" />
               </DatePickerWrapper>
             </div>
 
             <div className="flex gap-4 items-center justify-between">
-              <div className="font-semibold flex flex-col gap-1">
+              <div className="flex flex-col gap-1">
                 <span>Người lớn</span>
-                <span className="text-warning">
+                <span className="text-cyan-500">
                   $ {dataTour?.priceAdult || 0}
                 </span>
               </div>
-              <div className="flex items-center gap-2">
-                <Button size="sm" onClick={decrementNumberA} isIconOnly>
+              <div className="flex items-center">
+                <Button
+                  size="sm"
+                  className="rounded-l-md rounded-r-none"
+                  onClick={decrementNumberA}
+                  isIconOnly
+                >
                   -
                 </Button>
-                <Button size="sm" className="font-semibold text-lg">
+                <Button
+                  size="sm"
+                  className="font-semibold bg-white border text-md rounded-none"
+                >
                   {adult}
                 </Button>
-                <Button size="sm" onClick={incrementNumberA} isIconOnly>
+                <Button
+                  size="sm"
+                  className="rounded-r-md rounded-l-none"
+                  onClick={incrementNumberA}
+                  isIconOnly
+                >
                   +
                 </Button>
               </div>
             </div>
 
             <div className="flex gap-11 justify-between">
-              <div className="font-semibold flex flex-col gap-1">
+              <div className="flex flex-col gap-1">
                 <span>Trẻ em</span>
-                <span className="text-warning">
+                <span className="text-cyan-500">
                   $ {dataTour?.priceChildren || 0}
                 </span>
               </div>
-              <div className="flex items-center gap-2">
-                <Button size="sm" onClick={decrementNumberC} isIconOnly>
+              <div className="flex items-center">
+                <Button
+                  size="sm"
+                  className="rounded-l-md rounded-r-none"
+                  onClick={decrementNumberC}
+                  isIconOnly
+                >
                   -
                 </Button>
-                <Button size="sm" className="font-semibold text-lg">
+                <Button
+                  size="sm"
+                  className="font-semibold bg-white border text-md rounded-none"
+                >
                   {children}
                 </Button>
-                <Button size="sm" onClick={incrementNumberC} isIconOnly>
+                <Button
+                  size="sm"
+                  className="rounded-r-md rounded-l-none"
+                  onClick={incrementNumberC}
+                  isIconOnly
+                >
                   +
                 </Button>
               </div>
@@ -395,23 +418,41 @@ function CheckOut() {
       </div>
 
       {/* Price BreakUp */}
-      <div className="col-span-3 md:col-span-3">
-        <div className="bg-slate-100 rounded-lg p-2">
-          <div className="rounded flex flex-col justify-start items-start">
-            <div className="text-black text-xl font-bold">Thanh toán</div>
+      <div className="col-span-6 md:col-span-3 ">
+        <div className="border rounded-lg p-2">
+          <div className="flex flex-col justify-start items-start">
+            <div className="text-[#333333] text-xl font-medium">Thanh toán</div>
 
             <div className="py-2.5 border-b border-gray-300 w-full flex justify-between">
-              <div className="text-[1.2em] font-medium text-blue-500">
-                Khuyến mãi
+              <div className="text-md text-[#333333]">Giá gốc</div>
+              <div className="font-semibold">
+                {price}{" "}
+                <span className="text-slate-400 font-normal underline text-sm">
+                  đ
+                </span>
               </div>
-              <div className="font-semibold">$ {discountOut}</div>
             </div>
 
-            <div className="py-2.5 w-full flex justify-between">
-              <div className="text-[1.2em] font-semibold text-gray-600">
-                Tổng tiền
+            <div className="py-2.5 border-b border-gray-300 w-full flex justify-between">
+              <div className="text-md text-blue-500">Khuyến mãi</div>
+              <div className="font-semibold">
+                {discountOut}{" "}
+                <span className="text-slate-400 font-normal underline text-sm">
+                  đ
+                </span>
               </div>
-              <div className="font-semibold">$ {totalPrice || 0}</div>
+            </div>
+
+            <div className="py-2.5 w-full flex items-center justify-between">
+              <div className="text-md font-medium text-[#333333]">
+                Thành tiền
+              </div>
+              <div className="font-semibold">
+                {totalPrice || 0}{" "}
+                <span className="text-slate-400 font-normal underline text-sm">
+                  đ
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -419,8 +460,8 @@ function CheckOut() {
           <Button
             onClick={handleBooking}
             className={`${
-              sumGuest < 1 ? "bg-default" : "bg-[#73D8FC]"
-            } w-full text-lg text-white `}
+              sumGuest < 1 ? "bg-default" : "bg-cyan-500"
+            } w-full text-lg text-white rounded-md shadow-inner`}
             disabled={sumGuest < 1 ? true : false}
           >
             Đặt Tour

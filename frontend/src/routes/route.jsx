@@ -2,7 +2,7 @@ import { HeaderOnly } from "../Layouts";
 import Profile from "../components/Auth/Profile";
 import CheckOut from "../components/CheckOut";
 import Host from "../components/Host/host";
-import ListTour from "../components/ListTour";
+import ListTour from "../components/homeTour/ListTour";
 import TourDetail from "../components/Tour/tourDetail";
 import Search from "../components/searchPage";
 import Admin from "../components/admin/admin";

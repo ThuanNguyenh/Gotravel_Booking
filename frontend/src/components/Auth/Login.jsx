@@ -40,7 +40,7 @@ const Login = ({ setUserInfo, onLoginSuccess  }) => {
       Alert(2000, "Đăng nhập", "Thành công", "success", "OK");
       onLoginSuccess(true); // Notify parent of successful login
     } catch (error) {
-      setMessage(error.response.data);
+      setMessage(error.response?.data);
       onLoginSuccess(false); 
     }
   };
@@ -56,7 +56,7 @@ const Login = ({ setUserInfo, onLoginSuccess  }) => {
       onLoginSuccess(true); // Notify parent of successful login
     } catch (error) {
       Alert(2000, "Đăng nhập", "Thất bại", "error", "OK");
-      onLoginSuccess(false); // Notify parent of successful login
+      // onLoginSuccess(false); // Notify parent of successful login
     }
   };
 

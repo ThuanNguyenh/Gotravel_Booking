@@ -37,61 +37,59 @@ function Header() {
 
   const ListsId = [
     { id: 1, page: "Trang chủ", linkPage: "/" },
-    { id: 2, page: "Tour Hàng Đầu", percentage: 35 },
-    { id: 3, page: " Tour", percentage: 75 },
+    { id: 2, page: "Tour bán chạy", percentage: 35 },
+    { id: 3, page: "Chủ đề", percentage: 75 },
     { id: 4, page: "Liên hệ", percentage: 100 },
   ];
 
   return (
     <Navbar
       className={`nav mx-auto z-50 fixed ${
-        isScrolled ? "border-b-1" : "bg-gradient-to-r from-cyan-500 to-[#73D8FC]"
+        isScrolled
+          ? "border-b-1"
+          : "bg-[#E3F7FC]"
       }`}
     >
+      {/* mobile */}
       <NavbarContent className="sm:hidden pr-3" justify="center">
-        <NavbarBrand>
-          <img
-            src={isScrolled ? "/Logo.png" : "/Logo1.png"}
-            className="me-2 w-6"
-          />
-          <p
-            className={`font-bold ${
-              isScrolled ? "text-[#00AFE1]" : "text-white"
-            }`}
-          >
-            Gotravel
-          </p>
-        </NavbarBrand>
+        <Link to="/">
+          <NavbarBrand>
+            <img
+              src="/Logo.png"
+              className="me-2 w-8"
+            />
+            <p
+              className={`font-[600] text-2xl text-cyan-500
+              }`}
+            >
+              TourTrek
+            </p>
+          </NavbarBrand>
+        </Link>
       </NavbarContent>
 
+      {/* desktop */}
       <NavbarContent className="hidden sm:flex gap-8" justify="start">
-        <NavbarBrand>
-          <img
-            src={isScrolled ? "/Logo.png" : "/Logo1.png"}
-            className="me-2 w-8"
-          />
-          <p
-            className={`font-bold text-xl ${
-              isScrolled ? "text-[#00AFE1]" : "text-white"
-            }`}
-          >
-            Gotravel
-          </p>
-        </NavbarBrand>
+        <Link to="/">
+          <NavbarBrand>
+  
+            <img src="/Logo.png" className="me-2 w-8" />
+  
+            <p className={`font-[600] text-2xl text-cyan-500`}>TourTrek</p>
+          </NavbarBrand>
+        </Link>
       </NavbarContent>
 
       <NavbarContent justify="end" className="modal-account font-semibold">
         <NavbarContent className="hidden sm:flex gap-4" justify="center">
-          {ListsId.map((item) => (
+          {ListsId?.map((item) => (
             <NavbarItem key={item.id}>
               <div className="flex h-5 items-center space-x-2">
                 <Button
                   as={Link}
                   to={item.linkPage}
                   onClick={() => scrollToPercentage(item.percentage)}
-                  className={`${
-                    isScrolled ? "text-slate-800" : "text-white"
-                  } hover:text-slate-500 font-semibold text-lg`}
+                  className={`text-[#333333] hover:text-slate-500 font-semibold text-md`}
                   style={{ background: "none", border: "none" }}
                 >
                   {item.page}
@@ -102,7 +100,7 @@ function Header() {
           ))}
         </NavbarContent>
 
-        <NavbarItem className={`${isScrolled ? "text-slate-800" : "text-white"}`}>
+        <NavbarItem className={`text-[#333333]`}>
           <Language />
         </NavbarItem>
         <NavbarItem>

@@ -49,23 +49,6 @@ const Account = () => {
     }
   };
 
-  // hiển thị thanh cuộn
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      setIsScrolled(scrollTop > 0);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    // dọn sạch listener khi component bị unmount
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
   useEffect(() => {
     if (userInfo) {
       onClose();
@@ -105,7 +88,7 @@ const Account = () => {
                   >
                     {React.cloneElement(<NotificationIcon />, {
                       size: "20",
-                      fill: isScrolled ? "#1E293B" : "white",
+                      fill: "black",
                     })}
                   </Button>
                 </PopoverTrigger>
@@ -193,7 +176,7 @@ const Account = () => {
         hideCloseButton
       >
         <ModalContent className="container">
-          <Login setUserInfo={setUserInfo}/>
+          <Login setUserInfo={setUserInfo} />
         </ModalContent>
       </Modal>
       {/* modal */}

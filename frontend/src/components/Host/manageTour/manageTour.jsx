@@ -356,40 +356,6 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
 
                       <TableCell>
                         <div className="relative flex items-center gap-4">
-                          {/* Add Voucher */}
-                          {/* <Tooltip content="Voucher">
-                            <span
-                              onClick={voucherModal.onOpen}
-                              className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                            >
-                              <Percent />
-                            </span>
-                          </Tooltip>
-                          <Modal
-                            backdrop="transparent"
-                            hideCloseButton
-                            isOpen={voucherModal.isOpen}
-                            onOpenChange={voucherModal.onOpenChange}
-                          >
-                            <ModalContent>
-                              {(onClose) => (
-                                <>
-                                  <ModalHeader>Add Voucher</ModalHeader>
-                                  <ModalBody>
-                                    <div className="input-container">
-                                      <input
-                                        value={tour.discount}
-                                        placeholder="Add % Sale here"
-                                        type="text"
-                                      />
-                                      <button className="button">Add</button>
-                                    </div>
-                                  </ModalBody>
-                                </>
-                              )}
-                            </ModalContent>
-                          </Modal> */}
-
                           {/* Update */}
                           <Tooltip content="Edit">
                             <span
