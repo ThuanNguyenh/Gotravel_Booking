@@ -184,12 +184,12 @@ function BookingHistory() {
                         <div className="flex flex-col col-span-6 md:col-span-6">
                           <div className="flex flex-col justify-between gap-5">
                             <div className="flex flex-col gap-2">
-                              <h3 className="font-semibold text-xl">
+                              <h3 className="font-mediium text-md">
                                 {tour.tour.tourName}
                               </h3>
                               <div className="flex flex-row items-end gap-2">
                                 <LocationIcon className="w-5" />
-                                <p className="text-[1.1em] text-slate-500 text-[#73D8FC]">
+                                <p className="text-md text-slate-500 text-[#73D8FC]">
                                   {tour.tour.detailAddress}, {tour.tour.ward},
                                   {tour.tour.district}, {tour.tour.province}
                                 </p>
@@ -199,13 +199,13 @@ function BookingHistory() {
                             <div className="flex flex-row w-fit gap-5 justify-between text-medium font-lights text-slate-500">
                               <div className="flex gap-2">
                                 <h1 className="">Bắt đầu: </h1>
-                                <h1 className="italic font-semibold">
+                                <h1 className="italic font-medium">
                                   {tour.checkInDate}
                                 </h1>
                               </div>
                               <div className="flex gap-2">
                                 <h1 className="">Kết thúc:</h1>
-                                <h1 className="italic font-semibold">
+                                <h1 className="italic font-medium">
                                   {tour.checkOutDate}
                                 </h1>
                               </div>

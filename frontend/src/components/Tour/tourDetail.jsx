@@ -102,9 +102,9 @@ function TourDetail() {
         {/* right */}
 
         <div className="flex flex-col gap-5 md:items-end justify-between">
-          <h1 className="text-[24px] font-semibold">
+          <h1 className="text-[24px] font-semibold flex gap-2 items-center">
+            <span className="text-[18px]">$</span>
             {dataTour.priceAdult}{" "}
-            <span className="underline text-[18px]">đ</span>
           </h1>
           <div className="flex flex-row gap-3">
             <Button
@@ -131,7 +131,8 @@ function TourDetail() {
                     : "text-[#4682B4]"
                 }   font-medium text-[1em] shadow-inner`}
               >
-                {dataTour.status === true ? "Đặt chỗ" : "Không hoạt động"}
+                {/* {dataTour.status === true ? "Đặt chỗ" : "Không hoạt động"} */}
+                Đặt tour
               </Button>
             </Link>
           </div>

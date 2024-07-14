@@ -143,6 +143,7 @@ function CheckOut() {
 
   const sumGuest = adult + children;
   const price = adult * pricePerAdult + children * pricePerChildren;
+  const priceto = isNaN(price) ? 0 : price.toFixed(2);
 
   // Kiểm tra và tính toán giảm giá
   const discount = dataTour && dataTour.discount ? dataTour.discount / 100 : 0;
@@ -302,9 +303,10 @@ function CheckOut() {
                   <div className="flex flex-col justify-between gap-3">
                     <div className="flex flex-col gap-0">
                       <h3 className="font-semibold text-xl text-[#333333]">
-                        {dataTour?.tourName.length > 50
+                        {/* {dataTour?.tourName.length > 50
                           ? dataTour?.tourName.subsString(0, 60) + "..."
-                          : dataTour?.tourName}
+                          : dataTour?.tourName} */}
+                        {dataTour?.tourName}
                       </h3>
                       <div className="flex flex-row items-center gap-2 pt-2">
                         <TiLocation size={24} color="#73D8FC" />
@@ -425,21 +427,17 @@ function CheckOut() {
 
             <div className="py-2.5 border-b border-gray-300 w-full flex justify-between">
               <div className="text-md text-[#333333]">Giá gốc</div>
-              <div className="font-semibold">
-                {price}{" "}
-                <span className="text-slate-400 font-normal underline text-sm">
-                  đ
-                </span>
+              <div className="font-semibold flex gap-2 items-center">
+                <span className="text-slate-400 font-normal text-sm">$</span>
+                {priceto}{" "}
               </div>
             </div>
 
             <div className="py-2.5 border-b border-gray-300 w-full flex justify-between">
               <div className="text-md text-blue-500">Khuyến mãi</div>
-              <div className="font-semibold">
+              <div className="font-semibold flex gap-2 items-center">
+                <span className="text-slate-400 font-normal  text-sm">$</span>
                 {discountOut}{" "}
-                <span className="text-slate-400 font-normal underline text-sm">
-                  đ
-                </span>
               </div>
             </div>
 
@@ -447,11 +445,11 @@ function CheckOut() {
               <div className="text-md font-medium text-[#333333]">
                 Thành tiền
               </div>
-              <div className="font-semibold">
-                {totalPrice || 0}{" "}
-                <span className="text-slate-400 font-normal underline text-sm">
-                  đ
+              <div className="font-semibold flex  gap-2 items-center">
+                <span className="text-slate-400 font-normal text-sm">
+                  $
                 </span>
+                {totalPrice || 0}{" "}
               </div>
             </div>
           </div>

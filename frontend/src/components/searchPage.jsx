@@ -7,7 +7,6 @@ import {
   Image,
   Slider,
 } from "@nextui-org/react";
-import { LocationIcon } from "../assets/LocationIcon";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -28,7 +27,6 @@ function Search() {
       setDataTour(response.data);
       filterDataTour(response.data); // Initial filtering
       extractUniqueCategories(response.data); // Extract unique categories
-      console.log("Tour list: ", response.data);
     } catch (error) {
       console.log("Error");
     }
@@ -95,7 +93,7 @@ function Search() {
   const [filters, setFilters] = useState({
     locations: [],
     categories: [],
-    priceRange: [0, 500],
+    priceRange: [100, 500],
   });
 
   const handleLocationChange = (e) => {
@@ -211,11 +209,11 @@ function Search() {
               label="Khoảng giá"
               size="sm"
               hideThumb={true}
-              step={50}
-              minValue={0}
-              maxValue={500}
-              defaultValue={[100, 300]}
-              formatOptions={{ style: "currency", currency: "USD" }}
+              step={50} // Bước điều chỉnh là 100,000 VND
+              minValue={0} // Giá trị tối thiểu là 500,000 VND
+              maxValue={5000} // Giá trị tối đa là 100,000,000 VND
+              defaultValue={[100, 500]} // Giá trị mặc định là từ 500,000 đến 100,000,000 VND
+              formatOptions={{ style: "currency", currency: "USD" }} // Định dạng giá trị là tiền tệ VND
               onChange={handlePriceRangeChange}
             />
           </div>
@@ -250,7 +248,9 @@ function Search() {
                   ? item.tourName.substring(0, 60) + "..."
                   : item.tourName}
               </b>
-              <p className="font-medium text-default-500 text-[14px]">{item.province}</p>
+              <p className="font-medium text-default-500 text-[14px]">
+                {item.province}
+              </p>
               <div className="flex items-center gap-2 font-medium text-[14px] text-default-500">
                 <FaStar
                   style={{
@@ -260,15 +260,15 @@ function Search() {
                 <span>{calculateAverageRating(item.ratings)}</span>
               </div>
               <div className="w-full md:flex-col md:gap-3 flex justify-between custom-card-footer">
-                <div className="text-default-500 line-through">
+                <div className="text-default-500 line-through flex gap-2 items-center">
+                  <span className="underline-offset-2">$</span>
                   {formatPrice(item.priceAdult)}
-                  <span className="underline underline-offset-2">đ</span>
                 </div>
-                <div className="text-cyan-500 font-bold">
+                <div className="text-cyan-500 font-bold flex gap-2 items-center">
+                  <span className="underline-offset-2">$</span>
                   {formatPrice(
                     item.priceAdult - (item.priceAdult * item.discount) / 100
                   )}
-                  <span className="underline underline-offset-2">đ</span>
                 </div>
               </div>
             </CardFooter>

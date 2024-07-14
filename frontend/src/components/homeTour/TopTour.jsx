@@ -104,20 +104,20 @@ function TopTour() {
                       style={{
                         color: "#ffa726",
                       }}
-                    /> 
+                    />
                     <span>{calculateAverageRating(item.ratings)}</span>
                   </div>
                   <div className="w-full flex justify-between custom-card-footer">
-                    <div className="text-default-500 line-through">
+                    <div className="text-default-500 line-through flex gap-2 items-center">
+                      <span className=" -offset-2">$</span>
                       {formatPrice(item.priceAdult)}
-                      <span className="underline underline-offset-2">đ</span>
                     </div>
-                    <div className="text-cyan-500 font-bold">
+                    <div className="text-cyan-500 font-bold flex gap-2 items-center">
+                      <span className=" -offset-2">$</span>
                       {formatPrice(
                         item.priceAdult -
                           (item.priceAdult * item.discount) / 100
                       )}
-                      <span className="underline underline-offset-2">đ</span>
                     </div>
                   </div>
                 </CardFooter>
