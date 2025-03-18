@@ -2,13 +2,14 @@ import { Button, Card, CardBody, Image } from "@nextui-org/react";
 import { LocationIcon } from "../assets/LocationIcon";
 import { useEffect, useState } from "react";
 import PaypalButton from "./Payment/PaypalButton";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Alert } from "./Alert/Alert";
 
 function CheckOut() {
   const { tourId } = useParams();
   const [dataTour, setDataTour] = useState([]);
+  const navigate = useNavigate();
 
   // get token from localStorage
   const token = localStorage.getItem("accessToken");
@@ -29,7 +30,6 @@ function CheckOut() {
         return;
       }
 
-      // Thêm token vào tiêu đề "Authorization"
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -51,12 +51,14 @@ function CheckOut() {
     getDataTour();
   }, []);
 
-  //Select number of customer
-  const [adult, setAdult] = useState(0);
-  const pricePerAdult = 10;
+  // Select number of customer
+  const [adult, setAdult] = useState(1);
+  const pricePerAdult = dataTour.price;
 
   const incrementNumberA = () => {
-    setAdult((prevNumber) => prevNumber + 1);
+    if (adult + children < dataTour.numGuest) {
+      setAdult((prevNumber) => prevNumber + 1);
+    }
   };
 
   const decrementNumberA = () => {
@@ -66,10 +68,12 @@ function CheckOut() {
   };
 
   const [children, setChildren] = useState(0);
-  const pricePerChildren = 5;
+  const pricePerChildren = dataTour.price / 2;
 
   const incrementNumberC = () => {
-    setChildren((prevNumber) => prevNumber + 1);
+    if (adult + children < dataTour.numGuest) {
+      setChildren((prevNumber) => prevNumber + 1);
+    }
   };
 
   const decrementNumberC = () => {
@@ -117,7 +121,20 @@ function CheckOut() {
       method: method,
       intent: intent,
     }));
-  }, [adult, children, totalPrice, userId, tourId, currency, method, intent]);
+
+    const urlParams = new URLSearchParams({
+      tourId: tourId,
+      startDate: dataTour.startDate,
+      endDate: dataTour.endDate,
+      numGuest: adult + children,
+      total: totalPrice,
+    });
+
+    navigate({
+      pathname: `/checkout/${tourId}`,
+      search: `?${urlParams.toString()}`,
+    });
+  }, [adult, children, totalPrice, userId, tourId, currency, method, intent, dataTour.startDate, dataTour.endDate, navigate]);
 
   // BOOKING
   const handleBooking = async () => {
@@ -134,10 +151,8 @@ function CheckOut() {
         "success"
       );
 
-      // kiểm tra xem có approvalUrl trong response không
       if (response && response?.data?.approvalUrl) {
-        // chuyển hướng đến approvalUrl
-       window.location.href = response?.data?.approvalUrl;
+        window.location.href = response?.data?.approvalUrl;
       } else {
         Alert(2000, "Đặt phòng", "Không tìm thấy approvalUrl.", "error");
       }
@@ -151,8 +166,6 @@ function CheckOut() {
     }
   };
 
-  
-
   return (
     <div className="grid grid-cols-6 md:grid-cols-12 md:gap-4 p-[3%]">
       {/* Detail Tour & Selection */}
@@ -165,9 +178,8 @@ function CheckOut() {
           >
             <CardBody>
               <div className="grid grid-cols-6 md:grid-cols-12 md:gap-4 items-center justify-center">
-                <div className="relative col-span-3 md:col-span-3">
+                <div className="relative col-span-3 md:col-span-3 items-start h-full mt-5">
                   <Image
-                    // height={150}
                     style={{ height: "150px" }}
                     shadow="md"
                     src={dataTour.thumbnail}
@@ -176,7 +188,7 @@ function CheckOut() {
                 </div>
 
                 <div className="flex flex-col col-span-6 md:col-span-6">
-                  <div className="flex flex-col  justify-between gap-5">
+                  <div className="flex flex-col justify-between gap-5">
                     <div className="flex flex-col gap-0 mt-2">
                       <h3 className="font-semibold text-2xl text-foreground/90">
                         {dataTour.tourName}
@@ -184,8 +196,7 @@ function CheckOut() {
                       <div className="flex flex-row pt-2">
                         <LocationIcon />
                         <p className="text-small text-foreground/80 text-[#73D8FC]">
-                          {dataTour.detailAddress}, {dataTour.ward},{" "}
-                          {dataTour.district}, {dataTour.province}
+                          {dataTour.detailAddress}, {dataTour.ward}, {dataTour.district}, {dataTour.province}
                         </p>
                       </div>
                     </div>
@@ -206,7 +217,7 @@ function CheckOut() {
             </CardBody>
           </Card>
           <div className="p-4 flex flex-col gap-4 text-[1.1em]">
-            <div className="">Lượng khách tối đa {dataTour.numGuest}</div>
+            <div className="font-semibold">Lượng khách tối đa {dataTour.numGuest}</div>
             <div className="flex gap-4 ">
               <div className="font-semibold">Người lớn</div>
               <div className="flex items-center gap-2">
@@ -248,25 +259,18 @@ function CheckOut() {
             </div>
 
             <div className="py-2.5 border-b border-gray-300 w-full flex justify-between">
-              <div className="text-sm font-medium text-blue-500">
-                khuyến mãi
-              </div>
+              <div className="text-sm font-medium text-blue-500">Giảm giá</div>
               <div className="font-semibold">${dataTour.discount}</div>
             </div>
 
             <div className="py-2.5 w-full flex justify-between">
-              <div className="text-md font-semibold text-gray-600">
-                Tổng tiền{" "}
-              </div>
+              <div className="text-md font-semibold text-gray-600">Tổng tiền</div>
               <div className="font-semibold">${totalPrice}</div>
             </div>
           </div>
         </div>
         <div className="pt-5">
-          <Button
-            onClick={handleBooking}
-            className="w-full text-lg text-white bg-[#73D8FC]"
-          >
+          <Button onClick={handleBooking} className="w-full text-lg text-white bg-[#73D8FC]">
             Đặt phòng
           </Button>
         </div>

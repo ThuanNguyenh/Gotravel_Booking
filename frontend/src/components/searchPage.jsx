@@ -3,31 +3,21 @@ import { Button, Card, CardBody, Image, Slider } from "@nextui-org/react";
 import { LocationIcon } from "../assets/LocationIcon";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 function Search() {
   // State to store tour data
   const [dataTour, setDataTour] = useState([]);
   const [filteredDataTour, setFilteredDataTour] = useState([]);
-  // Get token from localStorage
-  const token = localStorage.getItem("accessToken");
+  const [uniqueCategories, setUniqueCategories] = useState([]);
 
   // Get all tours
   const getDataTour = async () => {
     try {
-      if (!token) {
-        return;
-      }
-
-      // Add token to the "Authorization" header
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-
-      const response = await axios.get(`http://localhost:8080/api/v1/tour`, config);
+      const response = await axios.get(`http://localhost:8080/api/v1/tour`);
       setDataTour(response.data);
-      filterDataTour(response.data);  // Initial filtering
+      filterDataTour(response.data); // Initial filtering
+      extractUniqueCategories(response.data); // Extract unique categories
       console.log("Tour list: ", response.data);
     } catch (error) {
       console.log("Error");
@@ -53,7 +43,7 @@ function Search() {
       const matchesLocation = location ? tour.province.includes(location) : true;
       const matchesStartDate = startDate ? new Date(tour.startDate) >= new Date(startDate) : true;
       const matchesEndDate = endDate ? new Date(tour.endDate) <= new Date(endDate) : true;
-      const matchesTourType = tourType ? tour.type === tourType : true;
+      const matchesTourType = tourType ? tour.categories.some(category => category.categoryName === tourType) : true;
 
       return matchesLocation && matchesStartDate && matchesEndDate && matchesTourType;
     });
@@ -61,16 +51,34 @@ function Search() {
     setFilteredDataTour(filtered);
   };
 
+  // Extract unique categories from the tours
+  const extractUniqueCategories = (tours) => {
+    const categoriesSet = new Set();
+    tours.forEach(tour => {
+      tour.categories.forEach(category => {
+        categoriesSet.add(category.categoryName);
+      });
+    });
+    setUniqueCategories(Array.from(categoriesSet));
+  };
+
   useEffect(() => {
     getDataTour();
   }, []);
 
+  useEffect(() => {
+    if (dataTour.length > 0) {
+      filterDataTour(dataTour);
+    }
+  }, [window.location.search]);
+
   const [filters, setFilters] = useState({
     locations: [],
+    categories: [],
     priceRange: [0, 500],
   });
 
-  const handleNationChange = (e) => {
+  const handleLocationChange = (e) => {
     const location = e.target.value;
     let updatedLocations = [...filters.locations];
 
@@ -86,6 +94,22 @@ function Search() {
     }));
   };
 
+  const handleCategoryChange = (e) => {
+    const category = e.target.value;
+    let updatedCategories = [...filters.categories];
+
+    if (e.target.checked) {
+      updatedCategories.push(category);
+    } else {
+      updatedCategories = updatedCategories.filter((item) => item !== category);
+    }
+
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      categories: updatedCategories,
+    }));
+  };
+
   const handlePriceRangeChange = (values) => {
     setFilters((prevFilters) => ({
       ...prevFilters,
@@ -94,13 +118,13 @@ function Search() {
   };
 
   const filteredTours = filteredDataTour.filter((tour) => {
-    if (
-      (filters.locations.length === 0 || filters.locations.includes(tour.province)) &&
-      (tour.price >= filters.priceRange[0] && tour.price <= filters.priceRange[1])
-    ) {
-      return true;
-    }
-    return false;
+    const tourCategories = tour.categories.map(cat => cat.categoryName);
+
+    const matchesLocation = filters.locations.length === 0 || filters.locations.includes(tour.province);
+    const matchesCategories = filters.categories.length === 0 || filters.categories.some(category => tourCategories.includes(category));
+    const matchesPriceRange = tour.price >= filters.priceRange[0] && tour.price <= filters.priceRange[1];
+
+    return matchesLocation && matchesCategories && matchesPriceRange;
   });
 
   return (
@@ -111,10 +135,21 @@ function Search() {
           <div className="font-semibold text-xl">Bộ lọc</div>
           <div className="flex flex-col">
             <h2 className="text-lg font-semibold mb-2">Địa điểm</h2>
-            {dataTour.map((tour) => (
-              <label key={tour.tourId} className="block mb-1">
-                <input type="checkbox" value={tour.province} onChange={handleNationChange} />
-                <span className="ml-2">{tour.province}</span>
+            {/* Use Set to store unique locations */}
+            {Array.from(new Set(dataTour.map(tour => tour.province))).map((location) => (
+              <label key={location} className="block mb-1">
+                <input type="checkbox" value={location} onChange={handleLocationChange} />
+                <span className="ml-2">{location}</span>
+              </label>
+            ))}
+          </div>
+          
+          <div className="flex flex-col">
+            <h2 className="text-lg font-semibold mb-2">Loại hình</h2>
+            {uniqueCategories.map((category) => (
+              <label key={category} className="block mb-1">
+                <input type="checkbox" value={category} onChange={handleCategoryChange} />
+                <span className="ml-2">{category}</span>
               </label>
             ))}
           </div>
@@ -144,7 +179,7 @@ function Search() {
           <div></div>
         </div>
         {filteredTours.map((tour) => (
-          <Card key={tour.tourId} isBlurred className="border-none bg-background/60 dark:bg-default-100/50" shadow="sm">
+          <Card key={tour.tourId} isPressable as={Link} to={`/tourDetail/${tour.tourId}`} isBlurred className="border-none bg-background/60 dark:bg-default-100/50" shadow="sm">
             <CardBody>
               <div className="grid grid-cols-6 md:grid-cols-12 md:gap-4 items-center justify-center">
                 <div className="col-span-3 md:col-span-3">
