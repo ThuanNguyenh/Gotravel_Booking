@@ -1,0 +1,10 @@
+/* Thêm vào custom-slick.css hoặc tệp CSS tùy chỉnh của bạn */
+.custom-card-footer {
+    flex-wrap: wrap; /* Cho phép nội dung xuống dòng */
+    word-break: break-word; /* Đảm bảo từ dài sẽ xuống dòng thay vì tràn ra ngoài */
+  }
+  
+  .custom-card-footer div {
+    min-width: 50%; /* Đảm bảo mỗi div con có kích thước tối thiểu 50% để xuống dòng hợp lý */
+  }
+  

@@ -29,7 +29,6 @@ function Amenities({ Utils, value }) {
         config
       );
       setData(response.data);
-      console.log("utilities: ", response.data);
     } catch (error) {
       console.log("Error")
     }
@@ -59,7 +58,7 @@ function Amenities({ Utils, value }) {
         onPress={onOpen}
       >
         {value && value.length > 0
-          ? `Đã chọn ${value.length} tiện ích`
+          ? `Đã chọn ${value.length}`
           : "Tiện ích"}
       </Button>
       <Modal
@@ -101,7 +100,7 @@ function Amenities({ Utils, value }) {
                   onClick={onClose}
                   className=" py-2 px-3 font-medium rounded-lg"
                 >
-                  Save
+                  Lưu
                 </Button>
               </div>
             </div>

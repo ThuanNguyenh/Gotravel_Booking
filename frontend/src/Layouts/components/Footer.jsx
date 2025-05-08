@@ -1,41 +1,34 @@
 
-import { FacebookIcon } from "../../assets/FacebookIcon";
-import { GoogleIcon } from "../../assets/GoogleIcon";
-import { Twitter } from "../../assets/twitter";
-import { Instagram } from "../../assets/insta";
-
-
-
 const Footer = () => {
-
-
-
   return (
-    <div className="pt-10">
-      <div className="flex justify-center bg-cover h-48 bg-[url('https://www.huxtaburger.com.au/wp-content/themes/HUXTA/images/Navy_Footer.svg')]"/>
-      
-      <div className="flex justify-center text-center text-white bg-[#10233C]">
-        <div className="flex flex-col p-10 gap-5">
-          <div className="flex flex-col text-2xl font-semibold justify-center">
+    <div className="justify-center flex mt-10 py-10 border-t rounded-t-[20px] bg-gradient-to-b from-[#fff] to-[#E3F7FC]">
+      <div className="w-5/6 items-start grid md:grid-cols-5 grid-cols-1 gap-4">
+        <div className="flex ">
+          <img src="/Logo.png" className="me-2 w-8" />
+          <p className={`font-[600] text-2xl text-cyan-500`}>TourTrek</p>
+        </div>
 
-            <h1>Xách balo lên và đi ngay thôi !</h1>
-          </div>
-          <div className="flex justify-center">
-            <button className="bn">Book Now !</button>
-          </div>
-          <div className="flex flex-row gap-5 justify-center">
-            <FacebookIcon/>
-            <Twitter/>
-            <Instagram/>
-            <GoogleIcon/>
-          </div>
-          <div>
-            <p>Copyright © 2024 - All Rights Reserved - LNA</p>
-          </div>
+        <div className="text-slate-500 text-[14px] flex flex-col gap-4 font-medium ">
+          <p className="text-[#333333] font-bold">TourTrek</p>
+          <p>Về chúng tôi</p>
+          <p>Liên hệ</p>
+        </div>
+        <div className="text-slate-500 text-[14px] flex flex-col gap-4 font-medium ">
+          <p className="text-[#333333] font-bold">Thông tin pháp lý</p>
+          <p>Chính sách bảo mật</p>
+          <p>Điều khoản dịch vụ</p>
+        </div>
+        <div className="text-slate-500 text-[14px] flex flex-col gap-4 font-medium ">
+          <p className="text-[#333333] font-bold">Liên kết nhanh</p>
+          <p>Tìm kiếm</p>
+          <p>Gần đây</p>
+        </div>
+        <div className="text-slate-500 text-[14px] flex flex-col gap-4 font-medium ">
+          <p>© 2024 TourTrek.com</p>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;

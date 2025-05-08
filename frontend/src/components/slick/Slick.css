@@ -1,0 +1,30 @@
+
+
+/* Điều chỉnh màu và kích thước của các nút điều khiển nếu cần */
+.slick-prev::before,
+.slick-next::before {
+  color: white;
+  font-size: 30px;
+}
+
+/* Thêm khoảng cách giữa các thẻ Card */
+.slick-slide > div {
+    padding: 0 5px; /* Điều chỉnh khoảng cách ngang giữa các thẻ */
+  }
+  
+  /* Đảm bảo rằng slick list không có padding để tránh ảnh hưởng đến khoảng cách giữa các thẻ */
+  .slick-list {
+    margin: 0 -5px; /* Điều chỉnh ngược lại khoảng cách đã thêm cho slick-slide > div */
+  }
+
+  /* Định vị lại nút prev */
+.slick-prev {
+    left: 10px; /* Điều chỉnh khoảng cách từ trái (âm giá trị để di chuyển ra ngoài) */
+    z-index: 1;
+  }
+  
+  /* Định vị lại nút next */
+  .slick-next {
+    right: 20px; /* Điều chỉnh khoảng cách từ phải (âm giá trị để di chuyển ra ngoài) */
+    z-index: 1;
+  }

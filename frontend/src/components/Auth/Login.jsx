@@ -6,12 +6,14 @@ import { useUserAuth } from "../../contexts/userAuthContext";
 import { useState } from "react";
 import Register from "./Register";
 import { Alert } from "../Alert/Alert";
+import PropTypes from "prop-types"; // Import PropTypes
 
-const Login = () => {
+// eslint-disable-next-line react/prop-types
+const Login = ({ setUserInfo, onLoginSuccess  }) => {
   const { googleSignIn, fbSignIn, emailAndPassword } = useUserAuth();
   const [selected, setSelected] = useState("login");
   const [dataLogin, setDataLogin] = useState();
-  const [message, setMessage] = useState();
+  const [message, setMessage] = useState(null);
 
   // input change
   const change = (e) => {
@@ -31,14 +33,15 @@ const Login = () => {
         return;
       }
 
-      await emailAndPassword(dataLogin);
+      const user = await emailAndPassword(dataLogin);
 
+      setMessage(null);
+      setUserInfo(user);
       Alert(2000, "Đăng nhập", "Thành công", "success", "OK");
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 2000);
+      onLoginSuccess(true); // Notify parent of successful login
     } catch (error) {
-      setMessage(error.response.data);
+      setMessage(error.response?.data);
+      onLoginSuccess(false); 
     }
   };
 
@@ -47,11 +50,13 @@ const Login = () => {
     try {
       await googleSignIn();
       Alert(2000, "Đăng nhập", "Thành công", "success", "OK");
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 2000);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+      onLoginSuccess(true); // Notify parent of successful login
     } catch (error) {
       Alert(2000, "Đăng nhập", "Thất bại", "error", "OK");
+      // onLoginSuccess(false); // Notify parent of successful login
     }
   };
 
@@ -60,18 +65,20 @@ const Login = () => {
     try {
       await fbSignIn();
       Alert(2000, "Đăng nhập", "Thành công", "success", "OK");
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 2000);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+      onLoginSuccess(true); // Notify parent of successful login
     } catch (error) {
       Alert(2000, "Đăng nhập", "Thất bại", "error", "OK");
+      onLoginSuccess(false); // Notify parent of successful login
     }
   };
 
   return (
     <div>
       <div className="w-full flex justify-center pb-2">
-        <Image width={40} src="/logo.png" />
+        <Image width={40} src="/Logo.png" />
       </div>
       <Tabs
         selectedKey={selected}
@@ -161,6 +168,11 @@ const Login = () => {
       </Tabs>
     </div>
   );
+};
+
+Login.propTypes = {
+  onLoginSuccess: PropTypes.func.isRequired, // Add prop validation for onLoginSuccess
+  setUserInfo: PropTypes.func.isRequired, // Xác thực kiểu dữ liệu và bắt buộc
 };
 
 export default Login;

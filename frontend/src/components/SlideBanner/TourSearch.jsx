@@ -1,129 +1,100 @@
-import { Autocomplete, AutocompleteItem, Button, Input } from "@nextui-org/react";
-import { LocationIcon } from "../../assets/LocationIcon";
-import { DateIcon } from "../../assets/DateIcon";
-import { PerRoomIcon } from "../../assets/PerRoom";
+import { Autocomplete, AutocompleteItem, Button } from "@nextui-org/react";
 import "./slide.scss";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { SearchIcon } from "../../assets/SearchIcon";
 import * as ProvinceService from "../../services/ProvinceService";
-
+import axios from "axios";
+import { BiSolidBookHeart } from "react-icons/bi";
+import { TiLocation } from "react-icons/ti";
 
 const TourSearch = () => {
   const [provinces, setProvinces] = useState([]);
+
   const [location, setLocation] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
   const [tourType, setTourType] = useState("");
+  const [category, setCategory] = useState([]);
+
+  const loadCategory = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/v1/directory/categories`
+      );
+      setCategory(response.data);
+    } catch (error) {
+      console.log("Error");
+    }
+  };
 
   useEffect(() => {
-    const fetchProvinces = async () => {
+    loadCategory();
+  }, []);
+
+  useEffect(() => {
+    async function fetchProvinces() {
       const result = await ProvinceService.resProvince();
-      if (result.status === 200) {
-        setProvinces(result?.data.results);
-      }
-    };
+      setProvinces(result.map((item) => item));
+    }
 
     fetchProvinces();
   }, []);
 
   const handleSearch = () => {
-    // Redirect to search page with query parameters
-    const queryParams = {
-      location,
-      startDate,
-      endDate,
-      tourType,
-    };
-    // Convert queryParams to query string
+    const queryParams = { location, tourType };
     const queryString = new URLSearchParams(queryParams).toString();
-    // Redirect to search page with query string
     window.location.href = `/search?${queryString}`;
   };
 
   return (
-    <div>
-      <div className="flex mt-2 mb-4 ml-2">
-        <div className="w-1/4">
-          <div className="flex flex-col gap-3">
-            <h2 className="font-semibold text-neutral-800">Địa điểm hoặc thành phố</h2>
-            <Autocomplete
-              defaultItems={provinces}
-              placeholder="Thành phố, địa điểm,..."
-              className="location max-w-xs"
-              startContent={React.cloneElement(<LocationIcon />, { stroke: "#0194F3" })}
-              size="sm"
-              variant="bordered"
-              onChange={(value) => setLocation(value)}
+    <div className="flex items-center gap-3">
+      <div className="flex w-full shadow-inner border rounded-lg">
+        <Autocomplete
+          defaultItems={provinces}
+          placeholder="Điạ điểm bạn muốn đến?"
+          className="location max-w"
+          startContent={<TiLocation color="#73D8FC" size={24} />}
+          size="sm"
+          variant="bordered"
+          onSelect={(item) => {
+            setLocation(item.target.defaultValue); // Use item.value to capture the selected name
+          }}
+        >
+          {(province) => (
+            <AutocompleteItem key={province.id} value={province.name}>
+              {province.name}
+            </AutocompleteItem>
+          )}
+        </Autocomplete>
+
+        {/* chủ đề */}
+        <Autocomplete
+          defaultItems={category}
+          placeholder="Thể loại yêu thích?"
+          className="type max-w"
+          startContent={<BiSolidBookHeart color="#73D8FC" size={24} />}
+          size="sm"
+          variant="bordered"
+          onSelect={(item) => {
+            setTourType(item.target.defaultValue); // Use item.value to capture the selected type
+          }}
+        >
+          {(category) => (
+            <AutocompleteItem
+              key={category.categoryId}
+              value={category.categoryName}
             >
-              {(province) => (
-                <AutocompleteItem key={province.province_id}>
-                  {province.province_name}
-                </AutocompleteItem>
-              )}
-            </Autocomplete>
-          </div>
-        </div>
-        <div className="w-1/4">
-          <div className="flex flex-col gap-3">
-            <h2 className="font-semibold text-neutral-800">Ngày đi</h2>
-            <Input
-              className="max-w-xs date"
-              startContent={<DateIcon />}
-              type="date"
-              radius="none"
-              size="sm"
-              variant="bordered"
-              onChange={(e) => setStartDate(e.target.value)}
-            />
-          </div>
-        </div>
-        <div className="w-1/4">
-          <div className="flex flex-col gap-3">
-            <h2 className="font-semibold text-neutral-800">Ngày về</h2>
-            <Input
-              className="max-w-xs date"
-              startContent={<DateIcon />}
-              type="date"
-              radius="none"
-              size="sm"
-              variant="bordered"
-              onChange={(e) => setEndDate(e.target.value)}
-            />
-          </div>
-        </div>
-        <div className="w-1/4">
-          <div className="flex flex-col gap-3">
-            <h2 className="font-semibold text-neutral-800">Loại hình</h2>
-            <Autocomplete
-              defaultItems={provinces}
-              placeholder="Loại hình mong muốn"
-              className="type max-w-xs"
-              startContent={<PerRoomIcon/>}
-              size="sm"
-              variant="bordered"
-              onChange={(value) => setTourType(value)}
-            >
-              {(province) => (
-                <AutocompleteItem key={province.province_id}>
-                  {province.province_type}
-                </AutocompleteItem>
-              )}
-            </Autocomplete>
-          </div>
-        </div>
-        <div className="pl-5 pt-2">
-          <Button
-            onClick={handleSearch}
-            isIconOnly
-            variant="ghost"
-            className="bg-gradient-to-tl text-white to-cyan-500 from-[#73D8FC] mr-4 mt-6"
-            size="lg"
-            radius="md"
-          >
-            <SearchIcon/>
-          </Button>
-        </div>
+              {category.categoryName}
+            </AutocompleteItem>
+          )}
+        </Autocomplete>
       </div>
+      <Button
+        onClick={handleSearch}
+        isIconOnly
+        className="shadow-inner rounded-lg border bg-gradient-to-tl text-white to-[#73D8FC] from-cyan-500"
+        size="lg"
+      >
+        <SearchIcon />
+      </Button>
     </div>
   );
 };

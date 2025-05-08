@@ -35,26 +35,22 @@ const NewTourForm = ({ handleSave }) => {
   const [districtName, setDistrictName] = useState("");
   const [wardName, setWardName] = useState("");
 
-  // chuyen tu object sang mang
-  const ArrayProVince = Object.values(provinces);
-  const ArrayDistrict = Object.values(districts);
-  const ArrayWard = Object.values(wards);
 
   // get provinceName - districtName - wardName
   useEffect(() => {
-    const selectProvince = provinces.find((p) => p.province_id === province);
-    const selectDistrict = districts.find((d) => d.district_id === district);
-    const selectWard = wards.find((w) => w.ward_id === ward);
+    const selectProvince = provinces.find((p) => p.id === province);
+    const selectDistrict = districts.find((d) => d.id === district);
+    const selectWard = wards.find((w) => w.id === ward);
 
     if (selectProvince) {
-      setProvinceName(selectProvince.province_name);
+      setProvinceName(selectProvince.name);
     }
     if (selectDistrict) {
-      setDistrictName(selectDistrict.district_name);
+      setDistrictName(selectDistrict.name);
     }
 
     if (selectWard) {
-      setWardName(selectWard.ward_name);
+      setWardName(selectWard.name);
     }
   }, [province, provinces, districts, district, wards, ward]);
 
@@ -62,9 +58,8 @@ const NewTourForm = ({ handleSave }) => {
   useEffect(() => {
     const resultProvince = async () => {
       const result = await ProvinceService.resProvince();
-      if (result.status === 200) {
-        setProvinces(result?.data.results);
-      }
+
+      setProvinces(result?.map((item) => item));
     };
 
     resultProvince();
@@ -75,9 +70,7 @@ const NewTourForm = ({ handleSave }) => {
     const resultDistrict = async () => {
       const result = await ProvinceService.resDistrict(province);
 
-      if (result.status === 200) {
-        setDistricts(result.data?.results);
-      }
+      setDistricts(result?.map((item) => item));
     };
 
     province && resultDistrict(province);
@@ -88,9 +81,7 @@ const NewTourForm = ({ handleSave }) => {
     const resultWard = async () => {
       const result = await ProvinceService.resWard(district);
 
-      if (result.status === 200) {
-        setWards(result.data?.results);
-      }
+      setWards(result?.map((item) => item));
     };
 
     district && resultWard(district);
@@ -219,11 +210,11 @@ const NewTourForm = ({ handleSave }) => {
     district: "",
     ward: "",
     detailAddress: "",
-    price: "",
+    priceAdult: "",
+    priceChildren: "",
+    tourTime: "",
     numGuest: "",
     discount: "",
-    startDate: "",
-    endDate: "",
     owner: {
       userId: "",
     },
@@ -284,6 +275,7 @@ const NewTourForm = ({ handleSave }) => {
     schedules,
   ]);
 
+
   // input change
   const change = (e) => {
     const { name, value } = e.target;
@@ -292,9 +284,6 @@ const NewTourForm = ({ handleSave }) => {
       [name]: value,
     });
   };
-
-  // message
-  const [message, setMessage] = useState("vui lòng điền đầy đủ thông tin");
 
   // save tour
   const saveTour = async (listImage) => {
@@ -317,10 +306,14 @@ const NewTourForm = ({ handleSave }) => {
       console.log("ket qua da luu: ", response);
       Alert(1000, "Tạo tour", "Thành công", "success", "OK");
     } catch (error) {
-      console.log("loi roi: ", error);
-      setMessage(error?.response.data);
-      alert(message);
-      Alert(2000, "Tạo tour", "Thất bại", "error", "OK");
+      // message
+      let messageError = "vui lòng điền đầy đủ thông tin";
+
+      if (error?.response) {
+        // eslint-disable-next-line no-unused-vars
+        messageError = error.response?.data || messageError;
+      }
+      Alert(2000, "Tạo tour", messageError, "error", "OK");
       return;
     }
     handleSave("ManageTour");
@@ -330,7 +323,7 @@ const NewTourForm = ({ handleSave }) => {
   const uploadAndSave = async (e) => {
     e.preventDefault();
     try {
-      LoadingAlert(3000, "Đang tạo tour",);
+      LoadingAlert(3000, "Đang tạo tour");
       const listImage = await uploadMultipleFiles(images);
       await saveTour(listImage);
     } catch (error) {
@@ -352,7 +345,7 @@ const NewTourForm = ({ handleSave }) => {
             type="text"
             id="tourName"
             name="tourName" // Update name attribute to match the field name
-            className=" mt-1 block w-1/2 "
+            className=" mt-1 block w-full "
           />
         </div>
         {/* Description */}
@@ -372,7 +365,7 @@ const NewTourForm = ({ handleSave }) => {
           <SelectAddress
             value={province}
             setValue={setProvince}
-            AutocompleteItems={ArrayProVince}
+            AutocompleteItems={provinces}
             label="Tỉnh / Thành phố"
             type="province"
             name="province"
@@ -383,7 +376,7 @@ const NewTourForm = ({ handleSave }) => {
           <SelectAddress
             value={district}
             setValue={setDistrict}
-            AutocompleteItems={ArrayDistrict}
+            AutocompleteItems={districts}
             label="Quận / Huyện"
             type="district"
             name="district"
@@ -394,7 +387,7 @@ const NewTourForm = ({ handleSave }) => {
           <SelectAddress
             value={ward}
             setValue={setWard}
-            AutocompleteItems={ArrayWard}
+            AutocompleteItems={wards}
             type="ward"
             label="Xã / Thị trấn"
             name="ward"
@@ -422,11 +415,12 @@ const NewTourForm = ({ handleSave }) => {
           <Rules Rules={handleRuleChange} value={selectRule} />
         </div>
 
-        <div className="flex gap-2">
+        <div className="grid grid-cols-5 gap-4">
           {/* Number of Guests */}
           <div className="mb-4">
             <Input
-              label="Số lượng khách"
+              min={0}
+              label="Số lượng khách / người"
               onChange={change}
               required
               type="number"
@@ -443,49 +437,51 @@ const NewTourForm = ({ handleSave }) => {
               onChange={change}
               type="number"
               id="discount"
+              max={100}
+              min={0}
               name="discount" // Update name attribute to match the field name
               className=" mt-1 block w-full "
             />
           </div>
-          {/* Price */}
+          {/* price adult */}
+
           <div className="mb-4">
             <Input
-              label="Giá tour"
+              min={0}
+              label="Giá vé người lớn / $"
               onChange={change}
               required
               type="number"
-              id="price"
-              name="price" // Update name attribute to match the field name
+              id="priceAdult"
+              name="priceAdult" // Update name attribute to match the field name
               className=" mt-1 block w-full "
             />
           </div>
-        </div>
 
-        {/* DATE */}
-        <div className="flex gap-2">
-          {/* Start Date */}
+          {/* Price children*/}
           <div className="mb-4">
             <Input
-              label="Ngày đi"
+              min={0}
+              label="Giá vé trẻ em / $"
               onChange={change}
               required
-              placeholder="date"
-              type="date"
-              id="startDate"
-              name="startDate" // Update name attribute to match the field name
+              type="number"
+              id="priceChildren"
+              name="priceChildren" // Update name attribute to match the field name
               className=" mt-1 block w-full "
             />
           </div>
-          {/* End Date */}
+
+          {/* tour time */}
           <div className="mb-4">
             <Input
-              label="Ngày về"
-              placeholder="date"
+              min={0}
+              label="Thơi gian tour / ngày"
               onChange={change}
               required
-              type="date"
-              id="endDate"
-              name="endDate" // Update name attribute to match the field name
+              type="number"
+              id="tourTime"
+              name="tourTime" // Update name attribute to match the field name
               className=" mt-1 block w-full "
             />
           </div>
@@ -629,7 +625,7 @@ const NewTourForm = ({ handleSave }) => {
             onClick={uploadAndSave}
             className="w-full py-2 px-4 border border-transparent shadow-sm text-white"
           >
-            Create Tour
+            Tạo Tour
           </Button>
         </div>
       </form>

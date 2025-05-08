@@ -22,6 +22,7 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
+  Switch,
 } from "@nextui-org/react";
 
 import { Pen } from "../../../assets/Pen";
@@ -35,43 +36,106 @@ import { Alert, DeleteAlert } from "../../Alert/Alert";
 
 import axios from "axios";
 import "./manageTour.css";
+import Empty from "../../alert/Empty";
+import { useNavigate } from "react-router-dom";
 
-
+// status
+const listStatusFil = [
+  {
+    title: "Đang hoạt động",
+    status: "true",
+  },
+  {
+    title: "Không hoạt động",
+    status: "false",
+  },
+  {
+    title: "Tất cả",
+    status: "",
+  },
+];
 
 const ManageTour = ({ handleLinkClick, selectedTourId }) => {
-
   const voucherModal = useDisclosure();
+
+  const navigate = useNavigate();
+
+  const [tourStatus, setTourStatus] = useState({});
 
   // state data
   const [dataTour, setDataTour] = useState([]);
   const [message, setMessage] = useState(null);
 
+  const [status, setStatus] = useState("");
+  const [statusName, setStatusName] = useState("Tất cả");
+
+  console.log("data: ", tourStatus);
+
+  // Hàm để cập nhật trạng thái của tour dựa trên ID
+  const updateTourStatus = (tourId, value) => {
+    const status = value === "true";
+    setTourStatus((prevStatus) => ({
+      ...prevStatus,
+      [tourId]: status,
+    }));
+    handleUpdateStatus(tourId, status); // Gọi hàm cập nhật trạng thái
+  };
+
+  // Hàm để lấy trạng thái của tour dựa trên ID
+  const getTourStatus = (tourId) => {
+    return tourStatus[tourId] || false; // Mặc định là false nếu không có trạng thái
+  };
+
   // get token from localStorage
   const token = localStorage.getItem("accessToken");
 
+  // get userId from localStorage
+  const userString = localStorage.getItem("userInfo");
+  const user = JSON.parse(userString);
+  const userId = user?.userId;
+
   // get all tour
-  const getDataTour = async () => {
-    try {
-      if (!token) {
-        return;
+
+  useEffect(() => {
+    async function getDataTour() {
+      try {
+        if (!token) {
+          return;
+        }
+
+        // Thêm token vào tiêu đề "Authorization"
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+
+        const params = {};
+
+        if (status) {
+          params.status = status;
+        }
+
+        // xây dựng URL với các tham số truy vấn
+        const queryString = new URLSearchParams(params).toString();
+        const URL = `http://localhost:8080/api/v1/tour/my-tour/${userId}/status?${queryString}`;
+
+        // Thay đổi URL của trình duyệt
+        navigate(`/host?${queryString}`, { replace: true });
+
+        const response = await axios.get(URL, config);
+        const toursData = response.data;
+
+        setDataTour(toursData);
+      } catch (error) {
+        setMessage(error.response.data.message);
       }
-
-      // Thêm token vào tiêu đề "Authorization"
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-
-      const response = await axios.get(
-        `http://localhost:8080/api/v1/tour`,
-        config
-      );
-      setDataTour(response.data);
-    } catch (error) {
-      setMessage(error.response.data.message);
     }
-  };
+
+    getDataTour();
+  }, [status, userId, token, navigate]);
+
+  console.log("trạng thái: ", dataTour);
 
   //delete tour
   const deleteTour = async (tourId) => {
@@ -86,26 +150,55 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
         },
       };
 
-      await DeleteAlert(async() => {
-        const response = await axios.delete(`http://localhost:8080/api/v1/tour/delete/${tourId}`, config);
+      await DeleteAlert(async () => {
+        const response = await axios.delete(
+          `http://localhost:8080/api/v1/tour/delete/${tourId}`,
+          config
+        );
         if (response.status === 200) {
           Alert(1000, "Xóa tour", "Thành công", "success");
           // Update the frontend state to remove the deleted tour
           setDataTour(dataTour.filter((tour) => tour.tourId !== tourId));
         } else {
-          alert('Thất bại: không tìm thấy tour!');
+          alert("Thất bại: không tìm thấy tour!");
         }
-      })
-
+      });
     } catch (error) {
-      console.error('Error deleting tour:', error);
-      alert('Thất bại: lỗi hệ thống!');
+      console.error("Error deleting tour:", error);
+      alert("Thất bại: lỗi hệ thống!");
     }
   };
 
-  useEffect(() => {
-    getDataTour();
-  }, []);
+  // CẬP NHẬT TRẠNG THÁI TOUR
+  const handleUpdateStatus = async (tourId, status) => {
+    try {
+      if (!token) {
+        return;
+      }
+
+      // Thêm token vào tiêu đề "Authorization"
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const params = new URLSearchParams({ status });
+
+      const response = await axios.put(
+        `http://localhost:8080/api/v1/tour/${tourId}/update-status?${params}`,
+        null,
+        config
+      );
+      if (response.status === 200) {
+        Alert(1000, "Cập nhật trạng thái tour", "Thành công", "success");
+      } else {
+        alert("Thất bại: không cập nhật được trạng thái tour!");
+      }
+    } catch (error) {
+      console.error("loooo: ", error);
+    }
+  };
 
   //update button
   const handleUpdate = async (tourId) => {
@@ -115,7 +208,7 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const toursPerPage = 5;
+  const toursPerPage = 9;
 
   // Handle page change
   const handlePageChange = (pageNumber) => {
@@ -130,24 +223,12 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
 
   // //filter status
   const [selectedStatusFilters, setSelectedStatusFilters] = useState([]);
-  const toggleStatusFilter = (province) => {
-    if (selectedStatusFilters.includes(province)) {
-      setSelectedStatusFilters(
-        selectedStatusFilters.filter((s) => s !== province)
-      );
-    } else {
-      setSelectedStatusFilters([...selectedStatusFilters, province]);
-    }
-  };
-
   const isTourVisible = (tour) => {
-    const matchesSearchQuery = tour.tourName
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-    const matchesStatusFilter =
-      selectedStatusFilters.length === 0 ||
-      selectedStatusFilters.includes(tour.province);
-    return matchesSearchQuery && matchesStatusFilter;
+    const matchesSearchQuery =
+      tour.tourName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      tour.province.toLowerCase().includes(searchQuery.toLowerCase());
+
+    return matchesSearchQuery;
   };
 
   // Filter tours based on search query and status filters
@@ -169,12 +250,13 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
 
   return (
     <div>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 w-[110%]">
         <div className="flex justify-between gap-3 items-end">
           <Input
+            variant="faded"
             isClearable
             className="w-full sm:max-w-[44%]"
-            placeholder="Search by name..."
+            placeholder="Tìm kiếm theo tên tour hoặc địa điểm..."
             size="sm"
             startContent={<SearchIcon />}
             value={searchQuery}
@@ -187,9 +269,7 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
                 >
-                  {selectedStatusFilters.length > 0
-                    ? selectedStatusFilters.join(", ")
-                    : "Status"}
+                  {statusName}
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
@@ -197,13 +277,15 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
                 disallowEmptySelection
                 selectionMode="single"
               >
-                {dataTour?.map((dataTour) => (
+                {listStatusFil?.map((status) => (
                   <DropdownItem
-                    key={dataTour.tourId}
+                    key={status.title}
                     className="capitalize"
-                    onClick={() => toggleStatusFilter(dataTour.province)}
+                    onClick={() => {
+                      setStatus(status.status), setStatusName(status.title);
+                    }}
                   >
-                    {capitalize(dataTour?.province)}
+                    {status.title}
                   </DropdownItem>
                 ))}
               </DropdownMenu>
@@ -219,115 +301,103 @@ const ManageTour = ({ handleLinkClick, selectedTourId }) => {
           </div>
         </div>
 
-        <div>
-          <Table layout="fixed" aria-label="Example static collection table">
-            <TableHeader>
-              <TableColumn>TÊN</TableColumn>
-              <TableColumn>VỊ TRÍ</TableColumn>
-              <TableColumn>GIÁ</TableColumn>
-              <TableColumn>LƯỢNG KHÁCH</TableColumn>
-              <TableColumn>TRẠNG THÁI</TableColumn>
-              <TableColumn>HÀNH ĐỘNG</TableColumn>
-            </TableHeader>
-            <TableBody>
-              {/* Map over the currentTours to render each row dynamically */}
-              {currentTours?.map((tour) => (
-                <TableRow key={tour.tourId}>
-                  <TableCell>{tour.tourName}</TableCell>
-                  <TableCell>
-                    {/* <Chip className="capitalize" size="sm" variant="flat"> */}
-                      {tour.province}
-                    {/* </Chip> */}
-                  </TableCell>
-                  <TableCell>
-                      {tour.price} $
-                  </TableCell>
+        {dataTour?.length > 0 ? (
+          <>
+            <div>
+              <Table
+                layout="fixed"
+                aria-label="Example static collection table"
+              >
+                <TableHeader>
+                  <TableColumn className="w-[350px]">TÊN</TableColumn>
+                  <TableColumn className="w-[150px]">VỊ TRÍ</TableColumn>
+                  <TableColumn>GIÁ LỚN</TableColumn>
+                  <TableColumn>GIÁ NHỎ</TableColumn>
+                  <TableColumn>KHÁCH</TableColumn>
+                  <TableColumn className="w-[90px]">THỜI GIAN</TableColumn>
+                  <TableColumn className="w-[160px]">NGÀY TẠO</TableColumn>
+                  <TableColumn className="w-[100px]">TRẠNG THÁI</TableColumn>
+                  <TableColumn className="w-[100px]">HÀNH ĐỘNG</TableColumn>
+                </TableHeader>
+                <TableBody>
+                  {/* Map over the currentTours to render each row dynamically */}
+                  {currentTours?.map((tour) => (
+                    <TableRow key={tour.tourId}>
+                      <TableCell>{tour.tourName}</TableCell>
+                      <TableCell>
+                        {/* <Chip className="capitalize" size="sm" variant="flat"> */}
+                        {tour.province}
+                        {/* </Chip> */}
+                      </TableCell>
+                      <TableCell>$ {tour.priceAdult}</TableCell>
 
-                  <TableCell>
-                    {/* <Chip className="capitalize" size="sm" variant="flat"> */}
-                      {tour.numGuest}
-                    {/* </Chip> */}
-                  </TableCell>
+                      <TableCell>$ {tour.priceChildren}</TableCell>
 
-                  <TableCell>
-                    <Chip className="capitalize" size="sm" variant="flat">
-                      {tour.status} trống
-                    </Chip>
-                  </TableCell>
-                  
-                  <TableCell>
-                    <div className="relative flex items-center gap-4">
-                      {/* Add Voucher */}
-                      <Tooltip content="Voucher">
-                        <span
-                          onClick={voucherModal.onOpen}
-                          className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                        >
-                          <Percent />
-                        </span>
-                      </Tooltip>
-                      <Modal
-                        backdrop="transparent"
-                        hideCloseButton
-                        isOpen={voucherModal.isOpen}
-                        onOpenChange={voucherModal.onOpenChange}
-                      >
-                        <ModalContent>
-                          {(onClose) => (
-                            <>
-                              <ModalHeader>Add Voucher</ModalHeader>
-                              <ModalBody>
-                                <div className="input-container">
-                                  <input
-                                    value={tour.discount}
-                                    placeholder="Add % Sale here"
-                                    type="text"
-                                  />
-                                  <button className="button">Add</button>
-                                </div>
-                              </ModalBody>
-                            </>
-                          )}
-                        </ModalContent>
-                      </Modal>
+                      <TableCell>
+                        {/* <Chip className="capitalize" size="sm" variant="flat"> */}
+                        {tour.numGuest}
+                        {/* </Chip> */}
+                      </TableCell>
 
-                      {/* Update */}
-                      <Tooltip content="Edit">
-                        <span
-                          onClick={() => handleUpdate(tour.tourId)}
-                          className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                        >
-                          <Pen />
-                        </span>
-                      </Tooltip>
+                      <TableCell>{tour.tourTime} ngày</TableCell>
 
-                      {/* Delete */}
-                      <Tooltip color="danger" content="Delete">
-                        <span
-                          onClick={() => deleteTour(tour.tourId)}
-                          className="text-lg text-danger cursor-pointer active:opacity-50"
-                        >
-                          <DeleteIcon />
-                        </span>
-                      </Tooltip>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+                      <TableCell>{tour.createAt}</TableCell>
 
-        <div className="flex w-full justify-center">
-          <Pagination
-            isCompact
-            showControls
-            showShadow
-            page={currentPage}
-            total={Math.ceil(filteredTours.length / toursPerPage)}
-            onChange={handlePageChange}
-          />
-        </div>
+                      <TableCell>
+                        {/* điều chỉnh trạng thái */}
+                        <Switch
+                          size="sm"
+                          isSelected={getTourStatus(tour.tourId)}
+                          onChange={(value) =>
+                            updateTourStatus(tour.tourId, value)
+                          }
+                        />
+                      </TableCell>
+
+                      <TableCell>
+                        <div className="relative flex items-center gap-4">
+                          {/* Update */}
+                          <Tooltip content="Edit">
+                            <span
+                              onClick={() => handleUpdate(tour.tourId)}
+                              className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                            >
+                              <Pen />
+                            </span>
+                          </Tooltip>
+
+                          {/* Delete */}
+                          <Tooltip color="danger" content="Delete">
+                            <span
+                              onClick={() => deleteTour(tour.tourId)}
+                              className="text-lg text-danger cursor-pointer active:opacity-50"
+                            >
+                              <DeleteIcon />
+                            </span>
+                          </Tooltip>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+
+            {/* phân trang */}
+            <div className="flex w-full justify-center">
+              <Pagination
+                isCompact
+                showControls
+                showShadow
+                page={currentPage}
+                total={Math.ceil(filteredTours.length / toursPerPage)}
+                onChange={handlePageChange}
+              />
+            </div>
+          </>
+        ) : (
+          <Empty />
+        )}
       </div>
     </div>
   );

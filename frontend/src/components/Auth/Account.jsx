@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useUserAuth } from "../../contexts/userAuthContext";
 import { NotificationIcon } from "../../assets/NotificationIcon";
-
 import {
   Button,
   Modal,
@@ -20,7 +19,7 @@ import {
   PopoverContent,
 } from "@nextui-org/react";
 import Login from "./Login";
-import { Link, redirect } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import getDataFromLocalStorage from "../../contexts/getDataFromLocalStorage";
 import { Alert } from "../Alert/Alert";
 
@@ -28,61 +27,41 @@ const Account = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [backdrop] = React.useState("blur");
 
-  const userInfo = getDataFromLocalStorage("userInfo");
+  const [userInfo, setUserInfo] = useState(getDataFromLocalStorage("userInfo"));
 
-  const [roles, setRole] = useState();
+  const [roles, setRoles] = useState(userInfo?.roles || []);
 
   // sử dụng useRef để giữ giá trị trước đó, để hạn chế re-render
-  const prevRolesRef = useRef();
-
-  const handleRoles = () => {
-    const currentRoles = userInfo?.roles;
-    // chỉ cập nhật trạng thái nếu roles thay đổi
-    if (prevRolesRef.current !== currentRoles) {
-      setRole(currentRoles);
-      prevRolesRef.current = currentRoles;
-    }
-  };
-
-  useEffect(() => {
-    handleRoles();
-  }, []);
+  // const prevRolesRef = useRef();
+  const loginButtonRef = useRef(null); // Ref for the login button
 
   const { logOut } = useUserAuth();
-
-  useEffect(() => {
-    // Đóng modal khi đăng nhập thành công
-    if (userInfo) {
-      onClose();
-    }
-  }, [userInfo, onClose]);
+  const navigate = useNavigate();
 
   const handleLogout = async () => {
     try {
       await logOut();
+      setUserInfo(null);
       Alert(2000, "Đăng xuất", "Thành công", "success", "OK");
-      redirect("/");
+      navigate("/");
     } catch (error) {
       Alert(2000, "Đăng xuất", "Thất bại", "error", "OK");
     }
   };
 
-  // scroll display
-  const [isScrolled, setIsScrolled] = useState(false);
+  useEffect(() => {
+    if (userInfo) {
+      onClose();
+    } else {
+      if (loginButtonRef.current) {
+        loginButtonRef.current.click();
+      }
+    }
+  }, [userInfo, onClose]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      setIsScrolled(scrollTop > 0);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    // Clean up the event listener when the component unmounts
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
+    setRoles(userInfo?.roles || []);
+  }, [userInfo]);
 
   return (
     <>
@@ -109,7 +88,7 @@ const Account = () => {
                   >
                     {React.cloneElement(<NotificationIcon />, {
                       size: "20",
-                      fill: isScrolled ? "#1E293B" : "white",
+                      fill: "black",
                     })}
                   </Button>
                 </PopoverTrigger>
@@ -147,19 +126,19 @@ const Account = () => {
                 </DropdownItem>
 
                 {roles?.includes("ROLE_USER") && (
-                  <DropdownItem as={Link} to={`/`}>
+                  <DropdownItem as={Link} to={`#`}>
                     Đăng ký tour của bạn
                   </DropdownItem>
                 )}
 
                 {roles?.includes("ROLE_HOST") && (
                   <DropdownItem as={Link} to={`/host`}>
-                    Tour của tôi
+                    Trang quản lý
                   </DropdownItem>
                 )}
 
                 <DropdownItem as={Link} to={`/profile`} key="settings">
-                  My Settings
+                  Tài khoản của tôi
                 </DropdownItem>
 
                 <DropdownItem
@@ -167,7 +146,7 @@ const Account = () => {
                   color="danger"
                   onClick={handleLogout}
                 >
-                  Log Out
+                  Đăng xuất
                 </DropdownItem>
               </DropdownMenu>
             </Dropdown>
@@ -177,9 +156,9 @@ const Account = () => {
         <NavbarContent justify="end">
           <NavbarItem>
             <Button
+              // ref={loginButtonRef} // Assign ref to the login button
               onPress={onOpen}
               radius="full"
-              // variant="bordered"
               className="bg-gradient-to-tr from-cyan-300 to-blue-400 text-white text-md shadow-lg transform transition-transform hover:scale-110 delay-150 duration-300"
             >
               Đăng nhập
@@ -197,10 +176,9 @@ const Account = () => {
         hideCloseButton
       >
         <ModalContent className="container">
-          <Login />
+          <Login setUserInfo={setUserInfo} />
         </ModalContent>
       </Modal>
-
       {/* modal */}
     </>
   );
